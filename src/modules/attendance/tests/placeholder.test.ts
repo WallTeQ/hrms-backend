@@ -1,0 +1,1 @@
+// scaffold: attendance tests placeholder

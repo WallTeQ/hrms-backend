@@ -1,0 +1,74 @@
+# Node
+node_modules/
+
+# Environment files
+.env
+.env.*
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids/
+*.pid
+*.seed
+
+# Compiled output
+dist/
+build/
+out/
+
+# Coverage and test reports
+coverage/
+.nyc_output/
+
+# Cache
+.cache/
+.DS_Store
+
+# IDEs and editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Yarn Berry / PnP
+.pnp/
+.pnp.js
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/patches
+
+# Misc
+*.tgz
+*.log
+*.tmp
+*.temp
+*.bak
+
+# OS generated files
+Thumbs.db
+desktop.ini
+
+# TypeScript
+*.tsbuildinfo
+
+# Docker
+docker-compose.override.yml
+.env.docker
+
+# Secrets and local files
+.local
+
+# Optional: lockfiles - usually committed, uncomment to ignore if needed
+# package-lock.json
+# yarn.lock
+
+/generated/prisma
