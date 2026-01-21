@@ -1,5 +1,5 @@
-import prismaDefault from "../../infra/database";
-import type { Prisma } from "../../generated/prisma";
+import prismaDefault from "../../infra/database.js";
+import type { Prisma } from ".prisma/client";
 
 export const PayrollRepository = (prisma = prismaDefault) => ({
   // Salary structures
@@ -8,8 +8,17 @@ export const PayrollRepository = (prisma = prismaDefault) => ({
   updateSalaryStructure: async (id: string, data: Prisma.SalaryStructureUpdateInput) => prisma.salaryStructure.update({ where: { id }, data }),
   deleteSalaryStructure: async (id: string) => prisma.salaryStructure.delete({ where: { id } }),
 
-  getSalaryStructuresForEmployee: async (employeeId: string) =>
-    prisma.salaryStructure.findMany({ where: { employeeId }, orderBy: { effectiveFrom: "desc" } }),
+  getSalaryStructuresForEmployee: async (employeeId: string, skip = 0, take = 50) => {
+    const items = await prisma.salaryStructure.findMany({ where: { employeeId }, skip, take, orderBy: { effectiveFrom: "desc" } });
+    const total = await prisma.salaryStructure.count({ where: { employeeId } });
+    return { items, total };
+  },
+
+  listSalaryStructures: async (skip = 0, take = 50) => {
+    const items = await prisma.salaryStructure.findMany({ skip, take, orderBy: { effectiveFrom: "desc" } });
+    const total = await prisma.salaryStructure.count();
+    return { items, total };
+  },
 
   // Payroll runs
   createPayrollRun: async (data: Prisma.PayrollRunCreateInput) =>
@@ -20,16 +29,53 @@ export const PayrollRepository = (prisma = prismaDefault) => ({
   findPayrollRun: async (id: string) =>
     prisma.payrollRun.findUnique({ where: { id }, include: { payslips: true } }),
 
-  listPayrollRuns: async (skip = 0, take = 20) =>
-    prisma.payrollRun.findMany({ skip, take, orderBy: { runAt: "desc" } }),
+  listPayrollRuns: async (skip = 0, take = 20) => {
+    const items = await prisma.payrollRun.findMany({ skip, take, orderBy: { runAt: "desc" } });
+    const total = await prisma.payrollRun.count();
+    return { items, total };
+  },
+
+  findPayrollRunByPeriod: async (period: string) => prisma.payrollRun.findFirst({ where: { period } }),
+
+  // Claim a pending payroll run and mark it PROCESSING (returns true if claimed)
+  claimPayrollRun: async (id: string) => {
+    const result = await prisma.payrollRun.updateMany({ where: { id, status: 'PENDING' }, data: { status: 'PROCESSING' } as any });
+    return result.count > 0;
+  },
 
   // Payslips
   createPayslip: async (data: Prisma.PayslipCreateInput) => prisma.payslip.create({ data }),
   getPayslip: async (id: string) => prisma.payslip.findUnique({ where: { id } }),
   updatePayslip: async (id: string, data: Prisma.PayslipUpdateInput) => prisma.payslip.update({ where: { id }, data }),
   deletePayslip: async (id: string) => prisma.payslip.delete({ where: { id } }),
-  listPayslipsForEmployee: async (employeeId: string, skip = 0, take = 20) =>
-    prisma.payslip.findMany({ where: { employeeId }, skip, take, orderBy: { generatedAt: "desc" } }),
+  listPayslipsForEmployee: async (employeeId: string, skip = 0, take = 20) => {
+    // Run both queries in parallel to overlap round-trips and reduce latency
+    const [items, total] = await Promise.all([
+      prisma.payslip.findMany({
+        where: { employeeId },
+        skip,
+        take,
+        orderBy: { generatedAt: "desc" },
+        // select only necessary fields to minimize payload
+        select: {
+          id: true,
+          payrollRunId: true,
+          employeeId: true,
+          gross: true,
+          net: true,
+          month: true,
+          year: true,
+          fileUrl: true,
+          publicId: true,
+          mimeType: true,
+          size: true,
+          generatedAt: true,
+        },
+      }),
+      prisma.payslip.count({ where: { employeeId } }),
+    ]);
+    return { items, total };
+  },
 
   // Statutory deductions
   createStatutoryDeduction: async (data: Prisma.StatutoryDeductionCreateInput) =>

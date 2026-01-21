@@ -1,5 +1,5 @@
-import prismaDefault from "../../infra/database";
-import type { Prisma } from "../../generated/prisma";
+import prismaDefault from "../../infra/database.js";
+import type { Prisma } from ".prisma/client";
 
 export const ReportsRepository = (prisma = prismaDefault) => ({
   attendanceSummary: async (startDate: Date, endDate: Date) => {

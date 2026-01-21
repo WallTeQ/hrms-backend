@@ -1,13 +1,19 @@
 import express from "express";
-import * as controller from "./controller";
-import salaryStructuresRouter from "./salary-structures/router";
-import payslipsRouter from "./payslips/router";
-import payrollRunsRouter from "./payroll-runs/router";
-import statutoryDeductionsRouter from "./statutory-deductions/router";
+import { authMiddleware } from "../../middlewares/auth.js";
+import * as controller from "./controller.js";
+import salaryStructuresRouter from "./salary-structures/router.js";
+import payslipsRouter from "./payslips/router.js";
+import payrollRunsRouter from "./payroll-runs/router.js";
+import statutoryDeductionsRouter from "./statutory-deductions/router.js";
 
 const router = express.Router();
 
-router.post("/process", controller.processPayroll);
+// Apply auth middleware to all routes in this router
+router.use(authMiddleware);
+
+import { requirePermission } from "../../middlewares/requireRole.js";
+
+router.post("/process", requirePermission("payroll:process"), controller.processPayroll);
 router.get("/runs", controller.listPayrollRuns);
 router.get("/runs/:id", controller.getPayrollRun);
 

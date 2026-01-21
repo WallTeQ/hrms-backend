@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
-import { RecruitmentService } from "../service";
-import { cacheWrap, cacheDelByPrefix } from "../../../infra/redis";
-import { uploadBuffer } from "../../../infra/cloudinary";
+import { RecruitmentService } from "../service.js";
+import { cacheWrap, cacheDelByPrefix } from "../../../infra/redis.js";
+import { uploadBuffer } from "../../../infra/cloudinary.js";
+import { getPaginationOptions, createPaginationResult } from "../../../common/pagination.js";
 
 export async function createApplication(req: Request, res: Response) {
   try {
@@ -18,11 +19,28 @@ export async function createApplication(req: Request, res: Response) {
       payload.size = file.size;
     }
 
-    const a = await RecruitmentService.createApplication(payload as any);
+    // Normalize name fields: if client sent firstName+lastName, create candidateName
+    if (!payload.candidateName && payload.firstName && payload.lastName) {
+      payload.candidateName = `${payload.firstName} ${payload.lastName}`.trim();
+    }
+
+    // Build sanitized data object so only expected fields are sent to Prisma
+    const data: any = {
+      vacancyId: payload.vacancyId,
+      candidateName: payload.candidateName,
+      email: payload.email,
+      phone: payload.phone ?? null,
+      resumeUrl: payload.resumeUrl ?? null,
+      publicId: payload.publicId ?? null,
+      mimeType: payload.mimeType ?? null,
+      size: payload.size ?? null,
+    };
+
+    const a = await RecruitmentService.createApplication(data as any);
     // invalidate vacancy application list and general vacancy caches
     if ((payload as any).vacancyId) await cacheDelByPrefix(`recruitment:vacancy:${(payload as any).vacancyId}:applications`);
     await cacheDelByPrefix("recruitment:vacancies");
-    return res.status(201).json(a);
+    return res.status(201).json({ status: "success", data: a });
   } catch (err: any) {
     return res.status(500).json({ error: err?.message ?? "Failed to create application" });
   }
@@ -30,11 +48,13 @@ export async function createApplication(req: Request, res: Response) {
 
 export async function listApplicationsForVacancy(req: Request, res: Response) {
   const vacancyId = req.params.vacancyId;
-  const skip = Number(req.query.skip || 0);
-  const take = Number(req.query.take || 50);
+  const pagination = getPaginationOptions(req.query);
+  const { skip, take, page } = pagination;
   const key = `recruitment:vacancy:${vacancyId}:applications:skip=${skip}:take=${take}`;
-  const items = await cacheWrap(key, 30, () => RecruitmentService.listApplicationsForVacancy(vacancyId, skip, take));
-  return res.json(items);
+  const result = await cacheWrap(key, 30, () => RecruitmentService.listApplicationsForVacancy(vacancyId, skip, take)) as { items: any[]; total: number };
+  const { items, total } = result;
+  const paginated = createPaginationResult(items, total, { ...pagination, page: page || 1 });
+  return res.json({ status: "success", ...paginated });
 }
 
 export async function getApplication(req: Request, res: Response) {
@@ -44,7 +64,7 @@ export async function getApplication(req: Request, res: Response) {
   if (!a) return res.status(404).json({ error: "Not found" });
   // redirect to resume if available
   if ((a as any).resumeUrl) return res.redirect((a as any).resumeUrl);
-  return res.json(a);
+  return res.json({ status: "success", data: a });
 }
 
 export async function updateApplication(req: Request, res: Response) {
@@ -53,7 +73,7 @@ export async function updateApplication(req: Request, res: Response) {
   const updated = await RecruitmentService.updateApplication(id, payload as any);
   await cacheDelByPrefix("recruitment:vacancies");
   await cacheDelByPrefix(`recruitment:application:${id}`);
-  return res.json(updated);
+  return res.json({ status: "success", data: updated });
 }
 
 export async function deleteApplication(req: Request, res: Response) {

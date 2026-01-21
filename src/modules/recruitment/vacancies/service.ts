@@ -1,5 +1,5 @@
-import { RecruitmentRepository } from "../repository";
-import type { Prisma } from "../../../generated/prisma";
+import { RecruitmentRepository } from "../repository.js";
+import type { Prisma } from '.prisma/client';
 
 const repo = RecruitmentRepository();
 

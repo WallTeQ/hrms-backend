@@ -3,7 +3,7 @@ import { v2 as cloudinary } from "cloudinary";
 const CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME;
 const API_KEY = process.env.CLOUDINARY_API_KEY;
 const API_SECRET = process.env.CLOUDINARY_API_SECRET;
-const FOLDER = process.env.CLOUDINARY_FOLDER || "hrms";
+const FOLDER = process.env.CLOUDINARY_FOLDER || "wallteqhrms";
 
 if (!CLOUD_NAME || !API_KEY || !API_SECRET) {
   // do not throw in non-production; allow tests to mock
@@ -20,6 +20,16 @@ export async function uploadBuffer(buffer: Buffer, filename: string, options: { 
       resolve(result);
     });
     stream.end(buffer);
+  });
+}
+
+export async function deleteResource(publicId: string) {
+  return new Promise<any>((resolve, reject) => {
+    const opts: any = { resource_type: "auto" };
+    cloudinary.uploader.destroy(publicId, opts, (error, result) => {
+      if (error) return reject(error);
+      resolve(result);
+    });
   });
 }
 

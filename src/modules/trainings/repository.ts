@@ -1,12 +1,16 @@
-import prismaDefault from "../../infra/database";
-import type { Prisma } from "../../generated/prisma";
+import prismaDefault from "../../infra/database.js";
+import type { Prisma } from ".prisma/client";
 
 export const TrainingsRepository = (prisma = prismaDefault) => ({
   createTraining: async (data: Prisma.TrainingCreateInput) => prisma.training.create({ data }),
   findTraining: async (id: string) => prisma.training.findUnique({ where: { id } }),
   updateTraining: async (id: string, data: Prisma.TrainingUpdateInput) => prisma.training.update({ where: { id }, data }),
   deleteTraining: async (id: string) => prisma.training.delete({ where: { id } }),
-  listTrainings: async (skip = 0, take = 50) => prisma.training.findMany({ skip, take }),
+  listTrainings: async (skip = 0, take = 50) => {
+    const items = await prisma.training.findMany({ skip, take });
+    const total = await prisma.training.count();
+    return { items, total };
+  },
 
   // Skills
   createSkill: async (data: Prisma.SkillCreateInput) => prisma.skill.create({ data }),

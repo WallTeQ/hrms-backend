@@ -1,7 +1,7 @@
 // Central routes index - registers module routers
 
 import express from "express";
-import modules from "./modules";
+import modules from "./modules.js";
 
 const router = express.Router();
 

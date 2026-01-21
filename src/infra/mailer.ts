@@ -1,10 +1,10 @@
 import nodemailer from "nodemailer";
-
+ 
 const host = process.env.SMTP_HOST || "smtp.mailtrap.io";
 const port = Number(process.env.SMTP_PORT || 587);
 const user = process.env.SMTP_USER || "";
 const pass = process.env.SMTP_PASS || "";
-const from = process.env.FROM_EMAIL || `no-reply@${process.env.APP_DOMAIN || "example.com"}`;
+const from = process.env.FROM_EMAIL || `no-reply@${process.env.APP_DOMAIN || "wallteqhrms.com"}`;
 
 export const transporter = nodemailer.createTransport({
   host,

@@ -1,13 +1,12 @@
-// scaffold: import and export module routers
-
-import attendance from "../modules/attendance/router";
-import auth from "../modules/auth/router";
-import employee from "../modules/employee/router";
-import payroll from "../modules/payroll/router";
-import performanceEvaluation from "../modules/performance-evaluation/router";
-import recruitment from "../modules/recruitment/router";
-import reports from "../modules/reports/router";
-import trainings from "../modules/trainings/router";
+import attendance from "../modules/attendance/router.js";
+import auth from "../modules/auth/router.js";
+import employee from "../modules/employee/router.js";
+import payroll from "../modules/payroll/router.js";
+import performanceEvaluation from "../modules/performance-evaluation/router.js";
+import recruitment from "../modules/recruitment/router.js";
+import reports from "../modules/reports/router.js";
+import trainings from "../modules/trainings/router.js";
+import user from "../modules/user/router.js";
 
 export default [
   { path: "/attendance", router: attendance },
@@ -18,4 +17,5 @@ export default [
   { path: "/recruitment", router: recruitment },
   { path: "/reports", router: reports },
   { path: "/trainings", router: trainings },
+  { path: "/users", router: user },
 ];

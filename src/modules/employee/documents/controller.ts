@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
-import { DocumentsService } from "./service";
-import { cacheWrap, cacheDelByPrefix } from "../../../infra/redis";
-import { uploadBuffer } from "../../../infra/cloudinary";
+import { DocumentsService } from "./service.js";
+import { cacheWrap, cacheDelByPrefix } from "../../../infra/redis.js";
+import { uploadBuffer } from "../../../infra/cloudinary.js";
+import { getPaginationOptions, createPaginationResult } from "../../../common/pagination.js";
 
 export async function uploadDocument(req: Request, res: Response) {
   try {
@@ -21,10 +22,15 @@ export async function uploadDocument(req: Request, res: Response) {
     // Ensure employeeId is set
     payload.employeeId = req.params.employeeId;
 
+    // Ensure a file was uploaded or a fileUrl provided
+    if (!payload.fileUrl) {
+      return res.status(400).json({ error: "file or fileUrl is required" });
+    }
+
     const doc = await DocumentsService.create(payload as any);
     if ((payload as any).employeeId) await cacheDelByPrefix(`employees:detail:${(payload as any).employeeId}`);
     await cacheDelByPrefix("employees");
-    return res.status(201).json(doc);
+    return res.status(201).json({ status: "success", data: doc });
   } catch (err: any) {
     return res.status(500).json({ error: err?.message ?? "Upload failed" });
   }
@@ -32,11 +38,13 @@ export async function uploadDocument(req: Request, res: Response) {
 
 export async function listDocumentsForEmployee(req: Request, res: Response) {
   const employeeId = req.params.employeeId;
-  const skip = Number(req.query.skip || 0);
-  const take = Number(req.query.take || 50);
+  const pagination = getPaginationOptions(req.query);
+  const { skip, take, page } = pagination;
   const key = `documents:employee:${employeeId}:skip=${skip}:take=${take}`;
-  const items = await cacheWrap(key, 30, () => DocumentsService.listForEmployee(employeeId, skip, take));
-  return res.json(items);
+  const result = await cacheWrap(key, 30, () => DocumentsService.listForEmployee(employeeId, skip, take)) as { items: any[]; total: number };
+  const { items, total } = result;
+  const paginated = createPaginationResult(items, total, { ...pagination, page: page || 1 });
+  return res.json({ status: "success", ...paginated });
 }
 
 export async function getDocument(req: Request, res: Response) {
@@ -45,7 +53,7 @@ export async function getDocument(req: Request, res: Response) {
   if (!doc) return res.status(404).json({ error: "Not found" });
   // If fileUrl points to Cloudinary, redirect to CDN URL so the client fetches it directly
   if ((doc as any).fileUrl) return res.redirect((doc as any).fileUrl);
-  return res.json(doc);
+  return res.json({ status: "success", data: doc });
 }
 
 export async function deleteDocument(req: Request, res: Response) {
@@ -59,5 +67,5 @@ export async function listExpiring(req: Request, res: Response) {
   const withinDays = Number(req.query.withinDays || 30);
   const key = `documents:expiring:within=${withinDays}`;
   const items = await cacheWrap(key, 60, () => DocumentsService.listExpiring(withinDays));
-  return res.json(items);
+  return res.json({ status: "success", length: items.length, data: items });
 }

@@ -223,11 +223,13 @@ model SalaryStructure {
 }
 
 model PayrollRun {
-  id       String        @id @default(uuid())
-  period   String
-  runAt    DateTime      @default(now())
-  status   PayrollStatus @default(PENDING)
-  payslips Payslip[]
+  id          String        @id @default(uuid())
+  period      String        @unique
+  runAt       DateTime      @default(now())
+  status      PayrollStatus @default(PENDING)
+  completedAt DateTime?
+  errorLog    String?
+  payslips    Payslip[]
 }
 
 model Payslip {

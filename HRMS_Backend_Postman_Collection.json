@@ -1,0 +1,2876 @@
+{
+  "info": {
+    "name": "HRMS Backend API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Postman collection for testing HRMS Backend API endpoints"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "auth_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password123\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const body = pm.response.json();",
+                  "    const token = body?.data?.tokens?.accessToken || body?.tokens?.accessToken || body?.token;",
+                  "    if (token) pm.collectionVariables.set('auth_token', token);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/logout",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "logout"]
+            }
+          }
+        },
+        {
+          "name": "Signup Request OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"newuser@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/signup/request",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "signup", "request"]
+            }
+          }
+        },
+        {
+          "name": "Signup Verify OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"newuser@example.com\",\n  \"otp\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/signup/verify",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "signup", "verify"]
+            }
+          }
+        },
+        {
+          "name": "Signup Complete",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"newuser@example.com\",\n  \"password\": \"password123\",\n  \"firstName\": \"Jane\",\n  \"lastName\": \"Doe\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/signup/complete",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "signup", "complete"]
+            }
+          }
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"oldPassword\": \"oldpassword123\",\n  \"newPassword\": \"newpassword123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/change-password",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "change-password"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "List Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/users?page=1&take=50",
+              "host": ["{{base_url}}"],
+              "path": ["users"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "take", "value": "50" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/users/:id",
+              "host": ["{{base_url}}"],
+              "path": ["users", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Updated Name\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/:id",
+              "host": ["{{base_url}}"],
+              "path": ["users", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/users/:id",
+              "host": ["{{base_url}}"],
+              "path": ["users", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Attendance",
+      "item": [
+        {
+          "name": "Mark Attendance",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employeeId\": 1,\n  \"date\": \"2023-10-01\",\n  \"clockIn\": \"09:00\",\n  \"clockOut\": \"17:00\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/attendance/mark",
+              "host": ["{{base_url}}"],
+              "path": ["attendance", "mark"]
+            }
+          }
+        },
+        {
+          "name": "Create Attendance",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employeeId\": 1,\n  \"date\": \"2023-10-01\",\n  \"status\": \"present\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/attendance",
+              "host": ["{{base_url}}"],
+              "path": ["attendance"]
+            }
+          }
+        },
+        {
+          "name": "List Attendance",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/attendance?employeeId={{employeeId}}&page=1&take=50",
+              "host": ["{{base_url}}"],
+              "path": ["attendance"],
+              "query": [
+                { "key": "employeeId", "value": "{{employeeId}}" },
+                { "key": "page", "value": "1" },
+                { "key": "take", "value": "50" }
+              ]
+            }
+          }
+        },
+
+        {
+          "name": "Get Attendance",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/attendance/:id",
+              "host": ["{{base_url}}"],
+              "path": ["attendance", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Attendance",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"absent\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/attendance/:id",
+              "host": ["{{base_url}}"],
+              "path": ["attendance", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Attendance",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/attendance/:id",
+              "host": ["{{base_url}}"],
+              "path": ["attendance", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Employees",
+      "item": [
+        {
+          "name": "Create Employee",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Jane\",\n  \"lastName\": \"Doe\",\n  \"email\": \"jane@example.com\",\n  \"phone\": \"+1234567890\",\n  \"dateOfBirth\": \"1990-01-01\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/employees",
+              "host": ["{{base_url}}"],
+              "path": ["employees"]
+            }
+          }
+        },
+        {
+          "name": "List Employees",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/employees?page=1&take=50",
+              "host": ["{{base_url}}"],
+              "path": ["employees"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "take", "value": "50" }
+              ]
+            }
+          }
+        },
+
+        {
+          "name": "Get Employee",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/employees/:id",
+              "host": ["{{base_url}}"],
+              "path": ["employees", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Employee",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"position\": \"Senior Manager\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/employees/:id",
+              "host": ["{{base_url}}"],
+              "path": ["employees", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Employee",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/employees/:id",
+              "host": ["{{base_url}}"],
+              "path": ["employees", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Contracts",
+          "item": [
+            {
+              "name": "Create Contract",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "title",
+                      "value": "Employment Contract"
+                    },
+                    {
+                      "key": "startDate",
+                      "value": "2023-01-01"
+                    },
+                    {
+                      "key": "endDate",
+                      "value": "2024-01-01"
+                    },
+                    {
+                      "key": "file",
+                      "type": "file",
+                      "src": []
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/employees/:employeeId/contracts",
+                  "host": ["{{base_url}}"],
+                  "path": ["employees", ":employeeId", "contracts"],
+                  "variable": [
+                    {
+                      "key": "employeeId",
+                      "value": "1"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "List Contracts",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/employees/:employeeId/contracts?page=1&take=50",
+                  "host": ["{{base_url}}"],
+                  "path": ["employees", ":employeeId", "contracts"],
+                  "variable": [
+                    {
+                      "key": "employeeId",
+                      "value": "1"
+                    }
+                  ],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "take", "value": "50" }
+                  ]
+                }
+              }
+            },
+
+            {
+              "name": "Get Contract",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/employees/:employeeId/contracts/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["employees", ":employeeId", "contracts", ":id"],
+                  "variable": [
+                    {
+                      "key": "employeeId",
+                      "value": "1"
+                    },
+                    {
+                      "key": "id",
+                      "value": "1"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Update Contract",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"active\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/employees/:employeeId/contracts/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["employees", ":employeeId", "contracts", ":id"],
+                  "variable": [
+                    {
+                      "key": "employeeId",
+                      "value": "1"
+                    },
+                    {
+                      "key": "id",
+                      "value": "1"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Delete Contract",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/employees/:employeeId/contracts/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["employees", ":employeeId", "contracts", ":id"],
+                  "variable": [
+                    {
+                      "key": "employeeId",
+                      "value": "1"
+                    },
+                    {
+                      "key": "id",
+                      "value": "1"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "List Failed Contract Uploads",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/employees/:employeeId/contracts/failed?page=1&take=50",
+                  "host": ["{{base_url}}"],
+                  "path": ["employees", ":employeeId", "contracts", "failed"],
+                  "variable": [
+                    {
+                      "key": "employeeId",
+                      "value": "1"
+                    }
+                  ],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "take", "value": "50" }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Retry Contract Upload",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "file",
+                      "type": "file",
+                      "src": []
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/employees/:employeeId/contracts/:id/retry-upload",
+                  "host": ["{{base_url}}"],
+                  "path": ["employees", ":employeeId", "contracts", ":id", "retry-upload"],
+                  "variable": [
+                    {
+                      "key": "employeeId",
+                      "value": "1"
+                    },
+                    {
+                      "key": "id",
+                      "value": "1"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Documents",
+          "item": [
+            {
+              "name": "Upload Document",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "type",
+                      "value": "ID"
+                    },
+                    {
+                      "key": "name",
+                      "value": "ID Card"
+                    },
+                    {
+                      "key": "file",
+                      "type": "file",
+                      "src": []
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/employees/:employeeId/documents",
+                  "host": ["{{base_url}}"],
+                  "path": ["employees", ":employeeId", "documents"],
+                  "variable": [
+                    {
+                      "key": "employeeId",
+                      "value": "1"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "List Documents",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/employees/:employeeId/documents?page=1&take=50",
+                  "host": ["{{base_url}}"],
+                  "path": ["employees", ":employeeId", "documents"],
+                  "variable": [
+                    {
+                      "key": "employeeId",
+                      "value": "1"
+                    }
+                  ],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "take", "value": "50" }
+                  ]
+                }
+              }
+            },
+
+            {
+              "name": "List Expiring Documents",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/employees/:employeeId/documents/expiring",
+                  "host": ["{{base_url}}"],
+                  "path": ["employees", ":employeeId", "documents", "expiring"],
+                  "variable": [
+                    {
+                      "key": "employeeId",
+                      "value": "1"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Get Document",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/employees/:employeeId/documents/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["employees", ":employeeId", "documents", ":id"],
+                  "variable": [
+                    {
+                      "key": "employeeId",
+                      "value": "1"
+                    },
+                    {
+                      "key": "id",
+                      "value": "1"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Delete Document",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/employees/:employeeId/documents/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["employees", ":employeeId", "documents", ":id"],
+                  "variable": [
+                    {
+                      "key": "employeeId",
+                      "value": "1"
+                    },
+                    {
+                      "key": "id",
+                      "value": "1"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Disciplinary Records",
+          "item": [
+            {
+              "name": "Create Record",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"incident\": \"Late arrival\",\n  \"action\": \"Warning\",\n  \"date\": \"2023-10-01\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/employees/:employeeId/disciplinary-records",
+                  "host": ["{{base_url}}"],
+                  "path": ["employees", ":employeeId", "disciplinary-records"],
+                  "variable": [
+                    {
+                      "key": "employeeId",
+                      "value": "1"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "List Records",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/employees/:employeeId/disciplinary-records?page=1&take=50",
+                  "host": ["{{base_url}}"],
+                  "path": ["employees", ":employeeId", "disciplinary-records"],
+                  "variable": [
+                    {
+                      "key": "employeeId",
+                      "value": "1"
+                    }
+                  ],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "take", "value": "50" }
+                  ]
+                }
+              }
+            },
+
+            {
+              "name": "Get Record",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/employees/:employeeId/disciplinary-records/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["employees", ":employeeId", "disciplinary-records", ":id"],
+                  "variable": [
+                    {
+                      "key": "employeeId",
+                      "value": "1"
+                    },
+                    {
+                      "key": "id",
+                      "value": "1"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Update Record",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"incident\": \"Updated incident\",\n  \"action\": \"Verbal warning\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/employees/:employeeId/disciplinary-records/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["employees", ":employeeId", "disciplinary-records", ":id"],
+                  "variable": [
+                    {
+                      "key": "employeeId",
+                      "value": "1"
+                    },
+                    {
+                      "key": "id",
+                      "value": "1"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Delete Record",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/employees/:employeeId/disciplinary-records/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["employees", ":employeeId", "disciplinary-records", ":id"],
+                  "variable": [
+                    {
+                      "key": "employeeId",
+                      "value": "1"
+                    },
+                    {
+                      "key": "id",
+                      "value": "1"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Payroll",
+      "item": [
+        {
+          "name": "Process Payroll",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"month\": 10,\n  \"year\": 2023\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/payroll/process",
+              "host": ["{{base_url}}"],
+              "path": ["payroll", "process"]
+            }
+          }
+        },
+        {
+          "name": "List Payroll Runs",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/payroll/runs?page=1&take=20",
+              "host": ["{{base_url}}"],
+              "path": ["payroll", "runs"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "take", "value": "20" }
+              ]
+            }
+          }
+        },
+
+        {
+          "name": "Get Payroll Run",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/payroll/runs/:id",
+              "host": ["{{base_url}}"],
+              "path": ["payroll", "runs", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Salary Structures",
+          "item": [
+            {
+              "name": "Create Salary Structure",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"employeeId\": \"9b5089c6-3995-4071-97c3-9f11e0b60cf8\",\n  \"baseSalary\": 50000,\n  \"allowances\": 5000,\n  \"effectiveFrom\": \"2023-10-01\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/payroll/salary-structures",
+                  "host": ["{{base_url}}"],
+                  "path": ["payroll", "salary-structures"]
+                }
+              }
+            },
+            {
+              "name": "List Salary Structures (Employee)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/payroll/salary-structures/employee/{{employeeId}}?page=1&take=20",
+                  "host": ["{{base_url}}"],
+                  "path": ["payroll", "salary-structures", "employee", ":employeeId"],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "take", "value": "20" }
+                  ],
+                  "variable": [
+                    { "key": "employeeId", "value": "{{employeeId}}" }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "List All Salary Structures",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/payroll/salary-structures?page=1&take=50",
+                  "host": ["{{base_url}}"],
+                  "path": ["payroll", "salary-structures"],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "take", "value": "50" }
+                  ]
+                }
+              }
+            },
+
+
+            {
+              "name": "Update Salary Structure",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"basicSalary\": 55000\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/payroll/salary-structures/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["payroll", "salary-structures", ":id"],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "1"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Delete Salary Structure",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/payroll/salary-structures/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["payroll", "salary-structures", ":id"],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "1"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Payslips",
+          "item": [
+            {
+              "name": "Create Payslip",
+              "request": {
+                "method": "POST",
+                "description": "Required: provide `month` and `year` (we will create/find the payroll run). `gross`/`net` default to 0 if omitted. Attach file using key `file`. The response includes `month` and `year` fields.",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "employeeId",
+                      "value": "{{employeeId}}"
+                    },
+                    {
+                      "key": "gross",
+                      "value": "0"
+                    },
+                    {
+                      "key": "net",
+                      "value": "0"
+                    },
+                    {
+                      "key": "month",
+                      "value": "10"
+                    },
+                    {
+                      "key": "year",
+                      "value": "2023"
+                    },
+                    {
+                      "key": "file",
+                      "type": "file",
+                      "src": []
+                    }
+                  ]
+                },
+
+                "url": {
+                  "raw": "{{base_url}}/payroll/payslips",
+                  "host": ["{{base_url}}"],
+                  "path": ["payroll", "payslips"]
+                }
+              }
+            },
+
+
+            {
+              "name": "List Payslips for Employee",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/payroll/payslips/employee/:employeeId?page=1&take=20",
+                  "host": ["{{base_url}}"],
+                  "path": ["payroll", "payslips", "employee", ":employeeId"],
+                  "variable": [
+                    {
+                      "key": "employeeId",
+                      "value": "1"
+                    }
+                  ],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "take", "value": "20" }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Get Payslip",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/payroll/payslips/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["payroll", "payslips", ":id"],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "1"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Update Payslip",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"paid\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/payroll/payslips/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["payroll", "payslips", ":id"],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "1"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Delete Payslip",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/payroll/payslips/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["payroll", "payslips", ":id"],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "1"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Payroll Runs",
+          "item": [
+
+            {
+              "name": "List Payroll Runs",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/payroll/runs?page=1&take=20",
+                  "host": ["{{base_url}}"],
+                  "path": ["payroll", "runs"],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "take", "value": "20" }
+                  ]
+                }
+              }
+            },
+
+            {
+              "name": "Get Payroll Run",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  }
+                ],
+                "description": "Returns payroll run with status and fields: completedAt and errorLog (nullable)",
+                "url": {
+                  "raw": "{{base_url}}/payroll/runs/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["payroll", "runs", ":id"],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "1"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Process Payroll Run",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/payroll/runs/:id/process",
+                  "host": ["{{base_url}}"],
+                  "path": ["payroll", "runs", ":id", "process"],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "7a410e92-cd68-4a79-b070-9711168aa416"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Update Payroll Run",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"COMPLETED\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/payroll/runs/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["payroll", "runs", ":id"],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "1"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Delete Payroll Run",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/payroll/runs/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["payroll", "runs", ":id"],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "1"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Statutory Deductions",
+          "item": [
+            {
+              "name": "Create Statutory Deduction",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "description": "Creates a statutory deduction. Send `rate` (number), e.g. 10 for 10%. The collection accepts `percentage` as an alias and will be mapped to `rate`.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Tax\",\n  \"rate\": 10\n}"
+                },
+
+                "url": {
+                  "raw": "{{base_url}}/payroll/statutory-deductions",
+                  "host": ["{{base_url}}"],
+                  "path": ["payroll", "statutory-deductions"]
+                }
+              }
+            },
+            {
+              "name": "List Statutory Deductions",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/payroll/statutory-deductions",
+                  "host": ["{{base_url}}"],
+                  "path": ["payroll", "statutory-deductions"]
+                }
+              }
+            },
+            {
+              "name": "Get Statutory Deduction",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/payroll/statutory-deductions/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["payroll", "statutory-deductions", ":id"],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "1"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Update Statutory Deduction",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"percentage\": 12\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/payroll/statutory-deductions/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["payroll", "statutory-deductions", ":id"],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "1"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Delete Statutory Deduction",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/payroll/statutory-deductions/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["payroll", "statutory-deductions", ":id"],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "1"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Performance Evaluation",
+      "item": [
+        {
+          "name": "Head",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/performance",
+              "host": ["{{base_url}}"],
+              "path": ["performance"]
+            }
+          }
+        },
+        {
+          "name": "List KPIs",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/performance/kpis?page=1&take=50",
+              "host": ["{{base_url}}"],
+              "path": ["performance", "kpis"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "take", "value": "50" }
+              ]
+            }
+          }
+        },
+
+        {
+          "name": "Create KPI",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sales Target\",\n  \"description\": \"Achieve 100k sales\",\n  \"weight\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/performance/kpis",
+              "host": ["{{base_url}}"],
+              "path": ["performance", "kpis"]
+            }
+          }
+        },
+        {
+          "name": "KPIs",
+          "item": [
+            {
+              "name": "Get KPI",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/performance/kpis/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["performance", "kpis", ":id"],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "1"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Update KPI",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"target\": 120000\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/performance/kpis/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["performance", "kpis", ":id"],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "1"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Delete KPI",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/performance/kpis/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["performance", "kpis", ":id"],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "1"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Evaluations",
+          "item": [
+            {
+              "name": "Get Evaluation",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/performance/evaluations/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["performance", "evaluations", ":id"],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "1"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Update Evaluation",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"score\": 85\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/performance/evaluations/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["performance", "evaluations", ":id"],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "1"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Delete Evaluation",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/performance/evaluations/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["performance", "evaluations", ":id"],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "1"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Create Evaluation",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"employeeId\": \"99a7da70-e176-40dc-baf0-a2da2ae467a9\",\n  \"kpiId\": null,\n  \"score\": 85,\n  \"period\": \"2026-01\",\n  \"notes\": \"Quarterly review\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/performance/evaluations",
+                  "host": ["{{base_url}}"],
+                  "path": ["performance", "evaluations"]
+                }
+              }
+            },
+            {
+              "name": "List Evaluations for Employee",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/performance/evaluations/employee/:employeeId?page=1&take=50",
+                  "host": ["{{base_url}}"],
+                  "path": ["performance", "evaluations", "employee", ":employeeId"],
+                  "variable": [
+                    {
+                      "key": "employeeId",
+                      "value": "99a7da70-e176-40dc-baf0-a2da2ae467a9"
+                    }
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "take",
+                      "value": "50"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Create Promotion",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"employeeId\": \"99a7da70-e176-40dc-baf0-a2da2ae467a9\",\n  \"newRole\": \"SENIOR\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/performance/promotions",
+                  "host": ["{{base_url}}"],
+                  "path": ["performance", "promotions"]
+                }
+              }
+            },
+            {
+              "name": "Assess Probation",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"employeeId\": \"99a7da70-e176-40dc-baf0-a2da2ae467a9\",\n  \"note\": \"6 month assessment\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/performance/probation/assess",
+                  "host": ["{{base_url}}"],
+                  "path": ["performance", "probation", "assess"]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Recruitment",
+      "item": [
+        {
+          "name": "List Vacancies",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/recruitment/vacancies?page=1&take=20",
+              "host": ["{{base_url}}"],
+              "path": ["recruitment", "vacancies"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "take", "value": "20" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Vacancy",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Software Engineer\",\n  \"description\": \"Develop software\",\n  \"department\": \"IT\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/recruitment/vacancies",
+              "host": ["{{base_url}}"],
+              "path": ["recruitment", "vacancies"]
+            }
+          }
+        },
+        {
+          "name": "Get Vacancy",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/recruitment/vacancies/:id",
+              "host": ["{{base_url}}"],
+              "path": ["recruitment", "vacancies", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Vacancy",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"closed\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/recruitment/vacancies/:id",
+              "host": ["{{base_url}}"],
+              "path": ["recruitment", "vacancies", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Vacancy",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/recruitment/vacancies/:id",
+              "host": ["{{base_url}}"],
+              "path": ["recruitment", "vacancies", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Application",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "vacancyId",
+                  "value": "1"
+                },
+                {
+                  "key": "firstName",
+                  "value": "Applicant"
+                },
+                {
+                  "key": "lastName",
+                  "value": "Name"
+                },
+                {
+                  "key": "email",
+                  "value": "applicant@example.com"
+                },
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/recruitment/applications",
+              "host": ["{{base_url}}"],
+              "path": ["recruitment", "applications"]
+            }
+          }
+        },
+        {
+          "name": "List Applications for Vacancy",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/recruitment/applications/vacancy/:vacancyId?page=1&take=50",
+              "host": ["{{base_url}}"],
+              "path": ["recruitment", "applications", "vacancy", ":vacancyId"],
+              "variable": [
+                {
+                  "key": "vacancyId",
+                  "value": "1"
+                }
+              ],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "take", "value": "50" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Application",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/recruitment/applications/:id",
+              "host": ["{{base_url}}"],
+              "path": ["recruitment", "applications", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Application",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"interviewed\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/recruitment/applications/:id",
+              "host": ["{{base_url}}"],
+              "path": ["recruitment", "applications", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Application",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/recruitment/applications/:id",
+              "host": ["{{base_url}}"],
+              "path": ["recruitment", "applications", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Schedule Interview",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"applicationId\": 1,\n  \"date\": \"2023-10-15\",\n  \"time\": \"10:00\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/recruitment/interviews",
+              "host": ["{{base_url}}"],
+              "path": ["recruitment", "interviews"]
+            }
+          }
+        },
+        {
+          "name": "Get Interview",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/recruitment/interviews/:id",
+              "host": ["{{base_url}}"],
+              "path": ["recruitment", "interviews", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Interview",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"completed\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/recruitment/interviews/:id",
+              "host": ["{{base_url}}"],
+              "path": ["recruitment", "interviews", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Interview",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/recruitment/interviews/:id",
+              "host": ["{{base_url}}"],
+              "path": ["recruitment", "interviews", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Offer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"applicationId\": \"99a7da70-e176-40dc-baf0-a2da2ae467a9\",\n  \"salary\": 60000,\n  \"startDate\": \"2026-02-01\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/recruitment/offers",
+              "host": ["{{base_url}}"],
+              "path": ["recruitment", "offers"]
+            }
+          }
+        },
+        {
+          "name": "Get Offer",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/recruitment/offers/:id",
+              "host": ["{{base_url}}"],
+              "path": ["recruitment", "offers", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Offer",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"accepted\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/recruitment/offers/:id",
+              "host": ["{{base_url}}"],
+              "path": ["recruitment", "offers", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Offer",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/recruitment/offers/:id",
+              "host": ["{{base_url}}"],
+              "path": ["recruitment", "offers", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Accept Offer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/recruitment/offers/:id/accept",
+              "host": ["{{base_url}}"],
+              "path": ["recruitment", "offers", ":id", "accept"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reports",
+      "item": [
+        {
+          "name": "Attendance Summary",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/reports/attendance",
+              "host": ["{{base_url}}"],
+              "path": ["reports", "attendance"]
+            }
+          }
+        },
+        {
+          "name": "Payroll Summary",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/reports/payroll",
+              "host": ["{{base_url}}"],
+              "path": ["reports", "payroll"]
+            }
+          }
+        },
+        {
+          "name": "Headcount",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/reports/headcount",
+              "host": ["{{base_url}}"],
+              "path": ["reports", "headcount"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Trainings",
+      "item": [
+        {
+          "name": "Create Training",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Leadership Training\",\n  \"description\": \"Improve leadership skills\",\n  \"startDate\": \"2023-11-01\",\n  \"endDate\": \"2023-11-05\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/trainings",
+              "host": ["{{base_url}}"],
+              "path": ["trainings"]
+            }
+          }
+        },
+        {
+          "name": "List Trainings",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/trainings?page=1&take=50",
+              "host": ["{{base_url}}"],
+              "path": ["trainings"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "take", "value": "50" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Training",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/trainings/:id",
+              "host": ["{{base_url}}"],
+              "path": ["trainings", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Training",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"completed\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/trainings/:id",
+              "host": ["{{base_url}}"],
+              "path": ["trainings", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Training",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/trainings/:id",
+              "host": ["{{base_url}}"],
+              "path": ["trainings", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Skill",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"JavaScript\",\n  \"description\": \"Programming language\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/trainings/skills",
+              "host": ["{{base_url}}"],
+              "path": ["trainings", "skills"]
+            }
+          }
+        },
+        {
+          "name": "List Skills",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/trainings/skills",
+              "host": ["{{base_url}}"],
+              "path": ["trainings", "skills"]
+            }
+          }
+        },
+        {
+          "name": "Get Skill",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/trainings/skills/:id",
+              "host": ["{{base_url}}"],
+              "path": ["trainings", "skills", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Skill",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Updated description\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/trainings/skills/:id",
+              "host": ["{{base_url}}"],
+              "path": ["trainings", "skills", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Skill",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/trainings/skills/:id",
+              "host": ["{{base_url}}"],
+              "path": ["trainings", "skills", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

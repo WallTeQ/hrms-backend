@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import { redis } from "../infra/redis";
+import { redis } from "../infra/redis.js";
 
 // Generic Redis-backed rate limiter (per IP or custom key)
 export function createRateLimiter(options: { prefix: string; windowSeconds?: number; max: number }) {

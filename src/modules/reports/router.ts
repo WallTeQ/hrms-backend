@@ -1,7 +1,11 @@
 import express from "express";
-import * as controller from "./controller";
+import { authMiddleware } from "../../middlewares/auth.js";
+import * as controller from "./controller.js";
 
 const router = express.Router();
+
+// Apply auth middleware to all routes in this router
+router.use(authMiddleware);
 
 router.get("/attendance", controller.attendanceSummary);
 router.get("/payroll", controller.payrollSummary);

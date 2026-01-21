@@ -1,5 +1,5 @@
 import type { RequestHandler } from "express";
-import { cacheGet, cacheSet } from "../infra/redis";
+import { cacheGet, cacheSet } from "../infra/redis.js";
 
 // Simple caching middleware keyed by request URL and query string
 export function cacheResponse(ttlSeconds = 60): RequestHandler {

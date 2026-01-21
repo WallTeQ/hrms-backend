@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
-import { AuthRepository } from "./repository";
-import type { Prisma } from "../../generated/prisma";
-import { sendOtpEmail } from "../../infra/mailer";
+import { AuthRepository } from "./repository.js";
+import type { Prisma } from ".prisma/client";
+import { sendOtpEmail } from "../../infra/mailer.js";
 import {
   setSignupOtp,
   getSignupOtp,
@@ -9,7 +9,13 @@ import {
   markSignupVerified,
   isSignupVerified,
   deleteSignupVerified,
-} from "../../infra/redis";
+  setPasswordResetOtp,
+  getPasswordResetOtp,
+  deletePasswordResetOtp,
+  markPasswordResetVerified,
+  isPasswordResetVerified,
+  deletePasswordResetVerified,
+} from "../../infra/redis.js";
 
 const repo = AuthRepository();
 
@@ -29,17 +35,9 @@ export const AuthService = {
     return user;
   },
 
-  getById: async (id: string) => repo.findById(id),
-
   updatePassword: async (id: string, hashedPassword: string) => repo.updatePassword(id, hashedPassword),
 
   setEmployeeLink: async (userId: string, employeeId: string) => repo.setEmployeeLink(userId, employeeId),
-
-  updateUser: async (id: string, data: Prisma.UserUpdateInput) => repo.update(id, data),
-
-  list: async (skip = 0, take = 50) => repo.list(skip, take),
-
-  delete: async (id: string) => repo.delete(id),
 
   // OTP signup flow
   requestSignupOtp: async (email: string) => {
@@ -65,5 +63,45 @@ export const AuthService = {
     if (!verified) throw new Error("Email not verified or verification expired");
     await deleteSignupVerified(email);
     return AuthService.register(email, password, firstName, lastName);
+  },
+
+  // Password reset flow
+  requestPasswordResetOtp: async (email: string) => {
+    const user = await repo.findByEmail(email);
+    if (!user) throw new Error("User not found");
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    await setPasswordResetOtp(email, otp, 300); // 5min
+    await sendOtpEmail(email, otp);
+    return { ok: true };
+  },
+
+  verifyPasswordResetOtp: async (email: string, otp: string) => {
+    const stored = await getPasswordResetOtp(email);
+    if (!stored) throw new Error("OTP expired or not requested");
+    if (stored !== otp) throw new Error("Invalid OTP");
+    await deletePasswordResetOtp(email);
+    await markPasswordResetVerified(email, 900); // 15min
+    return { ok: true };
+  },
+
+  resetPassword: async (email: string, password: string) => {
+    const verified = await isPasswordResetVerified(email);
+    if (!verified) throw new Error("Email not verified or verification expired");
+    const hashed = await bcrypt.hash(password, 10);
+    const user = await repo.findByEmail(email);
+    if (!user) throw new Error("User not found");
+    await repo.updatePassword(user.id, hashed);
+    await deletePasswordResetVerified(email);
+    return { ok: true };
+  },
+
+  changePassword: async (userId: string, oldPassword: string, newPassword: string) => {
+    const user = await repo.findById(userId);
+    if (!user) throw new Error("User not found");
+    const match = await bcrypt.compare(oldPassword, user.password);
+    if (!match) throw new Error("Old password is incorrect");
+    const hashed = await bcrypt.hash(newPassword, 10);
+    await repo.updatePassword(userId, hashed);
+    return { ok: true };
   },
 };

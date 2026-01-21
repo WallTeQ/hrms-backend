@@ -1,7 +1,7 @@
 import express from "express";
-import { validate } from "../../../middlewares/validate";
-import { UpdateEvaluationSchema } from "./schema";
-import * as controller from "./controller";
+import { validate } from "../../../middlewares/validate.js";
+import { UpdateEvaluationSchema } from "./schema.js";
+import * as controller from "./controller.js";
 
 const router = express.Router();
 

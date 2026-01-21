@@ -23,6 +23,7 @@ export const EmployeeResponseSchema = z.object({
   email: z.string().email(),
   phone: z.string().optional().nullable(),
   dateOfBirth: z.string().optional().nullable(),
+  position: z.string().optional().nullable(),
   createdAt: z.string(),
   updatedAt: z.string(),
 });

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { AttendanceRepository } from "../repository";
+import { AttendanceRepository } from "../repository.js";
 
 describe("AttendanceRepository", () => {
   it("marks attendance by creating when no existing record", async () => {

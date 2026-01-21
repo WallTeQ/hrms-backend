@@ -1,5 +1,5 @@
-import prismaDefault from "../../infra/database";
-import type { Prisma } from "../../generated/prisma";
+import prismaDefault from "../../infra/database.js";
+import type { Prisma, AttendanceStatus } from ".prisma/client";
 
 export type AttendanceFilters = {
   employeeId?: string;
@@ -18,7 +18,7 @@ export const AttendanceRepository = (prisma = prismaDefault) => ({
 
   list: async (filters: AttendanceFilters = {}) => {
     const { employeeId, startDate, endDate, skip = 0, take = 100 } = filters;
-    return prisma.attendance.findMany({
+    const items = await prisma.attendance.findMany({
       where: {
         AND: [
           employeeId ? { employeeId } : {},
@@ -35,6 +35,21 @@ export const AttendanceRepository = (prisma = prismaDefault) => ({
       take,
       orderBy: { date: "desc" },
     });
+    const total = await prisma.attendance.count({
+      where: {
+        AND: [
+          employeeId ? { employeeId } : {},
+          startDate && endDate
+            ? { date: { gte: startDate, lte: endDate } }
+            : startDate
+            ? { date: { gte: startDate } }
+            : endDate
+            ? { date: { lte: endDate } }
+            : {},
+        ],
+      },
+    });
+    return { items, total };
   },
 
   update: async (id: string, data: Prisma.AttendanceUpdateInput) =>
@@ -42,12 +57,17 @@ export const AttendanceRepository = (prisma = prismaDefault) => ({
 
   delete: async (id: string) => prisma.attendance.delete({ where: { id } }),
 
-  mark: async (employeeId: string, date: Date, status: Prisma.AttendanceStatus) =>
-    prisma.$transaction(async (tx) => {
+  mark: async (employeeId: string, date: Date, status?: AttendanceStatus, clockIn?: Date, clockOut?: Date) =>
+    prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       const existing = await tx.attendance.findFirst({ where: { employeeId, date } });
+      const data: any = {};
+      if (status !== undefined) data.status = status;
+      if (clockIn) data.clockIn = clockIn;
+      if (clockOut) data.clockOut = clockOut;
       if (existing) {
-        return tx.attendance.update({ where: { id: existing.id }, data: { status } });
+        return tx.attendance.update({ where: { id: existing.id }, data });
       }
-      return tx.attendance.create({ data: { employeeId, date, status } });
+      // Creation expects status to be present (service ensures this)
+      return tx.attendance.create({ data: { employeeId, date, ...data } });
     }),
 });

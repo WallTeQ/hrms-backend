@@ -1,5 +1,5 @@
-import { prisma as defaultPrisma } from "../../../infra/database";
-import type { Prisma } from "../../../generated/prisma";
+import { prisma as defaultPrisma } from "../../../infra/database.js";
+import type { Prisma } from ".prisma/client";
 
 const prisma = defaultPrisma as any;
 

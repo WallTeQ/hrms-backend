@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { RecruitmentService } from "../service";
-import { cacheWrap, cacheDelByPrefix } from "../../../infra/redis";
+import { RecruitmentService } from "../service.js";
+import { cacheWrap, cacheDelByPrefix } from "../../../infra/redis.js";
 
 export async function createOffer(req: Request, res: Response) {
   const payload = req.body;
@@ -8,7 +8,7 @@ export async function createOffer(req: Request, res: Response) {
   if ((payload as any).vacancyId) await cacheDelByPrefix(`recruitment:vacancy:${(payload as any).vacancyId}:offers`);
   await cacheDelByPrefix("recruitment:vacancies");
   await cacheDelByPrefix("recruitment:offers");
-  return res.status(201).json(o);
+  return res.status(201).json({ status: "success", data: o });
 }
 
 export async function getOffer(req: Request, res: Response) {
@@ -16,7 +16,7 @@ export async function getOffer(req: Request, res: Response) {
   const key = `recruitment:offer:${id}`;
   const o = await cacheWrap(key, 60, () => RecruitmentService.getOffer(id));
   if (!o) return res.status(404).json({ error: "Not found" });
-  return res.json(o);
+  return res.json({ status: "success", data: o });
 }
 
 export async function updateOffer(req: Request, res: Response) {
@@ -24,7 +24,7 @@ export async function updateOffer(req: Request, res: Response) {
   const updated = await RecruitmentService.updateOffer(id, req.body as any);
   await cacheDelByPrefix("recruitment:vacancies");
   await cacheDelByPrefix(`recruitment:offer:${id}`);
-  return res.json(updated);
+  return res.json({ status: "success", data: updated });
 }
 
 export async function deleteOffer(req: Request, res: Response) {
@@ -38,5 +38,5 @@ export async function acceptOffer(req: Request, res: Response) {
   await RecruitmentService.acceptOffer(req.params.id);
   await cacheDelByPrefix("recruitment:vacancies");
   await cacheDelByPrefix(`recruitment:offer:${req.params.id}`);
-  return res.json({ ok: true });
+  return res.json({ status: "success", data: { ok: true } });
 }

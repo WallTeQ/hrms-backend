@@ -1,7 +1,7 @@
 import express from "express";
-import { validate } from "../../../middlewares/validate";
-import { CreateStatutoryDeductionSchema, UpdateStatutoryDeductionSchema } from "./schema";
-import * as controller from "./controller";
+import { validate } from "../../../middlewares/validate.js";
+import { CreateStatutoryDeductionSchema, UpdateStatutoryDeductionSchema } from "./schema.js";
+import * as controller from "./controller.js";
 
 const router = express.Router();
 

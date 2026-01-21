@@ -1,12 +1,17 @@
 {
   "compilerOptions": {
-    "module": "ESNext",
+    "module": "NodeNext",
     "esModuleInterop": true,
-    "target": "es6",
-    "moduleResolution": "node",
+    "target": "ES2022",
+    "moduleResolution": "nodenext",
     "sourceMap": true,
     "outDir": "./dist",
     "typeRoots": ["node_modules/@types", "src/types"],
+    "baseUrl": ".",
+    "paths": {
+      ".prisma/client/*": ["src/generated/prisma/*"],
+      ".prisma/client": ["src/generated/prisma"]
+    },
     // "rootDir": ".",
 
     "experimentalDecorators": true,
@@ -15,6 +20,7 @@
     // "emitDeclarationOnly": false,
     // "allowImportingTsExtensions": true,
     "strict": true,
+    "skipLibCheck": true
   },
   "lib": ["es2015"],
   "include": ["src/**/*.ts"],  // Include your source files

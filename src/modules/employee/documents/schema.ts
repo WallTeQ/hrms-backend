@@ -4,7 +4,8 @@ export const CreateDocumentSchema = z.object({
   employeeId: z.string().uuid(),
   type: z.enum(["PASSPORT", "ID", "CERTIFICATE", "CONTRACT", "OTHER"]),
   name: z.string().min(1),
-  fileUrl: z.string().url(),
+  // fileUrl is optional for multipart/file uploads (controller will add it when a file is uploaded)
+  fileUrl: z.string().url().optional(),
   expiresAt: z.string().optional().nullable(),
 });
 export type CreateDocumentDto = z.infer<typeof CreateDocumentSchema>;

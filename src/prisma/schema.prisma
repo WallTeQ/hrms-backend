@@ -6,7 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
+  engine = "library"
 }
 
 datasource db {
@@ -71,6 +71,12 @@ enum DocumentType {
   OTHER
 }
 
+enum FileUploadStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+}
+
 // Models
 model User {
   id         String    @id @default(uuid())
@@ -81,6 +87,10 @@ model User {
   employeeId String?   @unique
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
+
+  // Indexes for performance
+  @@index([role])
+  @@index([createdAt])
 }
 
 model Employee {
@@ -90,6 +100,7 @@ model Employee {
   lastName             String
   email                String                @unique
   phone                String?
+  dateOfBirth          DateTime?
   status               EmployeeStatus        @default(ACTIVE)
   hireDate             DateTime?
   contracts            Contract[]
@@ -105,6 +116,13 @@ model Employee {
   user                 User?
   createdAt            DateTime              @default(now())
   updatedAt            DateTime              @updatedAt
+
+  // Indexes for performance
+  @@index([firstName])
+  @@index([lastName])
+  @@index([email])
+  @@index([status])
+  @@index([createdAt])
 }
 
 model Contract {
@@ -118,6 +136,10 @@ model Contract {
   publicId     String?
   mimeType     String?
   size         Int?
+  // Track background upload status for files
+  uploadStatus FileUploadStatus @default(SUCCEEDED)
+  uploadError  String?
+  uploadAttempts Int @default(0)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
@@ -220,6 +242,10 @@ model SalaryStructure {
   deductions    Float?   @default(0)
   effectiveFrom DateTime
   createdAt     DateTime @default(now())
+
+  // Indexes for performance
+  @@index([employeeId])
+  @@index([effectiveFrom])
 }
 
 model PayrollRun {
@@ -228,6 +254,10 @@ model PayrollRun {
   runAt     DateTime  @default(now())
   status    PayrollStatus @default(PENDING)
   payslips  Payslip[]
+
+  // Indexes for performance
+  @@index([status])
+  @@index([runAt])
 }
 
 model Payslip {
@@ -238,12 +268,22 @@ model Payslip {
   employeeId   String
   gross        Float
   net          Float
+  // Store month and year that this payslip applies to (separate from payroll run)
+  month        Int?
+  year         Int?
   fileUrl       String?
   publicId      String?
   mimeType      String?
   size          Int?
   generatedAt  DateTime   @default(now())
-}
+
+  // Indexes for performance
+  @@index([employeeId])
+  @@index([employeeId, generatedAt])
+  @@index([payrollRunId])
+  @@index([generatedAt])
+  @@index([year, month])
+} 
 
 model StatutoryDeduction {
   id     String @id @default(uuid())
@@ -259,6 +299,11 @@ model Attendance {
   status     AttendanceStatus
   clockIn    DateTime?
   clockOut   DateTime?
+  
+  // Indexes for performance
+  @@index([employeeId])
+  @@index([date])
+  @@index([status])
 }
 
 model LeaveRequest {

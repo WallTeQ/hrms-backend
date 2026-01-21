@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
-import { AuthService } from "./service";
-import type { RegisterDto, LoginDto } from "./schema";
-import { cacheWrap, cacheDelByPrefix } from "../../infra/redis";
-import { recordFailedLogin, clearFailedLogin, auditAuthEvent, revokeToken } from "../../middlewares/security";
+import { AuthService } from "./service.js";
+import type { RegisterDto, LoginDto, RequestPasswordResetOtpDto, VerifyPasswordResetOtpDto, ResetPasswordDto, ChangePasswordDto } from "./schema.js";
+import { cacheWrap, cacheDelByPrefix } from "../../infra/redis.js";
+import { recordFailedLogin, clearFailedLogin, auditAuthEvent, revokeToken } from "../../middlewares/security.js";
+import { generateTokens, verifyRefreshToken } from "../../common/jwt.js";
 
 export async function register(req: Request, res: Response) {
   try {
@@ -11,7 +12,7 @@ export async function register(req: Request, res: Response) {
     // scrub password
     delete user.password;
     await cacheDelByPrefix("users:list");
-    return res.status(201).json(user);
+    return res.status(201).json({ status: "success", data: user });
   } catch (err: any) {
     return res.status(400).json({ error: err?.message ?? "Failed to register" });
   }
@@ -35,54 +36,20 @@ export async function login(req: Request, res: Response) {
     await clearFailedLogin((payload as any).email);
     await auditAuthEvent("login:success", { id: user.id, email: user.email, ip: req.ip });
 
-    delete user.password;
-    return res.json(user);
+    const tokens = generateTokens({
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      employeeId: user.employeeId || undefined,
+    });
+
+    // Exclude password from response
+    const { password, ...userWithoutPassword } = user;
+
+    return res.json({ status: "success", data: { user: userWithoutPassword, tokens } });
   } catch (err: any) {
     return res.status(500).json({ error: err?.message ?? "Login failed" });
   }
-}
-
-export async function getUser(req: Request, res: Response) {
-  const id = req.params.id;
-  const user = await AuthService.getById(id);
-  if (!user) return res.status(404).json({ error: "Not found" });
-  delete user.password;
-  return res.json(user);
-}
-
-export async function listUsers(req: Request, res: Response) {
-  const skip = Number(req.query.skip || 0);
-  const take = Number(req.query.take || 50);
-  const key = `users:list:skip=${skip}:take=${take}`;
-  const users = await cacheWrap(key, 60, () => AuthService.list(skip, take));
-  // scrub passwords
-  const safe = users.map((u: any) => {
-    const copy = { ...u };
-    delete copy.password;
-    return copy;
-  });
-  return res.json(safe);
-}
-
-export async function updateUser(req: Request, res: Response) {
-  try {
-    const id = req.params.id;
-    const payload = req.body;
-    const updated = await AuthService.updateUser(id, payload as any);
-    if (!updated) return res.status(404).json({ error: "Not found" });
-    delete (updated as any).password;
-    await cacheDelByPrefix("users:list");
-    return res.json(updated);
-  } catch (err: any) {
-    return res.status(400).json({ error: err?.message ?? "Failed to update user" });
-  }
-}
-
-export async function deleteUser(req: Request, res: Response) {
-  const id = req.params.id;
-  await AuthService.delete(id);
-  await cacheDelByPrefix("users:list");
-  return res.status(204).send();
 }
 
 // OTP signup flow controllers
@@ -112,7 +79,7 @@ export async function completeSignup(req: Request, res: Response) {
     const user = await AuthService.completeSignup(email, password, firstName, lastName);
     delete user.password;
     await cacheDelByPrefix("users:list");
-    return res.status(201).json(user);
+    return res.status(201).json({ status: "success", data: user });
   } catch (err: any) {
     return res.status(400).json({ error: err?.message });
   }
@@ -129,5 +96,62 @@ export async function logout(req: Request, res: Response) {
     return res.json({ ok: true });
   } catch (err: any) {
     return res.status(500).json({ error: err?.message ?? "Logout failed" });
+  }
+}
+
+export async function refreshToken(req: Request, res: Response) {
+  try {
+    const { refreshToken } = req.body;
+    if (!refreshToken) return res.status(400).json({ error: "Refresh token required" });
+
+    const payload = verifyRefreshToken(refreshToken);
+    const newTokens = generateTokens(payload);
+
+    return res.json({ status: "success", data: newTokens });
+  } catch (err: any) {
+    return res.status(403).json({ error: "Invalid refresh token" });
+  }
+}
+
+// Password reset flow controllers
+export async function requestPasswordResetOtp(req: Request, res: Response) {
+  try {
+    const { email } = req.body as RequestPasswordResetOtpDto;
+    await AuthService.requestPasswordResetOtp(email);
+    return res.json({ ok: true });
+  } catch (err: any) {
+    return res.status(400).json({ error: err?.message });
+  }
+}
+
+export async function verifyPasswordResetOtp(req: Request, res: Response) {
+  try {
+    const { email, otp } = req.body as VerifyPasswordResetOtpDto;
+    await AuthService.verifyPasswordResetOtp(email, otp);
+    return res.json({ ok: true });
+  } catch (err: any) {
+    return res.status(400).json({ error: err?.message });
+  }
+}
+
+export async function resetPassword(req: Request, res: Response) {
+  try {
+    const { email, password } = req.body as ResetPasswordDto;
+    await AuthService.resetPassword(email, password);
+    return res.json({ ok: true });
+  } catch (err: any) {
+    return res.status(400).json({ error: err?.message });
+  }
+}
+
+export async function changePassword(req: Request, res: Response) {
+  try {
+    const user = (req as any).user;
+    const payload = req.body as ChangePasswordDto;
+    await AuthService.changePassword(user.id, payload.oldPassword, payload.newPassword);
+    await auditAuthEvent("password:changed", { id: user.id, email: user.email, ip: req.ip });
+    return res.json({ status: "success", message: "Password changed successfully" });
+  } catch (err: any) {
+    return res.status(400).json({ error: err?.message });
   }
 }

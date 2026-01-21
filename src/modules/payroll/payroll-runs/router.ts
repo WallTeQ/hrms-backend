@@ -1,13 +1,12 @@
 import express from "express";
-import { validate } from "../../../middlewares/validate";
-import { CreatePayrollRunSchema } from "./schema";
-import * as controller from "./controller";
+import { requirePermission } from "../../../middlewares/requireRole.js";
+import * as controller from "./controller.js";
 
 const router = express.Router();
 
-router.post("/", validate(CreatePayrollRunSchema), controller.createRun);
 router.get("/", controller.listRuns);
 router.get("/:id", controller.getRun);
+router.post("/:id/process", requirePermission("payroll:run:process"), controller.processRun);
 router.patch("/:id", controller.updateRun);
 router.delete("/:id", controller.deleteRun);
 

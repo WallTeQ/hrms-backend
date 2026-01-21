@@ -1,17 +1,77 @@
-import { AttendanceRepository } from "./repository";
-import type { Prisma } from "../../generated/prisma";
+import { AttendanceRepository } from "./repository.js";
+import type { AttendanceStatus, Prisma } from ".prisma/client";
+import type { CreateAttendanceDto } from "./schema.js";
+import prismaDefault from "../../infra/database.js";
 
 const repo = AttendanceRepository();
 
 export const AttendanceService = {
-  markAttendance: async (employeeId: string, date: Date, status: Prisma.AttendanceStatus) => {
+  markAttendance: async (employeeId: string, date: Date, status?: AttendanceStatus, clockIn?: Date, clockOut?: Date) => {
     if (date > new Date()) {
       throw new Error("Cannot mark attendance for a future date");
     }
-    return repo.mark(employeeId, date, status);
+
+    // Validate that employee exists
+    const employee = await prismaDefault.employee.findUnique({
+      where: { id: employeeId },
+      select: { id: true }
+    });
+
+    if (!employee) {
+      throw new Error("Invalid employee ID provided");
+    }
+
+    if (!status && !clockIn && !clockOut) {
+      throw new Error("Either status or clockIn/clockOut must be provided");
+    }
+
+    if (!status && (clockIn || clockOut)) {
+      status = "PRESENT" as AttendanceStatus;
+    }
+
+    return repo.mark(employeeId, date, status, clockIn, clockOut);
   },
 
-  create: async (data: Prisma.AttendanceCreateInput) => repo.create(data),
+  create: async (data: CreateAttendanceDto) => {
+    const attendanceDate = new Date(data.date);
+    
+    // Validate date is not in the future
+    if (attendanceDate > new Date()) {
+      throw new Error("Cannot create attendance record for a future date");
+    }
+
+    // Validate that employee exists
+    const employee = await prismaDefault.employee.findUnique({
+      where: { id: data.employeeId },
+      select: { id: true }
+    });
+    
+    if (!employee) {
+      throw new Error("Invalid employee ID provided");
+    }
+
+    // Check for existing attendance record for this employee on this date
+    const existingAttendance = await prismaDefault.attendance.findFirst({
+      where: { 
+        employeeId: data.employeeId, 
+        date: attendanceDate 
+      },
+      select: { id: true }
+    });
+
+    if (existingAttendance) {
+      throw new Error("Attendance record already exists for this employee on the specified date");
+    }
+
+    const createData: Prisma.AttendanceCreateInput = {
+      employee: { connect: { id: data.employeeId } },
+      date: attendanceDate,
+      status: data.status,
+      clockIn: data.clockIn ? new Date(`${data.date}T${data.clockIn}:00`) : undefined,
+      clockOut: data.clockOut ? new Date(`${data.date}T${data.clockOut}:00`) : undefined,
+    };
+    return repo.create(createData);
+  },
 
   getById: async (id: string) => repo.findById(id),
 

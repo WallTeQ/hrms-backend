@@ -1,8 +1,8 @@
 import express from "express";
-import { validate } from "../../../middlewares/validate";
-import { CreateApplicationSchema, UpdateApplicationSchema } from "./schema";
-import * as controller from "./controller";
-import { upload } from "../../../middlewares/multer";
+import { validate } from "../../../middlewares/validate.js";
+import { CreateApplicationSchema, UpdateApplicationSchema } from "./schema.js";
+import * as controller from "./controller.js";
+import { upload } from "../../../middlewares/multer.js";
 
 const router = express.Router();
 

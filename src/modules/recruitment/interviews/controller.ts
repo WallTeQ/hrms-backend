@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
-import { RecruitmentService } from "../service";
-import { cacheWrap, cacheDelByPrefix } from "../../../infra/redis";
+import { RecruitmentService } from "../service.js";
+import { cacheWrap, cacheDelByPrefix } from "../../../infra/redis.js";
 
 export async function schedule(req: Request, res: Response) {
   const payload = req.body;
   const i = await RecruitmentService.createInterview(payload as any);
   if ((payload as any).vacancyId) await cacheDelByPrefix(`recruitment:vacancy:${(payload as any).vacancyId}:interviews`);
   await cacheDelByPrefix("recruitment:vacancies");
-  return res.status(201).json(i);
+  return res.status(201).json({ status: "success", data: i });
 }
 
 export async function getInterview(req: Request, res: Response) {
@@ -15,7 +15,7 @@ export async function getInterview(req: Request, res: Response) {
   const key = `recruitment:interview:${id}`;
   const i = await cacheWrap(key, 60, () => RecruitmentService.getInterview(id));
   if (!i) return res.status(404).json({ error: "Not found" });
-  return res.json(i);
+  return res.json({ status: "success", data: i });
 }
 
 export async function updateInterview(req: Request, res: Response) {
@@ -23,7 +23,7 @@ export async function updateInterview(req: Request, res: Response) {
   const updated = await RecruitmentService.updateInterview(id, req.body as any);
   await cacheDelByPrefix("recruitment:vacancies");
   await cacheDelByPrefix(`recruitment:interview:${id}`);
-  return res.json(updated);
+  return res.json({ status: "success", data: updated });
 }
 
 export async function deleteInterview(req: Request, res: Response) {
