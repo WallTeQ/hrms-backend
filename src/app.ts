@@ -16,7 +16,23 @@ const app = express();
 // Basic hardening
 app.disable("x-powered-by");
 app.use(helmet({ contentSecurityPolicy: false })); // CSP should be tuned per-app
-app.use(cors({ origin: process.env.CORS_ORIGIN || true }));
+
+// CORS: support comma-separated whitelist in CORS_ORIGIN and reflect request origin when allowed
+const corsOriginsEnv = process.env.CORS_ORIGIN || "http://localhost:5000";
+const allowedOrigins = corsOriginsEnv.split(",").map(s => s.trim());
+
+app.use(cors({
+  origin: (origin, callback) => {
+    // Require a request Origin header (reject non-browser server-to-server requests)
+    if (!origin) return callback(new Error("CORS policy: Origin header required"));
+    if (allowedOrigins.includes("*") || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error("CORS policy: origin not allowed"));
+  },
+  credentials: true,
+  methods: ["GET","HEAD","PUT","PATCH","POST","DELETE","OPTIONS"]
+}));
 
 // Compression
 app.use(compression());
