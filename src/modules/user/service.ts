@@ -7,14 +7,38 @@ const repo = UserRepository();
 export const UserService = {
   getById: async (id: string, user?: any) => repo.findById(id, user),
 
-  updateUser: async (id: string, data: Prisma.UserUpdateInput, actorId?: string) => {
+  createUser: async (payload: Prisma.UserCreateInput) => {
+    // Hashing should be handled by controller/service caller; assume password already hashed
+    return repo.create(payload as any);
+  },
+
+  updateUser: async (id: string, data: Prisma.UserUpdateInput, actorId?: string, employeeData?: { firstName?: string; lastName?: string }) => {
     const existing = await repo.findById(id);
     if (!existing) return null;
 
-    const updated = await repo.update(id, data);
+    // Normalize data: if an employeeId is provided, convert to nested connect
+    const prismaData: any = { ...data };
+    if ((prismaData as any).employeeId) {
+      prismaData.employee = { connect: { id: (prismaData as any).employeeId } };
+      delete prismaData.employeeId;
+    }
+
+    // Handle employee name updates via nested update/create
+    if (employeeData && (employeeData.firstName || employeeData.lastName)) {
+      if (existing.employeeId) {
+        prismaData.employee = prismaData.employee || {};
+        prismaData.employee.update = { ...(employeeData as any) };
+      } else {
+        // create a new employee record and associate it
+        prismaData.employee = prismaData.employee || {};
+        prismaData.employee.create = { ...(employeeData as any), email: existing.email || (data as any).email };
+      }
+    }
+
+    const updated = await repo.update(id, prismaData);
 
     // Audit role change
-    if (data.role && data.role !== existing.role && actorId) {
+    if ((data as any).role && (data as any).role !== existing.role && actorId) {
       await prisma.auditLog.create({
         data: {
           actorId,
@@ -23,7 +47,7 @@ export const UserService = {
           entityId: id,
           details: {
             from: existing.role,
-            to: data.role,
+            to: (data as any).role,
           },
         },
       });

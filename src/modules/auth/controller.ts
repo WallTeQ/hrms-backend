@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { AuthService } from "./service.js";
 import type { RegisterDto, LoginDto, RequestPasswordResetOtpDto, VerifyPasswordResetOtpDto, ResetPasswordDto, ChangePasswordDto } from "./schema.js";
-import { cacheWrap, cacheDelByPrefix } from "../../infra/redis.js";
+import { cacheWrap, cacheDelByPrefix, cacheSet } from "../../infra/redis.js";
 import { recordFailedLogin, clearFailedLogin, auditAuthEvent, revokeToken } from "../../middlewares/security.js";
 import { generateTokens, verifyRefreshToken } from "../../common/jwt.js";
 
@@ -12,6 +12,7 @@ export async function register(req: Request, res: Response) {
     // scrub password
     delete user.password;
     await cacheDelByPrefix("users:list");
+    try { await cacheSet("users:version", Date.now().toString()); } catch (e) {}
     return res.status(201).json({ status: "success", data: user });
   } catch (err: any) {
     return res.status(400).json({ error: err?.message ?? "Failed to register" });

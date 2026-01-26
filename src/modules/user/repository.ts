@@ -41,6 +41,21 @@ export const UserRepository = (prisma = prismaDefault) => ({
     });
   },
 
+  create: async (data: Prisma.UserCreateInput) =>
+    prisma.user.create({
+      data,
+      include: {
+        employee: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            status: true,
+          },
+        },
+      },
+    }),
+
   update: async (id: string, data: Prisma.UserUpdateInput) =>
     prisma.user.update({ where: { id }, data }),
 
