@@ -5,6 +5,8 @@ import salaryStructuresRouter from "./salary-structures/router.js";
 import payslipsRouter from "./payslips/router.js";
 import payrollRunsRouter from "./payroll-runs/router.js";
 import statutoryDeductionsRouter from "./statutory-deductions/router.js";
+import { validate, validateQuery } from "../../middlewares/validate.js";
+import { PayrollSummaryQuery, PayrollExportQuery } from "./schema.js";
 
 const router = express.Router();
 
@@ -16,6 +18,10 @@ import { requirePermission } from "../../middlewares/requireRole.js";
 router.post("/process", requirePermission("payroll:process"), controller.processPayroll);
 router.get("/runs", controller.listPayrollRuns);
 router.get("/runs/:id", controller.getPayrollRun);
+
+// Summary & export
+router.get("/summary", requirePermission("payroll:summary"), validateQuery(PayrollSummaryQuery), controller.getPayrollSummary);
+router.get("/export", requirePermission("payroll:export"), validateQuery(PayrollExportQuery), controller.exportPayroll);
 
 router.use("/salary-structures", salaryStructuresRouter);
 router.use("/payslips", payslipsRouter);

@@ -77,6 +77,45 @@ export const PayrollRepository = (prisma = prismaDefault) => ({
     return { items, total };
   },
 
+  // Get payslips within a date range (inclusive)
+  listPayslipsInRange: async (start?: Date, end?: Date) => {
+    const where: any = {};
+    if (start || end) where.generatedAt = {} as any;
+    if (start) where.generatedAt.gte = start;
+    if (end) where.generatedAt.lte = end;
+
+    const items = await prisma.payslip.findMany({
+      where,
+      orderBy: { generatedAt: "desc" },
+      include: { payrollRun: { select: { id: true, period: true } }, employee: { select: { id: true, firstName: true, lastName: true } } },
+    });
+    return items;
+  },
+
+  // Get payslips for a particular period (YYYY-MM)
+  listPayslipsByPeriod: async (year: number, month: number) => {
+    const items = await prisma.payslip.findMany({
+      where: { year, month },
+      orderBy: { generatedAt: "desc" },
+      include: { payrollRun: { select: { id: true, period: true } }, employee: { select: { id: true, firstName: true, lastName: true } } },
+    });
+    return items;
+  },
+
+  // List all payslips (paginated)
+  listPayslips: async (skip = 0, take = 20) => {
+    const [items, total] = await Promise.all([
+      prisma.payslip.findMany({
+        skip,
+        take,
+        orderBy: { generatedAt: "desc" },
+        include: { payrollRun: { select: { id: true, period: true } }, employee: { select: { id: true, firstName: true, lastName: true } } },
+      }),
+      prisma.payslip.count(),
+    ]);
+    return { items, total };
+  },
+
   // Statutory deductions
   createStatutoryDeduction: async (data: Prisma.StatutoryDeductionCreateInput) =>
     prisma.statutoryDeduction.create({ data }),

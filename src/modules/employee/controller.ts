@@ -9,6 +9,7 @@ export async function createEmployee(req: Request, res: Response) {
   const e = await EmployeeService.create(payload as any);
   // invalidate employee list/detail + headcount reports
   await cacheDelByPrefix("employees");
+  await cacheDelByPrefix("departments");
   await cacheDelByPrefix("reports:headcount");
   return res.status(201).json({ status: "success", data: e });
 }
@@ -47,6 +48,7 @@ export async function updateEmployee(req: Request, res: Response) {
   const u = await EmployeeService.update(id, payload as any);
   await cacheDelByPrefix("employees");
   await cacheDelByPrefix(`employees:detail:${id}`);
+  await cacheDelByPrefix("departments");
   await cacheDelByPrefix("reports:headcount");
   return res.json({ status: "success", data: u });
 }
@@ -56,6 +58,7 @@ export async function deleteEmployee(req: Request, res: Response) {
   await EmployeeService.delete(id);
   await cacheDelByPrefix("employees");
   await cacheDelByPrefix(`employees:detail:${id}`);
+  await cacheDelByPrefix("departments");
   await cacheDelByPrefix("reports:headcount");
   return res.status(204).send();
 }

@@ -15,6 +15,11 @@ export const CreateSalaryStructureSchema = z.preprocess((val) => {
     const v = { ...(val as any) };
     if (v.basicSalary !== undefined && v.baseSalary === undefined) v.baseSalary = v.basicSalary;
     if (!v.effectiveFrom) v.effectiveFrom = new Date().toISOString();
+    // Normalize common date formats (e.g., MM/DD/YYYY) to ISO string for consistent validation/storage
+    if (v.effectiveFrom && typeof v.effectiveFrom === 'string') {
+      const parsed = new Date(v.effectiveFrom);
+      if (!Number.isNaN(parsed.getTime())) v.effectiveFrom = parsed.toISOString();
+    }
     return v;
   }
   return val;

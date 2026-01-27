@@ -74,6 +74,11 @@ export type Evaluation = $Result.DefaultSelection<Prisma.$EvaluationPayload>
  */
 export type SalaryStructure = $Result.DefaultSelection<Prisma.$SalaryStructurePayload>
 /**
+ * Model Department
+ * 
+ */
+export type Department = $Result.DefaultSelection<Prisma.$DepartmentPayload>
+/**
  * Model PayrollRun
  * 
  */
@@ -190,6 +195,7 @@ export type ApplicationStatus = (typeof ApplicationStatus)[keyof typeof Applicat
 
 export const PayrollStatus: {
   PENDING: 'PENDING',
+  QUEUED: 'QUEUED',
   PROCESSING: 'PROCESSING',
   COMPLETED: 'COMPLETED',
   FAILED: 'FAILED'
@@ -207,6 +213,15 @@ export const DocumentType: {
 };
 
 export type DocumentType = (typeof DocumentType)[keyof typeof DocumentType]
+
+
+export const FileUploadStatus: {
+  PENDING: 'PENDING',
+  SUCCEEDED: 'SUCCEEDED',
+  FAILED: 'FAILED'
+};
+
+export type FileUploadStatus = (typeof FileUploadStatus)[keyof typeof FileUploadStatus]
 
 }
 
@@ -241,6 +256,10 @@ export const PayrollStatus: typeof $Enums.PayrollStatus
 export type DocumentType = $Enums.DocumentType
 
 export const DocumentType: typeof $Enums.DocumentType
+
+export type FileUploadStatus = $Enums.FileUploadStatus
+
+export const FileUploadStatus: typeof $Enums.FileUploadStatus
 
 /**
  * ##  Prisma Client ʲˢ
@@ -478,6 +497,16 @@ export class PrismaClient<
     * ```
     */
   get salaryStructure(): Prisma.SalaryStructureDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.department`: Exposes CRUD operations for the **Department** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Departments
+    * const departments = await prisma.department.findMany()
+    * ```
+    */
+  get department(): Prisma.DepartmentDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.payrollRun`: Exposes CRUD operations for the **PayrollRun** model.
@@ -1024,6 +1053,7 @@ export namespace Prisma {
     Kpi: 'Kpi',
     Evaluation: 'Evaluation',
     SalaryStructure: 'SalaryStructure',
+    Department: 'Department',
     PayrollRun: 'PayrollRun',
     Payslip: 'Payslip',
     StatutoryDeduction: 'StatutoryDeduction',
@@ -1049,7 +1079,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "employee" | "contract" | "document" | "disciplinaryRecord" | "vacancy" | "application" | "interview" | "offer" | "kpi" | "evaluation" | "salaryStructure" | "payrollRun" | "payslip" | "statutoryDeduction" | "attendance" | "leaveRequest" | "leaveBalance" | "training" | "skill" | "trainingHistory" | "auditLog"
+      modelProps: "user" | "employee" | "contract" | "document" | "disciplinaryRecord" | "vacancy" | "application" | "interview" | "offer" | "kpi" | "evaluation" | "salaryStructure" | "department" | "payrollRun" | "payslip" | "statutoryDeduction" | "attendance" | "leaveRequest" | "leaveBalance" | "training" | "skill" | "trainingHistory" | "auditLog"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1941,6 +1971,80 @@ export namespace Prisma {
           }
         }
       }
+      Department: {
+        payload: Prisma.$DepartmentPayload<ExtArgs>
+        fields: Prisma.DepartmentFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.DepartmentFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.DepartmentFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentPayload>
+          }
+          findFirst: {
+            args: Prisma.DepartmentFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.DepartmentFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentPayload>
+          }
+          findMany: {
+            args: Prisma.DepartmentFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentPayload>[]
+          }
+          create: {
+            args: Prisma.DepartmentCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentPayload>
+          }
+          createMany: {
+            args: Prisma.DepartmentCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.DepartmentCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentPayload>[]
+          }
+          delete: {
+            args: Prisma.DepartmentDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentPayload>
+          }
+          update: {
+            args: Prisma.DepartmentUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentPayload>
+          }
+          deleteMany: {
+            args: Prisma.DepartmentDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.DepartmentUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.DepartmentUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentPayload>[]
+          }
+          upsert: {
+            args: Prisma.DepartmentUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentPayload>
+          }
+          aggregate: {
+            args: Prisma.DepartmentAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateDepartment>
+          }
+          groupBy: {
+            args: Prisma.DepartmentGroupByArgs<ExtArgs>
+            result: $Utils.Optional<DepartmentGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.DepartmentCountArgs<ExtArgs>
+            result: $Utils.Optional<DepartmentCountAggregateOutputType> | number
+          }
+        }
+      }
       PayrollRun: {
         payload: Prisma.$PayrollRunPayload<ExtArgs>
         fields: Prisma.PayrollRunFieldRefs
@@ -2801,6 +2905,7 @@ export namespace Prisma {
     kpi?: KpiOmit
     evaluation?: EvaluationOmit
     salaryStructure?: SalaryStructureOmit
+    department?: DepartmentOmit
     payrollRun?: PayrollRunOmit
     payslip?: PayslipOmit
     statutoryDeduction?: StatutoryDeductionOmit
@@ -2901,6 +3006,7 @@ export namespace Prisma {
     leaveBalances: number
     evaluations: number
     payslips: number
+    managesDepartments: number
   }
 
   export type EmployeeCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2914,6 +3020,7 @@ export namespace Prisma {
     leaveBalances?: boolean | EmployeeCountOutputTypeCountLeaveBalancesArgs
     evaluations?: boolean | EmployeeCountOutputTypeCountEvaluationsArgs
     payslips?: boolean | EmployeeCountOutputTypeCountPayslipsArgs
+    managesDepartments?: boolean | EmployeeCountOutputTypeCountManagesDepartmentsArgs
   }
 
   // Custom InputTypes
@@ -2997,6 +3104,13 @@ export namespace Prisma {
     where?: PayslipWhereInput
   }
 
+  /**
+   * EmployeeCountOutputType without action
+   */
+  export type EmployeeCountOutputTypeCountManagesDepartmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DepartmentWhereInput
+  }
+
 
   /**
    * Count Type VacancyCountOutputType
@@ -3057,6 +3171,37 @@ export namespace Prisma {
    */
   export type ApplicationCountOutputTypeCountInterviewsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: InterviewWhereInput
+  }
+
+
+  /**
+   * Count Type DepartmentCountOutputType
+   */
+
+  export type DepartmentCountOutputType = {
+    employees: number
+  }
+
+  export type DepartmentCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    employees?: boolean | DepartmentCountOutputTypeCountEmployeesArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * DepartmentCountOutputType without action
+   */
+  export type DepartmentCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DepartmentCountOutputType
+     */
+    select?: DepartmentCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * DepartmentCountOutputType without action
+   */
+  export type DepartmentCountOutputTypeCountEmployeesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EmployeeWhereInput
   }
 
 
@@ -4277,8 +4422,10 @@ export namespace Prisma {
     lastName: string | null
     email: string | null
     phone: string | null
+    dateOfBirth: Date | null
     status: $Enums.EmployeeStatus | null
     hireDate: Date | null
+    departmentId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -4290,8 +4437,10 @@ export namespace Prisma {
     lastName: string | null
     email: string | null
     phone: string | null
+    dateOfBirth: Date | null
     status: $Enums.EmployeeStatus | null
     hireDate: Date | null
+    departmentId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -4303,8 +4452,10 @@ export namespace Prisma {
     lastName: number
     email: number
     phone: number
+    dateOfBirth: number
     status: number
     hireDate: number
+    departmentId: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -4318,8 +4469,10 @@ export namespace Prisma {
     lastName?: true
     email?: true
     phone?: true
+    dateOfBirth?: true
     status?: true
     hireDate?: true
+    departmentId?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -4331,8 +4484,10 @@ export namespace Prisma {
     lastName?: true
     email?: true
     phone?: true
+    dateOfBirth?: true
     status?: true
     hireDate?: true
+    departmentId?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -4344,8 +4499,10 @@ export namespace Prisma {
     lastName?: true
     email?: true
     phone?: true
+    dateOfBirth?: true
     status?: true
     hireDate?: true
+    departmentId?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -4430,8 +4587,10 @@ export namespace Prisma {
     lastName: string
     email: string
     phone: string | null
+    dateOfBirth: Date | null
     status: $Enums.EmployeeStatus
     hireDate: Date | null
+    departmentId: string | null
     createdAt: Date
     updatedAt: Date
     _count: EmployeeCountAggregateOutputType | null
@@ -4460,8 +4619,10 @@ export namespace Prisma {
     lastName?: boolean
     email?: boolean
     phone?: boolean
+    dateOfBirth?: boolean
     status?: boolean
     hireDate?: boolean
+    departmentId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     contracts?: boolean | Employee$contractsArgs<ExtArgs>
@@ -4475,6 +4636,8 @@ export namespace Prisma {
     evaluations?: boolean | Employee$evaluationsArgs<ExtArgs>
     payslips?: boolean | Employee$payslipsArgs<ExtArgs>
     user?: boolean | Employee$userArgs<ExtArgs>
+    department?: boolean | Employee$departmentArgs<ExtArgs>
+    managesDepartments?: boolean | Employee$managesDepartmentsArgs<ExtArgs>
     _count?: boolean | EmployeeCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["employee"]>
 
@@ -4485,10 +4648,13 @@ export namespace Prisma {
     lastName?: boolean
     email?: boolean
     phone?: boolean
+    dateOfBirth?: boolean
     status?: boolean
     hireDate?: boolean
+    departmentId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    department?: boolean | Employee$departmentArgs<ExtArgs>
   }, ExtArgs["result"]["employee"]>
 
   export type EmployeeSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -4498,10 +4664,13 @@ export namespace Prisma {
     lastName?: boolean
     email?: boolean
     phone?: boolean
+    dateOfBirth?: boolean
     status?: boolean
     hireDate?: boolean
+    departmentId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    department?: boolean | Employee$departmentArgs<ExtArgs>
   }, ExtArgs["result"]["employee"]>
 
   export type EmployeeSelectScalar = {
@@ -4511,13 +4680,15 @@ export namespace Prisma {
     lastName?: boolean
     email?: boolean
     phone?: boolean
+    dateOfBirth?: boolean
     status?: boolean
     hireDate?: boolean
+    departmentId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type EmployeeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "employeeNumber" | "firstName" | "lastName" | "email" | "phone" | "status" | "hireDate" | "createdAt" | "updatedAt", ExtArgs["result"]["employee"]>
+  export type EmployeeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "employeeNumber" | "firstName" | "lastName" | "email" | "phone" | "dateOfBirth" | "status" | "hireDate" | "departmentId" | "createdAt" | "updatedAt", ExtArgs["result"]["employee"]>
   export type EmployeeInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     contracts?: boolean | Employee$contractsArgs<ExtArgs>
     documents?: boolean | Employee$documentsArgs<ExtArgs>
@@ -4530,10 +4701,16 @@ export namespace Prisma {
     evaluations?: boolean | Employee$evaluationsArgs<ExtArgs>
     payslips?: boolean | Employee$payslipsArgs<ExtArgs>
     user?: boolean | Employee$userArgs<ExtArgs>
+    department?: boolean | Employee$departmentArgs<ExtArgs>
+    managesDepartments?: boolean | Employee$managesDepartmentsArgs<ExtArgs>
     _count?: boolean | EmployeeCountOutputTypeDefaultArgs<ExtArgs>
   }
-  export type EmployeeIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
-  export type EmployeeIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type EmployeeIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    department?: boolean | Employee$departmentArgs<ExtArgs>
+  }
+  export type EmployeeIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    department?: boolean | Employee$departmentArgs<ExtArgs>
+  }
 
   export type $EmployeePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Employee"
@@ -4549,6 +4726,8 @@ export namespace Prisma {
       evaluations: Prisma.$EvaluationPayload<ExtArgs>[]
       payslips: Prisma.$PayslipPayload<ExtArgs>[]
       user: Prisma.$UserPayload<ExtArgs> | null
+      department: Prisma.$DepartmentPayload<ExtArgs> | null
+      managesDepartments: Prisma.$DepartmentPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -4557,8 +4736,10 @@ export namespace Prisma {
       lastName: string
       email: string
       phone: string | null
+      dateOfBirth: Date | null
       status: $Enums.EmployeeStatus
       hireDate: Date | null
+      departmentId: string | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["employee"]>
@@ -4966,6 +5147,8 @@ export namespace Prisma {
     evaluations<T extends Employee$evaluationsArgs<ExtArgs> = {}>(args?: Subset<T, Employee$evaluationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EvaluationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     payslips<T extends Employee$payslipsArgs<ExtArgs> = {}>(args?: Subset<T, Employee$payslipsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PayslipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     user<T extends Employee$userArgs<ExtArgs> = {}>(args?: Subset<T, Employee$userArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    department<T extends Employee$departmentArgs<ExtArgs> = {}>(args?: Subset<T, Employee$departmentArgs<ExtArgs>>): Prisma__DepartmentClient<$Result.GetResult<Prisma.$DepartmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    managesDepartments<T extends Employee$managesDepartmentsArgs<ExtArgs> = {}>(args?: Subset<T, Employee$managesDepartmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DepartmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5001,8 +5184,10 @@ export namespace Prisma {
     readonly lastName: FieldRef<"Employee", 'String'>
     readonly email: FieldRef<"Employee", 'String'>
     readonly phone: FieldRef<"Employee", 'String'>
+    readonly dateOfBirth: FieldRef<"Employee", 'DateTime'>
     readonly status: FieldRef<"Employee", 'EmployeeStatus'>
     readonly hireDate: FieldRef<"Employee", 'DateTime'>
+    readonly departmentId: FieldRef<"Employee", 'String'>
     readonly createdAt: FieldRef<"Employee", 'DateTime'>
     readonly updatedAt: FieldRef<"Employee", 'DateTime'>
   }
@@ -5254,6 +5439,10 @@ export namespace Prisma {
      */
     data: EmployeeCreateManyInput | EmployeeCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmployeeIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -5324,6 +5513,10 @@ export namespace Prisma {
      * Limit how many Employees to update.
      */
     limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmployeeIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -5652,6 +5845,49 @@ export namespace Prisma {
   }
 
   /**
+   * Employee.department
+   */
+  export type Employee$departmentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Department
+     */
+    select?: DepartmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Department
+     */
+    omit?: DepartmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentInclude<ExtArgs> | null
+    where?: DepartmentWhereInput
+  }
+
+  /**
+   * Employee.managesDepartments
+   */
+  export type Employee$managesDepartmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Department
+     */
+    select?: DepartmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Department
+     */
+    omit?: DepartmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentInclude<ExtArgs> | null
+    where?: DepartmentWhereInput
+    orderBy?: DepartmentOrderByWithRelationInput | DepartmentOrderByWithRelationInput[]
+    cursor?: DepartmentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: DepartmentScalarFieldEnum | DepartmentScalarFieldEnum[]
+  }
+
+  /**
    * Employee without action
    */
   export type EmployeeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5684,10 +5920,12 @@ export namespace Prisma {
 
   export type ContractAvgAggregateOutputType = {
     size: number | null
+    uploadAttempts: number | null
   }
 
   export type ContractSumAggregateOutputType = {
     size: number | null
+    uploadAttempts: number | null
   }
 
   export type ContractMinAggregateOutputType = {
@@ -5700,6 +5938,9 @@ export namespace Prisma {
     publicId: string | null
     mimeType: string | null
     size: number | null
+    uploadStatus: $Enums.FileUploadStatus | null
+    uploadError: string | null
+    uploadAttempts: number | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -5714,6 +5955,9 @@ export namespace Prisma {
     publicId: string | null
     mimeType: string | null
     size: number | null
+    uploadStatus: $Enums.FileUploadStatus | null
+    uploadError: string | null
+    uploadAttempts: number | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -5728,6 +5972,9 @@ export namespace Prisma {
     publicId: number
     mimeType: number
     size: number
+    uploadStatus: number
+    uploadError: number
+    uploadAttempts: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -5736,10 +5983,12 @@ export namespace Prisma {
 
   export type ContractAvgAggregateInputType = {
     size?: true
+    uploadAttempts?: true
   }
 
   export type ContractSumAggregateInputType = {
     size?: true
+    uploadAttempts?: true
   }
 
   export type ContractMinAggregateInputType = {
@@ -5752,6 +6001,9 @@ export namespace Prisma {
     publicId?: true
     mimeType?: true
     size?: true
+    uploadStatus?: true
+    uploadError?: true
+    uploadAttempts?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -5766,6 +6018,9 @@ export namespace Prisma {
     publicId?: true
     mimeType?: true
     size?: true
+    uploadStatus?: true
+    uploadError?: true
+    uploadAttempts?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -5780,6 +6035,9 @@ export namespace Prisma {
     publicId?: true
     mimeType?: true
     size?: true
+    uploadStatus?: true
+    uploadError?: true
+    uploadAttempts?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -5881,6 +6139,9 @@ export namespace Prisma {
     publicId: string | null
     mimeType: string | null
     size: number | null
+    uploadStatus: $Enums.FileUploadStatus
+    uploadError: string | null
+    uploadAttempts: number
     createdAt: Date
     updatedAt: Date
     _count: ContractCountAggregateOutputType | null
@@ -5914,6 +6175,9 @@ export namespace Prisma {
     publicId?: boolean
     mimeType?: boolean
     size?: boolean
+    uploadStatus?: boolean
+    uploadError?: boolean
+    uploadAttempts?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     employee?: boolean | EmployeeDefaultArgs<ExtArgs>
@@ -5929,6 +6193,9 @@ export namespace Prisma {
     publicId?: boolean
     mimeType?: boolean
     size?: boolean
+    uploadStatus?: boolean
+    uploadError?: boolean
+    uploadAttempts?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     employee?: boolean | EmployeeDefaultArgs<ExtArgs>
@@ -5944,6 +6211,9 @@ export namespace Prisma {
     publicId?: boolean
     mimeType?: boolean
     size?: boolean
+    uploadStatus?: boolean
+    uploadError?: boolean
+    uploadAttempts?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     employee?: boolean | EmployeeDefaultArgs<ExtArgs>
@@ -5959,11 +6229,14 @@ export namespace Prisma {
     publicId?: boolean
     mimeType?: boolean
     size?: boolean
+    uploadStatus?: boolean
+    uploadError?: boolean
+    uploadAttempts?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type ContractOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "employeeId" | "title" | "startDate" | "endDate" | "fileUrl" | "publicId" | "mimeType" | "size" | "createdAt" | "updatedAt", ExtArgs["result"]["contract"]>
+  export type ContractOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "employeeId" | "title" | "startDate" | "endDate" | "fileUrl" | "publicId" | "mimeType" | "size" | "uploadStatus" | "uploadError" | "uploadAttempts" | "createdAt" | "updatedAt", ExtArgs["result"]["contract"]>
   export type ContractInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     employee?: boolean | EmployeeDefaultArgs<ExtArgs>
   }
@@ -5989,6 +6262,9 @@ export namespace Prisma {
       publicId: string | null
       mimeType: string | null
       size: number | null
+      uploadStatus: $Enums.FileUploadStatus
+      uploadError: string | null
+      uploadAttempts: number
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["contract"]>
@@ -6424,6 +6700,9 @@ export namespace Prisma {
     readonly publicId: FieldRef<"Contract", 'String'>
     readonly mimeType: FieldRef<"Contract", 'String'>
     readonly size: FieldRef<"Contract", 'Int'>
+    readonly uploadStatus: FieldRef<"Contract", 'FileUploadStatus'>
+    readonly uploadError: FieldRef<"Contract", 'String'>
+    readonly uploadAttempts: FieldRef<"Contract", 'Int'>
     readonly createdAt: FieldRef<"Contract", 'DateTime'>
     readonly updatedAt: FieldRef<"Contract", 'DateTime'>
   }
@@ -16815,6 +17094,1100 @@ export namespace Prisma {
 
 
   /**
+   * Model Department
+   */
+
+  export type AggregateDepartment = {
+    _count: DepartmentCountAggregateOutputType | null
+    _min: DepartmentMinAggregateOutputType | null
+    _max: DepartmentMaxAggregateOutputType | null
+  }
+
+  export type DepartmentMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    managerId: string | null
+    createdAt: Date | null
+  }
+
+  export type DepartmentMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    managerId: string | null
+    createdAt: Date | null
+  }
+
+  export type DepartmentCountAggregateOutputType = {
+    id: number
+    name: number
+    managerId: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type DepartmentMinAggregateInputType = {
+    id?: true
+    name?: true
+    managerId?: true
+    createdAt?: true
+  }
+
+  export type DepartmentMaxAggregateInputType = {
+    id?: true
+    name?: true
+    managerId?: true
+    createdAt?: true
+  }
+
+  export type DepartmentCountAggregateInputType = {
+    id?: true
+    name?: true
+    managerId?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type DepartmentAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Department to aggregate.
+     */
+    where?: DepartmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Departments to fetch.
+     */
+    orderBy?: DepartmentOrderByWithRelationInput | DepartmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: DepartmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Departments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Departments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Departments
+    **/
+    _count?: true | DepartmentCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: DepartmentMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: DepartmentMaxAggregateInputType
+  }
+
+  export type GetDepartmentAggregateType<T extends DepartmentAggregateArgs> = {
+        [P in keyof T & keyof AggregateDepartment]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateDepartment[P]>
+      : GetScalarType<T[P], AggregateDepartment[P]>
+  }
+
+
+
+
+  export type DepartmentGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DepartmentWhereInput
+    orderBy?: DepartmentOrderByWithAggregationInput | DepartmentOrderByWithAggregationInput[]
+    by: DepartmentScalarFieldEnum[] | DepartmentScalarFieldEnum
+    having?: DepartmentScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: DepartmentCountAggregateInputType | true
+    _min?: DepartmentMinAggregateInputType
+    _max?: DepartmentMaxAggregateInputType
+  }
+
+  export type DepartmentGroupByOutputType = {
+    id: string
+    name: string
+    managerId: string | null
+    createdAt: Date
+    _count: DepartmentCountAggregateOutputType | null
+    _min: DepartmentMinAggregateOutputType | null
+    _max: DepartmentMaxAggregateOutputType | null
+  }
+
+  type GetDepartmentGroupByPayload<T extends DepartmentGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<DepartmentGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof DepartmentGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], DepartmentGroupByOutputType[P]>
+            : GetScalarType<T[P], DepartmentGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type DepartmentSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    managerId?: boolean
+    createdAt?: boolean
+    manager?: boolean | Department$managerArgs<ExtArgs>
+    employees?: boolean | Department$employeesArgs<ExtArgs>
+    _count?: boolean | DepartmentCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["department"]>
+
+  export type DepartmentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    managerId?: boolean
+    createdAt?: boolean
+    manager?: boolean | Department$managerArgs<ExtArgs>
+  }, ExtArgs["result"]["department"]>
+
+  export type DepartmentSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    managerId?: boolean
+    createdAt?: boolean
+    manager?: boolean | Department$managerArgs<ExtArgs>
+  }, ExtArgs["result"]["department"]>
+
+  export type DepartmentSelectScalar = {
+    id?: boolean
+    name?: boolean
+    managerId?: boolean
+    createdAt?: boolean
+  }
+
+  export type DepartmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "managerId" | "createdAt", ExtArgs["result"]["department"]>
+  export type DepartmentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    manager?: boolean | Department$managerArgs<ExtArgs>
+    employees?: boolean | Department$employeesArgs<ExtArgs>
+    _count?: boolean | DepartmentCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type DepartmentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    manager?: boolean | Department$managerArgs<ExtArgs>
+  }
+  export type DepartmentIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    manager?: boolean | Department$managerArgs<ExtArgs>
+  }
+
+  export type $DepartmentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Department"
+    objects: {
+      manager: Prisma.$EmployeePayload<ExtArgs> | null
+      employees: Prisma.$EmployeePayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      managerId: string | null
+      createdAt: Date
+    }, ExtArgs["result"]["department"]>
+    composites: {}
+  }
+
+  type DepartmentGetPayload<S extends boolean | null | undefined | DepartmentDefaultArgs> = $Result.GetResult<Prisma.$DepartmentPayload, S>
+
+  type DepartmentCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<DepartmentFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: DepartmentCountAggregateInputType | true
+    }
+
+  export interface DepartmentDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Department'], meta: { name: 'Department' } }
+    /**
+     * Find zero or one Department that matches the filter.
+     * @param {DepartmentFindUniqueArgs} args - Arguments to find a Department
+     * @example
+     * // Get one Department
+     * const department = await prisma.department.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends DepartmentFindUniqueArgs>(args: SelectSubset<T, DepartmentFindUniqueArgs<ExtArgs>>): Prisma__DepartmentClient<$Result.GetResult<Prisma.$DepartmentPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Department that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {DepartmentFindUniqueOrThrowArgs} args - Arguments to find a Department
+     * @example
+     * // Get one Department
+     * const department = await prisma.department.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends DepartmentFindUniqueOrThrowArgs>(args: SelectSubset<T, DepartmentFindUniqueOrThrowArgs<ExtArgs>>): Prisma__DepartmentClient<$Result.GetResult<Prisma.$DepartmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Department that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DepartmentFindFirstArgs} args - Arguments to find a Department
+     * @example
+     * // Get one Department
+     * const department = await prisma.department.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends DepartmentFindFirstArgs>(args?: SelectSubset<T, DepartmentFindFirstArgs<ExtArgs>>): Prisma__DepartmentClient<$Result.GetResult<Prisma.$DepartmentPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Department that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DepartmentFindFirstOrThrowArgs} args - Arguments to find a Department
+     * @example
+     * // Get one Department
+     * const department = await prisma.department.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends DepartmentFindFirstOrThrowArgs>(args?: SelectSubset<T, DepartmentFindFirstOrThrowArgs<ExtArgs>>): Prisma__DepartmentClient<$Result.GetResult<Prisma.$DepartmentPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Departments that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DepartmentFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Departments
+     * const departments = await prisma.department.findMany()
+     * 
+     * // Get first 10 Departments
+     * const departments = await prisma.department.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const departmentWithIdOnly = await prisma.department.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends DepartmentFindManyArgs>(args?: SelectSubset<T, DepartmentFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DepartmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Department.
+     * @param {DepartmentCreateArgs} args - Arguments to create a Department.
+     * @example
+     * // Create one Department
+     * const Department = await prisma.department.create({
+     *   data: {
+     *     // ... data to create a Department
+     *   }
+     * })
+     * 
+     */
+    create<T extends DepartmentCreateArgs>(args: SelectSubset<T, DepartmentCreateArgs<ExtArgs>>): Prisma__DepartmentClient<$Result.GetResult<Prisma.$DepartmentPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Departments.
+     * @param {DepartmentCreateManyArgs} args - Arguments to create many Departments.
+     * @example
+     * // Create many Departments
+     * const department = await prisma.department.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends DepartmentCreateManyArgs>(args?: SelectSubset<T, DepartmentCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Departments and returns the data saved in the database.
+     * @param {DepartmentCreateManyAndReturnArgs} args - Arguments to create many Departments.
+     * @example
+     * // Create many Departments
+     * const department = await prisma.department.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Departments and only return the `id`
+     * const departmentWithIdOnly = await prisma.department.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends DepartmentCreateManyAndReturnArgs>(args?: SelectSubset<T, DepartmentCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DepartmentPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Department.
+     * @param {DepartmentDeleteArgs} args - Arguments to delete one Department.
+     * @example
+     * // Delete one Department
+     * const Department = await prisma.department.delete({
+     *   where: {
+     *     // ... filter to delete one Department
+     *   }
+     * })
+     * 
+     */
+    delete<T extends DepartmentDeleteArgs>(args: SelectSubset<T, DepartmentDeleteArgs<ExtArgs>>): Prisma__DepartmentClient<$Result.GetResult<Prisma.$DepartmentPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Department.
+     * @param {DepartmentUpdateArgs} args - Arguments to update one Department.
+     * @example
+     * // Update one Department
+     * const department = await prisma.department.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends DepartmentUpdateArgs>(args: SelectSubset<T, DepartmentUpdateArgs<ExtArgs>>): Prisma__DepartmentClient<$Result.GetResult<Prisma.$DepartmentPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Departments.
+     * @param {DepartmentDeleteManyArgs} args - Arguments to filter Departments to delete.
+     * @example
+     * // Delete a few Departments
+     * const { count } = await prisma.department.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends DepartmentDeleteManyArgs>(args?: SelectSubset<T, DepartmentDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Departments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DepartmentUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Departments
+     * const department = await prisma.department.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends DepartmentUpdateManyArgs>(args: SelectSubset<T, DepartmentUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Departments and returns the data updated in the database.
+     * @param {DepartmentUpdateManyAndReturnArgs} args - Arguments to update many Departments.
+     * @example
+     * // Update many Departments
+     * const department = await prisma.department.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Departments and only return the `id`
+     * const departmentWithIdOnly = await prisma.department.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends DepartmentUpdateManyAndReturnArgs>(args: SelectSubset<T, DepartmentUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DepartmentPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Department.
+     * @param {DepartmentUpsertArgs} args - Arguments to update or create a Department.
+     * @example
+     * // Update or create a Department
+     * const department = await prisma.department.upsert({
+     *   create: {
+     *     // ... data to create a Department
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Department we want to update
+     *   }
+     * })
+     */
+    upsert<T extends DepartmentUpsertArgs>(args: SelectSubset<T, DepartmentUpsertArgs<ExtArgs>>): Prisma__DepartmentClient<$Result.GetResult<Prisma.$DepartmentPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Departments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DepartmentCountArgs} args - Arguments to filter Departments to count.
+     * @example
+     * // Count the number of Departments
+     * const count = await prisma.department.count({
+     *   where: {
+     *     // ... the filter for the Departments we want to count
+     *   }
+     * })
+    **/
+    count<T extends DepartmentCountArgs>(
+      args?: Subset<T, DepartmentCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], DepartmentCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Department.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DepartmentAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends DepartmentAggregateArgs>(args: Subset<T, DepartmentAggregateArgs>): Prisma.PrismaPromise<GetDepartmentAggregateType<T>>
+
+    /**
+     * Group by Department.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DepartmentGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends DepartmentGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: DepartmentGroupByArgs['orderBy'] }
+        : { orderBy?: DepartmentGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, DepartmentGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetDepartmentGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Department model
+   */
+  readonly fields: DepartmentFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Department.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__DepartmentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    manager<T extends Department$managerArgs<ExtArgs> = {}>(args?: Subset<T, Department$managerArgs<ExtArgs>>): Prisma__EmployeeClient<$Result.GetResult<Prisma.$EmployeePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    employees<T extends Department$employeesArgs<ExtArgs> = {}>(args?: Subset<T, Department$employeesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EmployeePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Department model
+   */
+  interface DepartmentFieldRefs {
+    readonly id: FieldRef<"Department", 'String'>
+    readonly name: FieldRef<"Department", 'String'>
+    readonly managerId: FieldRef<"Department", 'String'>
+    readonly createdAt: FieldRef<"Department", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Department findUnique
+   */
+  export type DepartmentFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Department
+     */
+    select?: DepartmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Department
+     */
+    omit?: DepartmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentInclude<ExtArgs> | null
+    /**
+     * Filter, which Department to fetch.
+     */
+    where: DepartmentWhereUniqueInput
+  }
+
+  /**
+   * Department findUniqueOrThrow
+   */
+  export type DepartmentFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Department
+     */
+    select?: DepartmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Department
+     */
+    omit?: DepartmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentInclude<ExtArgs> | null
+    /**
+     * Filter, which Department to fetch.
+     */
+    where: DepartmentWhereUniqueInput
+  }
+
+  /**
+   * Department findFirst
+   */
+  export type DepartmentFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Department
+     */
+    select?: DepartmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Department
+     */
+    omit?: DepartmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentInclude<ExtArgs> | null
+    /**
+     * Filter, which Department to fetch.
+     */
+    where?: DepartmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Departments to fetch.
+     */
+    orderBy?: DepartmentOrderByWithRelationInput | DepartmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Departments.
+     */
+    cursor?: DepartmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Departments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Departments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Departments.
+     */
+    distinct?: DepartmentScalarFieldEnum | DepartmentScalarFieldEnum[]
+  }
+
+  /**
+   * Department findFirstOrThrow
+   */
+  export type DepartmentFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Department
+     */
+    select?: DepartmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Department
+     */
+    omit?: DepartmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentInclude<ExtArgs> | null
+    /**
+     * Filter, which Department to fetch.
+     */
+    where?: DepartmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Departments to fetch.
+     */
+    orderBy?: DepartmentOrderByWithRelationInput | DepartmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Departments.
+     */
+    cursor?: DepartmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Departments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Departments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Departments.
+     */
+    distinct?: DepartmentScalarFieldEnum | DepartmentScalarFieldEnum[]
+  }
+
+  /**
+   * Department findMany
+   */
+  export type DepartmentFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Department
+     */
+    select?: DepartmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Department
+     */
+    omit?: DepartmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentInclude<ExtArgs> | null
+    /**
+     * Filter, which Departments to fetch.
+     */
+    where?: DepartmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Departments to fetch.
+     */
+    orderBy?: DepartmentOrderByWithRelationInput | DepartmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Departments.
+     */
+    cursor?: DepartmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Departments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Departments.
+     */
+    skip?: number
+    distinct?: DepartmentScalarFieldEnum | DepartmentScalarFieldEnum[]
+  }
+
+  /**
+   * Department create
+   */
+  export type DepartmentCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Department
+     */
+    select?: DepartmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Department
+     */
+    omit?: DepartmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Department.
+     */
+    data: XOR<DepartmentCreateInput, DepartmentUncheckedCreateInput>
+  }
+
+  /**
+   * Department createMany
+   */
+  export type DepartmentCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Departments.
+     */
+    data: DepartmentCreateManyInput | DepartmentCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Department createManyAndReturn
+   */
+  export type DepartmentCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Department
+     */
+    select?: DepartmentSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Department
+     */
+    omit?: DepartmentOmit<ExtArgs> | null
+    /**
+     * The data used to create many Departments.
+     */
+    data: DepartmentCreateManyInput | DepartmentCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Department update
+   */
+  export type DepartmentUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Department
+     */
+    select?: DepartmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Department
+     */
+    omit?: DepartmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Department.
+     */
+    data: XOR<DepartmentUpdateInput, DepartmentUncheckedUpdateInput>
+    /**
+     * Choose, which Department to update.
+     */
+    where: DepartmentWhereUniqueInput
+  }
+
+  /**
+   * Department updateMany
+   */
+  export type DepartmentUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Departments.
+     */
+    data: XOR<DepartmentUpdateManyMutationInput, DepartmentUncheckedUpdateManyInput>
+    /**
+     * Filter which Departments to update
+     */
+    where?: DepartmentWhereInput
+    /**
+     * Limit how many Departments to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Department updateManyAndReturn
+   */
+  export type DepartmentUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Department
+     */
+    select?: DepartmentSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Department
+     */
+    omit?: DepartmentOmit<ExtArgs> | null
+    /**
+     * The data used to update Departments.
+     */
+    data: XOR<DepartmentUpdateManyMutationInput, DepartmentUncheckedUpdateManyInput>
+    /**
+     * Filter which Departments to update
+     */
+    where?: DepartmentWhereInput
+    /**
+     * Limit how many Departments to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Department upsert
+   */
+  export type DepartmentUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Department
+     */
+    select?: DepartmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Department
+     */
+    omit?: DepartmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Department to update in case it exists.
+     */
+    where: DepartmentWhereUniqueInput
+    /**
+     * In case the Department found by the `where` argument doesn't exist, create a new Department with this data.
+     */
+    create: XOR<DepartmentCreateInput, DepartmentUncheckedCreateInput>
+    /**
+     * In case the Department was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<DepartmentUpdateInput, DepartmentUncheckedUpdateInput>
+  }
+
+  /**
+   * Department delete
+   */
+  export type DepartmentDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Department
+     */
+    select?: DepartmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Department
+     */
+    omit?: DepartmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentInclude<ExtArgs> | null
+    /**
+     * Filter which Department to delete.
+     */
+    where: DepartmentWhereUniqueInput
+  }
+
+  /**
+   * Department deleteMany
+   */
+  export type DepartmentDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Departments to delete
+     */
+    where?: DepartmentWhereInput
+    /**
+     * Limit how many Departments to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Department.manager
+   */
+  export type Department$managerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Employee
+     */
+    select?: EmployeeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Employee
+     */
+    omit?: EmployeeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmployeeInclude<ExtArgs> | null
+    where?: EmployeeWhereInput
+  }
+
+  /**
+   * Department.employees
+   */
+  export type Department$employeesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Employee
+     */
+    select?: EmployeeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Employee
+     */
+    omit?: EmployeeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmployeeInclude<ExtArgs> | null
+    where?: EmployeeWhereInput
+    orderBy?: EmployeeOrderByWithRelationInput | EmployeeOrderByWithRelationInput[]
+    cursor?: EmployeeWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: EmployeeScalarFieldEnum | EmployeeScalarFieldEnum[]
+  }
+
+  /**
+   * Department without action
+   */
+  export type DepartmentDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Department
+     */
+    select?: DepartmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Department
+     */
+    omit?: DepartmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model PayrollRun
    */
 
@@ -17886,12 +19259,16 @@ export namespace Prisma {
   export type PayslipAvgAggregateOutputType = {
     gross: number | null
     net: number | null
+    month: number | null
+    year: number | null
     size: number | null
   }
 
   export type PayslipSumAggregateOutputType = {
     gross: number | null
     net: number | null
+    month: number | null
+    year: number | null
     size: number | null
   }
 
@@ -17901,6 +19278,8 @@ export namespace Prisma {
     employeeId: string | null
     gross: number | null
     net: number | null
+    month: number | null
+    year: number | null
     fileUrl: string | null
     publicId: string | null
     mimeType: string | null
@@ -17914,6 +19293,8 @@ export namespace Prisma {
     employeeId: string | null
     gross: number | null
     net: number | null
+    month: number | null
+    year: number | null
     fileUrl: string | null
     publicId: string | null
     mimeType: string | null
@@ -17927,6 +19308,8 @@ export namespace Prisma {
     employeeId: number
     gross: number
     net: number
+    month: number
+    year: number
     fileUrl: number
     publicId: number
     mimeType: number
@@ -17939,12 +19322,16 @@ export namespace Prisma {
   export type PayslipAvgAggregateInputType = {
     gross?: true
     net?: true
+    month?: true
+    year?: true
     size?: true
   }
 
   export type PayslipSumAggregateInputType = {
     gross?: true
     net?: true
+    month?: true
+    year?: true
     size?: true
   }
 
@@ -17954,6 +19341,8 @@ export namespace Prisma {
     employeeId?: true
     gross?: true
     net?: true
+    month?: true
+    year?: true
     fileUrl?: true
     publicId?: true
     mimeType?: true
@@ -17967,6 +19356,8 @@ export namespace Prisma {
     employeeId?: true
     gross?: true
     net?: true
+    month?: true
+    year?: true
     fileUrl?: true
     publicId?: true
     mimeType?: true
@@ -17980,6 +19371,8 @@ export namespace Prisma {
     employeeId?: true
     gross?: true
     net?: true
+    month?: true
+    year?: true
     fileUrl?: true
     publicId?: true
     mimeType?: true
@@ -18080,6 +19473,8 @@ export namespace Prisma {
     employeeId: string
     gross: number
     net: number
+    month: number | null
+    year: number | null
     fileUrl: string | null
     publicId: string | null
     mimeType: string | null
@@ -18112,6 +19507,8 @@ export namespace Prisma {
     employeeId?: boolean
     gross?: boolean
     net?: boolean
+    month?: boolean
+    year?: boolean
     fileUrl?: boolean
     publicId?: boolean
     mimeType?: boolean
@@ -18127,6 +19524,8 @@ export namespace Prisma {
     employeeId?: boolean
     gross?: boolean
     net?: boolean
+    month?: boolean
+    year?: boolean
     fileUrl?: boolean
     publicId?: boolean
     mimeType?: boolean
@@ -18142,6 +19541,8 @@ export namespace Prisma {
     employeeId?: boolean
     gross?: boolean
     net?: boolean
+    month?: boolean
+    year?: boolean
     fileUrl?: boolean
     publicId?: boolean
     mimeType?: boolean
@@ -18157,6 +19558,8 @@ export namespace Prisma {
     employeeId?: boolean
     gross?: boolean
     net?: boolean
+    month?: boolean
+    year?: boolean
     fileUrl?: boolean
     publicId?: boolean
     mimeType?: boolean
@@ -18164,7 +19567,7 @@ export namespace Prisma {
     generatedAt?: boolean
   }
 
-  export type PayslipOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "payrollRunId" | "employeeId" | "gross" | "net" | "fileUrl" | "publicId" | "mimeType" | "size" | "generatedAt", ExtArgs["result"]["payslip"]>
+  export type PayslipOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "payrollRunId" | "employeeId" | "gross" | "net" | "month" | "year" | "fileUrl" | "publicId" | "mimeType" | "size" | "generatedAt", ExtArgs["result"]["payslip"]>
   export type PayslipInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     payrollRun?: boolean | PayrollRunDefaultArgs<ExtArgs>
     employee?: boolean | EmployeeDefaultArgs<ExtArgs>
@@ -18190,6 +19593,8 @@ export namespace Prisma {
       employeeId: string
       gross: number
       net: number
+      month: number | null
+      year: number | null
       fileUrl: string | null
       publicId: string | null
       mimeType: string | null
@@ -18625,6 +20030,8 @@ export namespace Prisma {
     readonly employeeId: FieldRef<"Payslip", 'String'>
     readonly gross: FieldRef<"Payslip", 'Float'>
     readonly net: FieldRef<"Payslip", 'Float'>
+    readonly month: FieldRef<"Payslip", 'Int'>
+    readonly year: FieldRef<"Payslip", 'Int'>
     readonly fileUrl: FieldRef<"Payslip", 'String'>
     readonly publicId: FieldRef<"Payslip", 'String'>
     readonly mimeType: FieldRef<"Payslip", 'String'>
@@ -27561,8 +28968,10 @@ export namespace Prisma {
     lastName: 'lastName',
     email: 'email',
     phone: 'phone',
+    dateOfBirth: 'dateOfBirth',
     status: 'status',
     hireDate: 'hireDate',
+    departmentId: 'departmentId',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -27580,6 +28989,9 @@ export namespace Prisma {
     publicId: 'publicId',
     mimeType: 'mimeType',
     size: 'size',
+    uploadStatus: 'uploadStatus',
+    uploadError: 'uploadError',
+    uploadAttempts: 'uploadAttempts',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -27704,6 +29116,16 @@ export namespace Prisma {
   export type SalaryStructureScalarFieldEnum = (typeof SalaryStructureScalarFieldEnum)[keyof typeof SalaryStructureScalarFieldEnum]
 
 
+  export const DepartmentScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    managerId: 'managerId',
+    createdAt: 'createdAt'
+  };
+
+  export type DepartmentScalarFieldEnum = (typeof DepartmentScalarFieldEnum)[keyof typeof DepartmentScalarFieldEnum]
+
+
   export const PayrollRunScalarFieldEnum: {
     id: 'id',
     period: 'period',
@@ -27720,6 +29142,8 @@ export namespace Prisma {
     employeeId: 'employeeId',
     gross: 'gross',
     net: 'net',
+    month: 'month',
+    year: 'year',
     fileUrl: 'fileUrl',
     publicId: 'publicId',
     mimeType: 'mimeType',
@@ -27933,6 +29357,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'FileUploadStatus'
+   */
+  export type EnumFileUploadStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FileUploadStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'FileUploadStatus[]'
+   */
+  export type ListEnumFileUploadStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FileUploadStatus[]'>
+    
+
+
+  /**
    * Reference to a field of type 'DocumentType'
    */
   export type EnumDocumentTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DocumentType'>
@@ -28129,8 +29567,10 @@ export namespace Prisma {
     lastName?: StringFilter<"Employee"> | string
     email?: StringFilter<"Employee"> | string
     phone?: StringNullableFilter<"Employee"> | string | null
+    dateOfBirth?: DateTimeNullableFilter<"Employee"> | Date | string | null
     status?: EnumEmployeeStatusFilter<"Employee"> | $Enums.EmployeeStatus
     hireDate?: DateTimeNullableFilter<"Employee"> | Date | string | null
+    departmentId?: StringNullableFilter<"Employee"> | string | null
     createdAt?: DateTimeFilter<"Employee"> | Date | string
     updatedAt?: DateTimeFilter<"Employee"> | Date | string
     contracts?: ContractListRelationFilter
@@ -28144,6 +29584,8 @@ export namespace Prisma {
     evaluations?: EvaluationListRelationFilter
     payslips?: PayslipListRelationFilter
     user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    department?: XOR<DepartmentNullableScalarRelationFilter, DepartmentWhereInput> | null
+    managesDepartments?: DepartmentListRelationFilter
   }
 
   export type EmployeeOrderByWithRelationInput = {
@@ -28153,8 +29595,10 @@ export namespace Prisma {
     lastName?: SortOrder
     email?: SortOrder
     phone?: SortOrderInput | SortOrder
+    dateOfBirth?: SortOrderInput | SortOrder
     status?: SortOrder
     hireDate?: SortOrderInput | SortOrder
+    departmentId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     contracts?: ContractOrderByRelationAggregateInput
@@ -28168,6 +29612,8 @@ export namespace Prisma {
     evaluations?: EvaluationOrderByRelationAggregateInput
     payslips?: PayslipOrderByRelationAggregateInput
     user?: UserOrderByWithRelationInput
+    department?: DepartmentOrderByWithRelationInput
+    managesDepartments?: DepartmentOrderByRelationAggregateInput
   }
 
   export type EmployeeWhereUniqueInput = Prisma.AtLeast<{
@@ -28180,8 +29626,10 @@ export namespace Prisma {
     firstName?: StringFilter<"Employee"> | string
     lastName?: StringFilter<"Employee"> | string
     phone?: StringNullableFilter<"Employee"> | string | null
+    dateOfBirth?: DateTimeNullableFilter<"Employee"> | Date | string | null
     status?: EnumEmployeeStatusFilter<"Employee"> | $Enums.EmployeeStatus
     hireDate?: DateTimeNullableFilter<"Employee"> | Date | string | null
+    departmentId?: StringNullableFilter<"Employee"> | string | null
     createdAt?: DateTimeFilter<"Employee"> | Date | string
     updatedAt?: DateTimeFilter<"Employee"> | Date | string
     contracts?: ContractListRelationFilter
@@ -28195,6 +29643,8 @@ export namespace Prisma {
     evaluations?: EvaluationListRelationFilter
     payslips?: PayslipListRelationFilter
     user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    department?: XOR<DepartmentNullableScalarRelationFilter, DepartmentWhereInput> | null
+    managesDepartments?: DepartmentListRelationFilter
   }, "id" | "employeeNumber" | "email">
 
   export type EmployeeOrderByWithAggregationInput = {
@@ -28204,8 +29654,10 @@ export namespace Prisma {
     lastName?: SortOrder
     email?: SortOrder
     phone?: SortOrderInput | SortOrder
+    dateOfBirth?: SortOrderInput | SortOrder
     status?: SortOrder
     hireDate?: SortOrderInput | SortOrder
+    departmentId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: EmployeeCountOrderByAggregateInput
@@ -28223,8 +29675,10 @@ export namespace Prisma {
     lastName?: StringWithAggregatesFilter<"Employee"> | string
     email?: StringWithAggregatesFilter<"Employee"> | string
     phone?: StringNullableWithAggregatesFilter<"Employee"> | string | null
+    dateOfBirth?: DateTimeNullableWithAggregatesFilter<"Employee"> | Date | string | null
     status?: EnumEmployeeStatusWithAggregatesFilter<"Employee"> | $Enums.EmployeeStatus
     hireDate?: DateTimeNullableWithAggregatesFilter<"Employee"> | Date | string | null
+    departmentId?: StringNullableWithAggregatesFilter<"Employee"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Employee"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Employee"> | Date | string
   }
@@ -28242,6 +29696,9 @@ export namespace Prisma {
     publicId?: StringNullableFilter<"Contract"> | string | null
     mimeType?: StringNullableFilter<"Contract"> | string | null
     size?: IntNullableFilter<"Contract"> | number | null
+    uploadStatus?: EnumFileUploadStatusFilter<"Contract"> | $Enums.FileUploadStatus
+    uploadError?: StringNullableFilter<"Contract"> | string | null
+    uploadAttempts?: IntFilter<"Contract"> | number
     createdAt?: DateTimeFilter<"Contract"> | Date | string
     updatedAt?: DateTimeFilter<"Contract"> | Date | string
     employee?: XOR<EmployeeScalarRelationFilter, EmployeeWhereInput>
@@ -28257,6 +29714,9 @@ export namespace Prisma {
     publicId?: SortOrderInput | SortOrder
     mimeType?: SortOrderInput | SortOrder
     size?: SortOrderInput | SortOrder
+    uploadStatus?: SortOrder
+    uploadError?: SortOrderInput | SortOrder
+    uploadAttempts?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     employee?: EmployeeOrderByWithRelationInput
@@ -28275,6 +29735,9 @@ export namespace Prisma {
     publicId?: StringNullableFilter<"Contract"> | string | null
     mimeType?: StringNullableFilter<"Contract"> | string | null
     size?: IntNullableFilter<"Contract"> | number | null
+    uploadStatus?: EnumFileUploadStatusFilter<"Contract"> | $Enums.FileUploadStatus
+    uploadError?: StringNullableFilter<"Contract"> | string | null
+    uploadAttempts?: IntFilter<"Contract"> | number
     createdAt?: DateTimeFilter<"Contract"> | Date | string
     updatedAt?: DateTimeFilter<"Contract"> | Date | string
     employee?: XOR<EmployeeScalarRelationFilter, EmployeeWhereInput>
@@ -28290,6 +29753,9 @@ export namespace Prisma {
     publicId?: SortOrderInput | SortOrder
     mimeType?: SortOrderInput | SortOrder
     size?: SortOrderInput | SortOrder
+    uploadStatus?: SortOrder
+    uploadError?: SortOrderInput | SortOrder
+    uploadAttempts?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: ContractCountOrderByAggregateInput
@@ -28312,6 +29778,9 @@ export namespace Prisma {
     publicId?: StringNullableWithAggregatesFilter<"Contract"> | string | null
     mimeType?: StringNullableWithAggregatesFilter<"Contract"> | string | null
     size?: IntNullableWithAggregatesFilter<"Contract"> | number | null
+    uploadStatus?: EnumFileUploadStatusWithAggregatesFilter<"Contract"> | $Enums.FileUploadStatus
+    uploadError?: StringNullableWithAggregatesFilter<"Contract"> | string | null
+    uploadAttempts?: IntWithAggregatesFilter<"Contract"> | number
     createdAt?: DateTimeWithAggregatesFilter<"Contract"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Contract"> | Date | string
   }
@@ -28916,6 +30385,59 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"SalaryStructure"> | Date | string
   }
 
+  export type DepartmentWhereInput = {
+    AND?: DepartmentWhereInput | DepartmentWhereInput[]
+    OR?: DepartmentWhereInput[]
+    NOT?: DepartmentWhereInput | DepartmentWhereInput[]
+    id?: StringFilter<"Department"> | string
+    name?: StringFilter<"Department"> | string
+    managerId?: StringNullableFilter<"Department"> | string | null
+    createdAt?: DateTimeFilter<"Department"> | Date | string
+    manager?: XOR<EmployeeNullableScalarRelationFilter, EmployeeWhereInput> | null
+    employees?: EmployeeListRelationFilter
+  }
+
+  export type DepartmentOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    managerId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    manager?: EmployeeOrderByWithRelationInput
+    employees?: EmployeeOrderByRelationAggregateInput
+  }
+
+  export type DepartmentWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    name?: string
+    AND?: DepartmentWhereInput | DepartmentWhereInput[]
+    OR?: DepartmentWhereInput[]
+    NOT?: DepartmentWhereInput | DepartmentWhereInput[]
+    managerId?: StringNullableFilter<"Department"> | string | null
+    createdAt?: DateTimeFilter<"Department"> | Date | string
+    manager?: XOR<EmployeeNullableScalarRelationFilter, EmployeeWhereInput> | null
+    employees?: EmployeeListRelationFilter
+  }, "id" | "name">
+
+  export type DepartmentOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    managerId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: DepartmentCountOrderByAggregateInput
+    _max?: DepartmentMaxOrderByAggregateInput
+    _min?: DepartmentMinOrderByAggregateInput
+  }
+
+  export type DepartmentScalarWhereWithAggregatesInput = {
+    AND?: DepartmentScalarWhereWithAggregatesInput | DepartmentScalarWhereWithAggregatesInput[]
+    OR?: DepartmentScalarWhereWithAggregatesInput[]
+    NOT?: DepartmentScalarWhereWithAggregatesInput | DepartmentScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Department"> | string
+    name?: StringWithAggregatesFilter<"Department"> | string
+    managerId?: StringNullableWithAggregatesFilter<"Department"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"Department"> | Date | string
+  }
+
   export type PayrollRunWhereInput = {
     AND?: PayrollRunWhereInput | PayrollRunWhereInput[]
     OR?: PayrollRunWhereInput[]
@@ -28975,6 +30497,8 @@ export namespace Prisma {
     employeeId?: StringFilter<"Payslip"> | string
     gross?: FloatFilter<"Payslip"> | number
     net?: FloatFilter<"Payslip"> | number
+    month?: IntNullableFilter<"Payslip"> | number | null
+    year?: IntNullableFilter<"Payslip"> | number | null
     fileUrl?: StringNullableFilter<"Payslip"> | string | null
     publicId?: StringNullableFilter<"Payslip"> | string | null
     mimeType?: StringNullableFilter<"Payslip"> | string | null
@@ -28990,6 +30514,8 @@ export namespace Prisma {
     employeeId?: SortOrder
     gross?: SortOrder
     net?: SortOrder
+    month?: SortOrderInput | SortOrder
+    year?: SortOrderInput | SortOrder
     fileUrl?: SortOrderInput | SortOrder
     publicId?: SortOrderInput | SortOrder
     mimeType?: SortOrderInput | SortOrder
@@ -29008,6 +30534,8 @@ export namespace Prisma {
     employeeId?: StringFilter<"Payslip"> | string
     gross?: FloatFilter<"Payslip"> | number
     net?: FloatFilter<"Payslip"> | number
+    month?: IntNullableFilter<"Payslip"> | number | null
+    year?: IntNullableFilter<"Payslip"> | number | null
     fileUrl?: StringNullableFilter<"Payslip"> | string | null
     publicId?: StringNullableFilter<"Payslip"> | string | null
     mimeType?: StringNullableFilter<"Payslip"> | string | null
@@ -29023,6 +30551,8 @@ export namespace Prisma {
     employeeId?: SortOrder
     gross?: SortOrder
     net?: SortOrder
+    month?: SortOrderInput | SortOrder
+    year?: SortOrderInput | SortOrder
     fileUrl?: SortOrderInput | SortOrder
     publicId?: SortOrderInput | SortOrder
     mimeType?: SortOrderInput | SortOrder
@@ -29044,6 +30574,8 @@ export namespace Prisma {
     employeeId?: StringWithAggregatesFilter<"Payslip"> | string
     gross?: FloatWithAggregatesFilter<"Payslip"> | number
     net?: FloatWithAggregatesFilter<"Payslip"> | number
+    month?: IntNullableWithAggregatesFilter<"Payslip"> | number | null
+    year?: IntNullableWithAggregatesFilter<"Payslip"> | number | null
     fileUrl?: StringNullableWithAggregatesFilter<"Payslip"> | string | null
     publicId?: StringNullableWithAggregatesFilter<"Payslip"> | string | null
     mimeType?: StringNullableWithAggregatesFilter<"Payslip"> | string | null
@@ -29563,6 +31095,7 @@ export namespace Prisma {
     lastName: string
     email: string
     phone?: string | null
+    dateOfBirth?: Date | string | null
     status?: $Enums.EmployeeStatus
     hireDate?: Date | string | null
     createdAt?: Date | string
@@ -29578,6 +31111,8 @@ export namespace Prisma {
     evaluations?: EvaluationCreateNestedManyWithoutEmployeeInput
     payslips?: PayslipCreateNestedManyWithoutEmployeeInput
     user?: UserCreateNestedOneWithoutEmployeeInput
+    department?: DepartmentCreateNestedOneWithoutEmployeesInput
+    managesDepartments?: DepartmentCreateNestedManyWithoutManagerInput
   }
 
   export type EmployeeUncheckedCreateInput = {
@@ -29587,8 +31122,10 @@ export namespace Prisma {
     lastName: string
     email: string
     phone?: string | null
+    dateOfBirth?: Date | string | null
     status?: $Enums.EmployeeStatus
     hireDate?: Date | string | null
+    departmentId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
@@ -29602,6 +31139,7 @@ export namespace Prisma {
     evaluations?: EvaluationUncheckedCreateNestedManyWithoutEmployeeInput
     payslips?: PayslipUncheckedCreateNestedManyWithoutEmployeeInput
     user?: UserUncheckedCreateNestedOneWithoutEmployeeInput
+    managesDepartments?: DepartmentUncheckedCreateNestedManyWithoutManagerInput
   }
 
   export type EmployeeUpdateInput = {
@@ -29611,6 +31149,7 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
     hireDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -29626,6 +31165,8 @@ export namespace Prisma {
     evaluations?: EvaluationUpdateManyWithoutEmployeeNestedInput
     payslips?: PayslipUpdateManyWithoutEmployeeNestedInput
     user?: UserUpdateOneWithoutEmployeeNestedInput
+    department?: DepartmentUpdateOneWithoutEmployeesNestedInput
+    managesDepartments?: DepartmentUpdateManyWithoutManagerNestedInput
   }
 
   export type EmployeeUncheckedUpdateInput = {
@@ -29635,8 +31176,10 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
     hireDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -29650,6 +31193,7 @@ export namespace Prisma {
     evaluations?: EvaluationUncheckedUpdateManyWithoutEmployeeNestedInput
     payslips?: PayslipUncheckedUpdateManyWithoutEmployeeNestedInput
     user?: UserUncheckedUpdateOneWithoutEmployeeNestedInput
+    managesDepartments?: DepartmentUncheckedUpdateManyWithoutManagerNestedInput
   }
 
   export type EmployeeCreateManyInput = {
@@ -29659,8 +31203,10 @@ export namespace Prisma {
     lastName: string
     email: string
     phone?: string | null
+    dateOfBirth?: Date | string | null
     status?: $Enums.EmployeeStatus
     hireDate?: Date | string | null
+    departmentId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -29672,6 +31218,7 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
     hireDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -29685,8 +31232,10 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
     hireDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -29700,6 +31249,9 @@ export namespace Prisma {
     publicId?: string | null
     mimeType?: string | null
     size?: number | null
+    uploadStatus?: $Enums.FileUploadStatus
+    uploadError?: string | null
+    uploadAttempts?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     employee: EmployeeCreateNestedOneWithoutContractsInput
@@ -29715,6 +31267,9 @@ export namespace Prisma {
     publicId?: string | null
     mimeType?: string | null
     size?: number | null
+    uploadStatus?: $Enums.FileUploadStatus
+    uploadError?: string | null
+    uploadAttempts?: number
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -29728,6 +31283,9 @@ export namespace Prisma {
     publicId?: NullableStringFieldUpdateOperationsInput | string | null
     mimeType?: NullableStringFieldUpdateOperationsInput | string | null
     size?: NullableIntFieldUpdateOperationsInput | number | null
+    uploadStatus?: EnumFileUploadStatusFieldUpdateOperationsInput | $Enums.FileUploadStatus
+    uploadError?: NullableStringFieldUpdateOperationsInput | string | null
+    uploadAttempts?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     employee?: EmployeeUpdateOneRequiredWithoutContractsNestedInput
@@ -29743,6 +31301,9 @@ export namespace Prisma {
     publicId?: NullableStringFieldUpdateOperationsInput | string | null
     mimeType?: NullableStringFieldUpdateOperationsInput | string | null
     size?: NullableIntFieldUpdateOperationsInput | number | null
+    uploadStatus?: EnumFileUploadStatusFieldUpdateOperationsInput | $Enums.FileUploadStatus
+    uploadError?: NullableStringFieldUpdateOperationsInput | string | null
+    uploadAttempts?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -29757,6 +31318,9 @@ export namespace Prisma {
     publicId?: string | null
     mimeType?: string | null
     size?: number | null
+    uploadStatus?: $Enums.FileUploadStatus
+    uploadError?: string | null
+    uploadAttempts?: number
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -29770,6 +31334,9 @@ export namespace Prisma {
     publicId?: NullableStringFieldUpdateOperationsInput | string | null
     mimeType?: NullableStringFieldUpdateOperationsInput | string | null
     size?: NullableIntFieldUpdateOperationsInput | number | null
+    uploadStatus?: EnumFileUploadStatusFieldUpdateOperationsInput | $Enums.FileUploadStatus
+    uploadError?: NullableStringFieldUpdateOperationsInput | string | null
+    uploadAttempts?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -29784,6 +31351,9 @@ export namespace Prisma {
     publicId?: NullableStringFieldUpdateOperationsInput | string | null
     mimeType?: NullableStringFieldUpdateOperationsInput | string | null
     size?: NullableIntFieldUpdateOperationsInput | number | null
+    uploadStatus?: EnumFileUploadStatusFieldUpdateOperationsInput | $Enums.FileUploadStatus
+    uploadError?: NullableStringFieldUpdateOperationsInput | string | null
+    uploadAttempts?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -30423,6 +31993,58 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type DepartmentCreateInput = {
+    id?: string
+    name: string
+    createdAt?: Date | string
+    manager?: EmployeeCreateNestedOneWithoutManagesDepartmentsInput
+    employees?: EmployeeCreateNestedManyWithoutDepartmentInput
+  }
+
+  export type DepartmentUncheckedCreateInput = {
+    id?: string
+    name: string
+    managerId?: string | null
+    createdAt?: Date | string
+    employees?: EmployeeUncheckedCreateNestedManyWithoutDepartmentInput
+  }
+
+  export type DepartmentUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    manager?: EmployeeUpdateOneWithoutManagesDepartmentsNestedInput
+    employees?: EmployeeUpdateManyWithoutDepartmentNestedInput
+  }
+
+  export type DepartmentUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    managerId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    employees?: EmployeeUncheckedUpdateManyWithoutDepartmentNestedInput
+  }
+
+  export type DepartmentCreateManyInput = {
+    id?: string
+    name: string
+    managerId?: string | null
+    createdAt?: Date | string
+  }
+
+  export type DepartmentUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DepartmentUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    managerId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type PayrollRunCreateInput = {
     id?: string
     period: string
@@ -30480,6 +32102,8 @@ export namespace Prisma {
     id?: string
     gross: number
     net: number
+    month?: number | null
+    year?: number | null
     fileUrl?: string | null
     publicId?: string | null
     mimeType?: string | null
@@ -30495,6 +32119,8 @@ export namespace Prisma {
     employeeId: string
     gross: number
     net: number
+    month?: number | null
+    year?: number | null
     fileUrl?: string | null
     publicId?: string | null
     mimeType?: string | null
@@ -30506,6 +32132,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     gross?: FloatFieldUpdateOperationsInput | number
     net?: FloatFieldUpdateOperationsInput | number
+    month?: NullableIntFieldUpdateOperationsInput | number | null
+    year?: NullableIntFieldUpdateOperationsInput | number | null
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     publicId?: NullableStringFieldUpdateOperationsInput | string | null
     mimeType?: NullableStringFieldUpdateOperationsInput | string | null
@@ -30521,6 +32149,8 @@ export namespace Prisma {
     employeeId?: StringFieldUpdateOperationsInput | string
     gross?: FloatFieldUpdateOperationsInput | number
     net?: FloatFieldUpdateOperationsInput | number
+    month?: NullableIntFieldUpdateOperationsInput | number | null
+    year?: NullableIntFieldUpdateOperationsInput | number | null
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     publicId?: NullableStringFieldUpdateOperationsInput | string | null
     mimeType?: NullableStringFieldUpdateOperationsInput | string | null
@@ -30534,6 +32164,8 @@ export namespace Prisma {
     employeeId: string
     gross: number
     net: number
+    month?: number | null
+    year?: number | null
     fileUrl?: string | null
     publicId?: string | null
     mimeType?: string | null
@@ -30545,6 +32177,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     gross?: FloatFieldUpdateOperationsInput | number
     net?: FloatFieldUpdateOperationsInput | number
+    month?: NullableIntFieldUpdateOperationsInput | number | null
+    year?: NullableIntFieldUpdateOperationsInput | number | null
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     publicId?: NullableStringFieldUpdateOperationsInput | string | null
     mimeType?: NullableStringFieldUpdateOperationsInput | string | null
@@ -30558,6 +32192,8 @@ export namespace Prisma {
     employeeId?: StringFieldUpdateOperationsInput | string
     gross?: FloatFieldUpdateOperationsInput | number
     net?: FloatFieldUpdateOperationsInput | number
+    month?: NullableIntFieldUpdateOperationsInput | number | null
+    year?: NullableIntFieldUpdateOperationsInput | number | null
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     publicId?: NullableStringFieldUpdateOperationsInput | string | null
     mimeType?: NullableStringFieldUpdateOperationsInput | string | null
@@ -31149,13 +32785,6 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
-  export type EnumEmployeeStatusFilter<$PrismaModel = never> = {
-    equals?: $Enums.EmployeeStatus | EnumEmployeeStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.EmployeeStatus[] | ListEnumEmployeeStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.EmployeeStatus[] | ListEnumEmployeeStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumEmployeeStatusFilter<$PrismaModel> | $Enums.EmployeeStatus
-  }
-
   export type DateTimeNullableFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
@@ -31165,6 +32794,13 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type EnumEmployeeStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.EmployeeStatus | EnumEmployeeStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.EmployeeStatus[] | ListEnumEmployeeStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.EmployeeStatus[] | ListEnumEmployeeStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumEmployeeStatusFilter<$PrismaModel> | $Enums.EmployeeStatus
   }
 
   export type ContractListRelationFilter = {
@@ -31232,6 +32868,17 @@ export namespace Prisma {
     isNot?: UserWhereInput | null
   }
 
+  export type DepartmentNullableScalarRelationFilter = {
+    is?: DepartmentWhereInput | null
+    isNot?: DepartmentWhereInput | null
+  }
+
+  export type DepartmentListRelationFilter = {
+    every?: DepartmentWhereInput
+    some?: DepartmentWhereInput
+    none?: DepartmentWhereInput
+  }
+
   export type ContractOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -31272,6 +32919,10 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
+  export type DepartmentOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type EmployeeCountOrderByAggregateInput = {
     id?: SortOrder
     employeeNumber?: SortOrder
@@ -31279,8 +32930,10 @@ export namespace Prisma {
     lastName?: SortOrder
     email?: SortOrder
     phone?: SortOrder
+    dateOfBirth?: SortOrder
     status?: SortOrder
     hireDate?: SortOrder
+    departmentId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -31292,8 +32945,10 @@ export namespace Prisma {
     lastName?: SortOrder
     email?: SortOrder
     phone?: SortOrder
+    dateOfBirth?: SortOrder
     status?: SortOrder
     hireDate?: SortOrder
+    departmentId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -31305,20 +32960,12 @@ export namespace Prisma {
     lastName?: SortOrder
     email?: SortOrder
     phone?: SortOrder
+    dateOfBirth?: SortOrder
     status?: SortOrder
     hireDate?: SortOrder
+    departmentId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-  }
-
-  export type EnumEmployeeStatusWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.EmployeeStatus | EnumEmployeeStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.EmployeeStatus[] | ListEnumEmployeeStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.EmployeeStatus[] | ListEnumEmployeeStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumEmployeeStatusWithAggregatesFilter<$PrismaModel> | $Enums.EmployeeStatus
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumEmployeeStatusFilter<$PrismaModel>
-    _max?: NestedEnumEmployeeStatusFilter<$PrismaModel>
   }
 
   export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -31335,6 +32982,16 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
+  export type EnumEmployeeStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.EmployeeStatus | EnumEmployeeStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.EmployeeStatus[] | ListEnumEmployeeStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.EmployeeStatus[] | ListEnumEmployeeStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumEmployeeStatusWithAggregatesFilter<$PrismaModel> | $Enums.EmployeeStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumEmployeeStatusFilter<$PrismaModel>
+    _max?: NestedEnumEmployeeStatusFilter<$PrismaModel>
+  }
+
   export type IntNullableFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel> | null
     in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
@@ -31344,6 +33001,24 @@ export namespace Prisma {
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type EnumFileUploadStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.FileUploadStatus | EnumFileUploadStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.FileUploadStatus[] | ListEnumFileUploadStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FileUploadStatus[] | ListEnumFileUploadStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumFileUploadStatusFilter<$PrismaModel> | $Enums.FileUploadStatus
+  }
+
+  export type IntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
   }
 
   export type EmployeeScalarRelationFilter = {
@@ -31361,12 +33036,16 @@ export namespace Prisma {
     publicId?: SortOrder
     mimeType?: SortOrder
     size?: SortOrder
+    uploadStatus?: SortOrder
+    uploadError?: SortOrder
+    uploadAttempts?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
   export type ContractAvgOrderByAggregateInput = {
     size?: SortOrder
+    uploadAttempts?: SortOrder
   }
 
   export type ContractMaxOrderByAggregateInput = {
@@ -31379,6 +33058,9 @@ export namespace Prisma {
     publicId?: SortOrder
     mimeType?: SortOrder
     size?: SortOrder
+    uploadStatus?: SortOrder
+    uploadError?: SortOrder
+    uploadAttempts?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -31393,12 +33075,16 @@ export namespace Prisma {
     publicId?: SortOrder
     mimeType?: SortOrder
     size?: SortOrder
+    uploadStatus?: SortOrder
+    uploadError?: SortOrder
+    uploadAttempts?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
   export type ContractSumOrderByAggregateInput = {
     size?: SortOrder
+    uploadAttempts?: SortOrder
   }
 
   export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -31415,6 +33101,32 @@ export namespace Prisma {
     _sum?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedIntNullableFilter<$PrismaModel>
     _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
+  export type EnumFileUploadStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.FileUploadStatus | EnumFileUploadStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.FileUploadStatus[] | ListEnumFileUploadStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FileUploadStatus[] | ListEnumFileUploadStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumFileUploadStatusWithAggregatesFilter<$PrismaModel> | $Enums.FileUploadStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumFileUploadStatusFilter<$PrismaModel>
+    _max?: NestedEnumFileUploadStatusFilter<$PrismaModel>
+  }
+
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
   }
 
   export type EnumDocumentTypeFilter<$PrismaModel = never> = {
@@ -31894,6 +33606,37 @@ export namespace Prisma {
     deductions?: SortOrder
   }
 
+  export type EmployeeListRelationFilter = {
+    every?: EmployeeWhereInput
+    some?: EmployeeWhereInput
+    none?: EmployeeWhereInput
+  }
+
+  export type EmployeeOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type DepartmentCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    managerId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type DepartmentMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    managerId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type DepartmentMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    managerId?: SortOrder
+    createdAt?: SortOrder
+  }
+
   export type EnumPayrollStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.PayrollStatus | EnumPayrollStatusFieldRefInput<$PrismaModel>
     in?: $Enums.PayrollStatus[] | ListEnumPayrollStatusFieldRefInput<$PrismaModel>
@@ -31943,6 +33686,8 @@ export namespace Prisma {
     employeeId?: SortOrder
     gross?: SortOrder
     net?: SortOrder
+    month?: SortOrder
+    year?: SortOrder
     fileUrl?: SortOrder
     publicId?: SortOrder
     mimeType?: SortOrder
@@ -31953,6 +33698,8 @@ export namespace Prisma {
   export type PayslipAvgOrderByAggregateInput = {
     gross?: SortOrder
     net?: SortOrder
+    month?: SortOrder
+    year?: SortOrder
     size?: SortOrder
   }
 
@@ -31962,6 +33709,8 @@ export namespace Prisma {
     employeeId?: SortOrder
     gross?: SortOrder
     net?: SortOrder
+    month?: SortOrder
+    year?: SortOrder
     fileUrl?: SortOrder
     publicId?: SortOrder
     mimeType?: SortOrder
@@ -31975,6 +33724,8 @@ export namespace Prisma {
     employeeId?: SortOrder
     gross?: SortOrder
     net?: SortOrder
+    month?: SortOrder
+    year?: SortOrder
     fileUrl?: SortOrder
     publicId?: SortOrder
     mimeType?: SortOrder
@@ -31985,6 +33736,8 @@ export namespace Prisma {
   export type PayslipSumOrderByAggregateInput = {
     gross?: SortOrder
     net?: SortOrder
+    month?: SortOrder
+    year?: SortOrder
     size?: SortOrder
   }
 
@@ -32105,17 +33858,6 @@ export namespace Prisma {
     _max?: NestedEnumLeaveTypeFilter<$PrismaModel>
   }
 
-  export type IntFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
-  }
-
   export type LeaveBalanceCountOrderByAggregateInput = {
     id?: SortOrder
     employeeId?: SortOrder
@@ -32145,22 +33887,6 @@ export namespace Prisma {
   export type LeaveBalanceSumOrderByAggregateInput = {
     year?: SortOrder
     balance?: SortOrder
-  }
-
-  export type IntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
   }
 
   export type SkillNullableScalarRelationFilter = {
@@ -32436,6 +34162,19 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
+  export type DepartmentCreateNestedOneWithoutEmployeesInput = {
+    create?: XOR<DepartmentCreateWithoutEmployeesInput, DepartmentUncheckedCreateWithoutEmployeesInput>
+    connectOrCreate?: DepartmentCreateOrConnectWithoutEmployeesInput
+    connect?: DepartmentWhereUniqueInput
+  }
+
+  export type DepartmentCreateNestedManyWithoutManagerInput = {
+    create?: XOR<DepartmentCreateWithoutManagerInput, DepartmentUncheckedCreateWithoutManagerInput> | DepartmentCreateWithoutManagerInput[] | DepartmentUncheckedCreateWithoutManagerInput[]
+    connectOrCreate?: DepartmentCreateOrConnectWithoutManagerInput | DepartmentCreateOrConnectWithoutManagerInput[]
+    createMany?: DepartmentCreateManyManagerInputEnvelope
+    connect?: DepartmentWhereUniqueInput | DepartmentWhereUniqueInput[]
+  }
+
   export type ContractUncheckedCreateNestedManyWithoutEmployeeInput = {
     create?: XOR<ContractCreateWithoutEmployeeInput, ContractUncheckedCreateWithoutEmployeeInput> | ContractCreateWithoutEmployeeInput[] | ContractUncheckedCreateWithoutEmployeeInput[]
     connectOrCreate?: ContractCreateOrConnectWithoutEmployeeInput | ContractCreateOrConnectWithoutEmployeeInput[]
@@ -32512,12 +34251,19 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
-  export type EnumEmployeeStatusFieldUpdateOperationsInput = {
-    set?: $Enums.EmployeeStatus
+  export type DepartmentUncheckedCreateNestedManyWithoutManagerInput = {
+    create?: XOR<DepartmentCreateWithoutManagerInput, DepartmentUncheckedCreateWithoutManagerInput> | DepartmentCreateWithoutManagerInput[] | DepartmentUncheckedCreateWithoutManagerInput[]
+    connectOrCreate?: DepartmentCreateOrConnectWithoutManagerInput | DepartmentCreateOrConnectWithoutManagerInput[]
+    createMany?: DepartmentCreateManyManagerInputEnvelope
+    connect?: DepartmentWhereUniqueInput | DepartmentWhereUniqueInput[]
   }
 
   export type NullableDateTimeFieldUpdateOperationsInput = {
     set?: Date | string | null
+  }
+
+  export type EnumEmployeeStatusFieldUpdateOperationsInput = {
+    set?: $Enums.EmployeeStatus
   }
 
   export type ContractUpdateManyWithoutEmployeeNestedInput = {
@@ -32670,6 +34416,30 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutEmployeeInput, UserUpdateWithoutEmployeeInput>, UserUncheckedUpdateWithoutEmployeeInput>
   }
 
+  export type DepartmentUpdateOneWithoutEmployeesNestedInput = {
+    create?: XOR<DepartmentCreateWithoutEmployeesInput, DepartmentUncheckedCreateWithoutEmployeesInput>
+    connectOrCreate?: DepartmentCreateOrConnectWithoutEmployeesInput
+    upsert?: DepartmentUpsertWithoutEmployeesInput
+    disconnect?: DepartmentWhereInput | boolean
+    delete?: DepartmentWhereInput | boolean
+    connect?: DepartmentWhereUniqueInput
+    update?: XOR<XOR<DepartmentUpdateToOneWithWhereWithoutEmployeesInput, DepartmentUpdateWithoutEmployeesInput>, DepartmentUncheckedUpdateWithoutEmployeesInput>
+  }
+
+  export type DepartmentUpdateManyWithoutManagerNestedInput = {
+    create?: XOR<DepartmentCreateWithoutManagerInput, DepartmentUncheckedCreateWithoutManagerInput> | DepartmentCreateWithoutManagerInput[] | DepartmentUncheckedCreateWithoutManagerInput[]
+    connectOrCreate?: DepartmentCreateOrConnectWithoutManagerInput | DepartmentCreateOrConnectWithoutManagerInput[]
+    upsert?: DepartmentUpsertWithWhereUniqueWithoutManagerInput | DepartmentUpsertWithWhereUniqueWithoutManagerInput[]
+    createMany?: DepartmentCreateManyManagerInputEnvelope
+    set?: DepartmentWhereUniqueInput | DepartmentWhereUniqueInput[]
+    disconnect?: DepartmentWhereUniqueInput | DepartmentWhereUniqueInput[]
+    delete?: DepartmentWhereUniqueInput | DepartmentWhereUniqueInput[]
+    connect?: DepartmentWhereUniqueInput | DepartmentWhereUniqueInput[]
+    update?: DepartmentUpdateWithWhereUniqueWithoutManagerInput | DepartmentUpdateWithWhereUniqueWithoutManagerInput[]
+    updateMany?: DepartmentUpdateManyWithWhereWithoutManagerInput | DepartmentUpdateManyWithWhereWithoutManagerInput[]
+    deleteMany?: DepartmentScalarWhereInput | DepartmentScalarWhereInput[]
+  }
+
   export type ContractUncheckedUpdateManyWithoutEmployeeNestedInput = {
     create?: XOR<ContractCreateWithoutEmployeeInput, ContractUncheckedCreateWithoutEmployeeInput> | ContractCreateWithoutEmployeeInput[] | ContractUncheckedCreateWithoutEmployeeInput[]
     connectOrCreate?: ContractCreateOrConnectWithoutEmployeeInput | ContractCreateOrConnectWithoutEmployeeInput[]
@@ -32820,6 +34590,20 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutEmployeeInput, UserUpdateWithoutEmployeeInput>, UserUncheckedUpdateWithoutEmployeeInput>
   }
 
+  export type DepartmentUncheckedUpdateManyWithoutManagerNestedInput = {
+    create?: XOR<DepartmentCreateWithoutManagerInput, DepartmentUncheckedCreateWithoutManagerInput> | DepartmentCreateWithoutManagerInput[] | DepartmentUncheckedCreateWithoutManagerInput[]
+    connectOrCreate?: DepartmentCreateOrConnectWithoutManagerInput | DepartmentCreateOrConnectWithoutManagerInput[]
+    upsert?: DepartmentUpsertWithWhereUniqueWithoutManagerInput | DepartmentUpsertWithWhereUniqueWithoutManagerInput[]
+    createMany?: DepartmentCreateManyManagerInputEnvelope
+    set?: DepartmentWhereUniqueInput | DepartmentWhereUniqueInput[]
+    disconnect?: DepartmentWhereUniqueInput | DepartmentWhereUniqueInput[]
+    delete?: DepartmentWhereUniqueInput | DepartmentWhereUniqueInput[]
+    connect?: DepartmentWhereUniqueInput | DepartmentWhereUniqueInput[]
+    update?: DepartmentUpdateWithWhereUniqueWithoutManagerInput | DepartmentUpdateWithWhereUniqueWithoutManagerInput[]
+    updateMany?: DepartmentUpdateManyWithWhereWithoutManagerInput | DepartmentUpdateManyWithWhereWithoutManagerInput[]
+    deleteMany?: DepartmentScalarWhereInput | DepartmentScalarWhereInput[]
+  }
+
   export type EmployeeCreateNestedOneWithoutContractsInput = {
     create?: XOR<EmployeeCreateWithoutContractsInput, EmployeeUncheckedCreateWithoutContractsInput>
     connectOrCreate?: EmployeeCreateOrConnectWithoutContractsInput
@@ -32828,6 +34612,18 @@ export namespace Prisma {
 
   export type NullableIntFieldUpdateOperationsInput = {
     set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type EnumFileUploadStatusFieldUpdateOperationsInput = {
+    set?: $Enums.FileUploadStatus
+  }
+
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
     increment?: number
     decrement?: number
     multiply?: number
@@ -33088,6 +34884,64 @@ export namespace Prisma {
     update?: XOR<XOR<EmployeeUpdateToOneWithWhereWithoutSalaryStructuresInput, EmployeeUpdateWithoutSalaryStructuresInput>, EmployeeUncheckedUpdateWithoutSalaryStructuresInput>
   }
 
+  export type EmployeeCreateNestedOneWithoutManagesDepartmentsInput = {
+    create?: XOR<EmployeeCreateWithoutManagesDepartmentsInput, EmployeeUncheckedCreateWithoutManagesDepartmentsInput>
+    connectOrCreate?: EmployeeCreateOrConnectWithoutManagesDepartmentsInput
+    connect?: EmployeeWhereUniqueInput
+  }
+
+  export type EmployeeCreateNestedManyWithoutDepartmentInput = {
+    create?: XOR<EmployeeCreateWithoutDepartmentInput, EmployeeUncheckedCreateWithoutDepartmentInput> | EmployeeCreateWithoutDepartmentInput[] | EmployeeUncheckedCreateWithoutDepartmentInput[]
+    connectOrCreate?: EmployeeCreateOrConnectWithoutDepartmentInput | EmployeeCreateOrConnectWithoutDepartmentInput[]
+    createMany?: EmployeeCreateManyDepartmentInputEnvelope
+    connect?: EmployeeWhereUniqueInput | EmployeeWhereUniqueInput[]
+  }
+
+  export type EmployeeUncheckedCreateNestedManyWithoutDepartmentInput = {
+    create?: XOR<EmployeeCreateWithoutDepartmentInput, EmployeeUncheckedCreateWithoutDepartmentInput> | EmployeeCreateWithoutDepartmentInput[] | EmployeeUncheckedCreateWithoutDepartmentInput[]
+    connectOrCreate?: EmployeeCreateOrConnectWithoutDepartmentInput | EmployeeCreateOrConnectWithoutDepartmentInput[]
+    createMany?: EmployeeCreateManyDepartmentInputEnvelope
+    connect?: EmployeeWhereUniqueInput | EmployeeWhereUniqueInput[]
+  }
+
+  export type EmployeeUpdateOneWithoutManagesDepartmentsNestedInput = {
+    create?: XOR<EmployeeCreateWithoutManagesDepartmentsInput, EmployeeUncheckedCreateWithoutManagesDepartmentsInput>
+    connectOrCreate?: EmployeeCreateOrConnectWithoutManagesDepartmentsInput
+    upsert?: EmployeeUpsertWithoutManagesDepartmentsInput
+    disconnect?: EmployeeWhereInput | boolean
+    delete?: EmployeeWhereInput | boolean
+    connect?: EmployeeWhereUniqueInput
+    update?: XOR<XOR<EmployeeUpdateToOneWithWhereWithoutManagesDepartmentsInput, EmployeeUpdateWithoutManagesDepartmentsInput>, EmployeeUncheckedUpdateWithoutManagesDepartmentsInput>
+  }
+
+  export type EmployeeUpdateManyWithoutDepartmentNestedInput = {
+    create?: XOR<EmployeeCreateWithoutDepartmentInput, EmployeeUncheckedCreateWithoutDepartmentInput> | EmployeeCreateWithoutDepartmentInput[] | EmployeeUncheckedCreateWithoutDepartmentInput[]
+    connectOrCreate?: EmployeeCreateOrConnectWithoutDepartmentInput | EmployeeCreateOrConnectWithoutDepartmentInput[]
+    upsert?: EmployeeUpsertWithWhereUniqueWithoutDepartmentInput | EmployeeUpsertWithWhereUniqueWithoutDepartmentInput[]
+    createMany?: EmployeeCreateManyDepartmentInputEnvelope
+    set?: EmployeeWhereUniqueInput | EmployeeWhereUniqueInput[]
+    disconnect?: EmployeeWhereUniqueInput | EmployeeWhereUniqueInput[]
+    delete?: EmployeeWhereUniqueInput | EmployeeWhereUniqueInput[]
+    connect?: EmployeeWhereUniqueInput | EmployeeWhereUniqueInput[]
+    update?: EmployeeUpdateWithWhereUniqueWithoutDepartmentInput | EmployeeUpdateWithWhereUniqueWithoutDepartmentInput[]
+    updateMany?: EmployeeUpdateManyWithWhereWithoutDepartmentInput | EmployeeUpdateManyWithWhereWithoutDepartmentInput[]
+    deleteMany?: EmployeeScalarWhereInput | EmployeeScalarWhereInput[]
+  }
+
+  export type EmployeeUncheckedUpdateManyWithoutDepartmentNestedInput = {
+    create?: XOR<EmployeeCreateWithoutDepartmentInput, EmployeeUncheckedCreateWithoutDepartmentInput> | EmployeeCreateWithoutDepartmentInput[] | EmployeeUncheckedCreateWithoutDepartmentInput[]
+    connectOrCreate?: EmployeeCreateOrConnectWithoutDepartmentInput | EmployeeCreateOrConnectWithoutDepartmentInput[]
+    upsert?: EmployeeUpsertWithWhereUniqueWithoutDepartmentInput | EmployeeUpsertWithWhereUniqueWithoutDepartmentInput[]
+    createMany?: EmployeeCreateManyDepartmentInputEnvelope
+    set?: EmployeeWhereUniqueInput | EmployeeWhereUniqueInput[]
+    disconnect?: EmployeeWhereUniqueInput | EmployeeWhereUniqueInput[]
+    delete?: EmployeeWhereUniqueInput | EmployeeWhereUniqueInput[]
+    connect?: EmployeeWhereUniqueInput | EmployeeWhereUniqueInput[]
+    update?: EmployeeUpdateWithWhereUniqueWithoutDepartmentInput | EmployeeUpdateWithWhereUniqueWithoutDepartmentInput[]
+    updateMany?: EmployeeUpdateManyWithWhereWithoutDepartmentInput | EmployeeUpdateManyWithWhereWithoutDepartmentInput[]
+    deleteMany?: EmployeeScalarWhereInput | EmployeeScalarWhereInput[]
+  }
+
   export type PayslipCreateNestedManyWithoutPayrollRunInput = {
     create?: XOR<PayslipCreateWithoutPayrollRunInput, PayslipUncheckedCreateWithoutPayrollRunInput> | PayslipCreateWithoutPayrollRunInput[] | PayslipUncheckedCreateWithoutPayrollRunInput[]
     connectOrCreate?: PayslipCreateOrConnectWithoutPayrollRunInput | PayslipCreateOrConnectWithoutPayrollRunInput[]
@@ -33202,14 +35056,6 @@ export namespace Prisma {
     create?: XOR<EmployeeCreateWithoutLeaveBalancesInput, EmployeeUncheckedCreateWithoutLeaveBalancesInput>
     connectOrCreate?: EmployeeCreateOrConnectWithoutLeaveBalancesInput
     connect?: EmployeeWhereUniqueInput
-  }
-
-  export type IntFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
   }
 
   export type EmployeeUpdateOneRequiredWithoutLeaveBalancesNestedInput = {
@@ -33474,13 +35320,6 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
-  export type NestedEnumEmployeeStatusFilter<$PrismaModel = never> = {
-    equals?: $Enums.EmployeeStatus | EnumEmployeeStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.EmployeeStatus[] | ListEnumEmployeeStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.EmployeeStatus[] | ListEnumEmployeeStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumEmployeeStatusFilter<$PrismaModel> | $Enums.EmployeeStatus
-  }
-
   export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
@@ -33492,14 +35331,11 @@ export namespace Prisma {
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
-  export type NestedEnumEmployeeStatusWithAggregatesFilter<$PrismaModel = never> = {
+  export type NestedEnumEmployeeStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.EmployeeStatus | EnumEmployeeStatusFieldRefInput<$PrismaModel>
     in?: $Enums.EmployeeStatus[] | ListEnumEmployeeStatusFieldRefInput<$PrismaModel>
     notIn?: $Enums.EmployeeStatus[] | ListEnumEmployeeStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumEmployeeStatusWithAggregatesFilter<$PrismaModel> | $Enums.EmployeeStatus
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumEmployeeStatusFilter<$PrismaModel>
-    _max?: NestedEnumEmployeeStatusFilter<$PrismaModel>
+    not?: NestedEnumEmployeeStatusFilter<$PrismaModel> | $Enums.EmployeeStatus
   }
 
   export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -33514,6 +35350,23 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedDateTimeNullableFilter<$PrismaModel>
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type NestedEnumEmployeeStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.EmployeeStatus | EnumEmployeeStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.EmployeeStatus[] | ListEnumEmployeeStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.EmployeeStatus[] | ListEnumEmployeeStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumEmployeeStatusWithAggregatesFilter<$PrismaModel> | $Enums.EmployeeStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumEmployeeStatusFilter<$PrismaModel>
+    _max?: NestedEnumEmployeeStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumFileUploadStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.FileUploadStatus | EnumFileUploadStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.FileUploadStatus[] | ListEnumFileUploadStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FileUploadStatus[] | ListEnumFileUploadStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumFileUploadStatusFilter<$PrismaModel> | $Enums.FileUploadStatus
   }
 
   export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -33541,6 +35394,43 @@ export namespace Prisma {
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedEnumFileUploadStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.FileUploadStatus | EnumFileUploadStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.FileUploadStatus[] | ListEnumFileUploadStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FileUploadStatus[] | ListEnumFileUploadStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumFileUploadStatusWithAggregatesFilter<$PrismaModel> | $Enums.FileUploadStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumFileUploadStatusFilter<$PrismaModel>
+    _max?: NestedEnumFileUploadStatusFilter<$PrismaModel>
+  }
+
+  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type NestedFloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
   }
 
   export type NestedEnumDocumentTypeFilter<$PrismaModel = never> = {
@@ -33608,17 +35498,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumApplicationStatusFilter<$PrismaModel>
     _max?: NestedEnumApplicationStatusFilter<$PrismaModel>
-  }
-
-  export type NestedFloatFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatFilter<$PrismaModel> | number
   }
 
   export type NestedBoolFilter<$PrismaModel = never> = {
@@ -33700,22 +35579,6 @@ export namespace Prisma {
     _min?: NestedEnumLeaveTypeFilter<$PrismaModel>
     _max?: NestedEnumLeaveTypeFilter<$PrismaModel>
   }
-
-  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
-  }
   export type NestedJsonNullableFilter<$PrismaModel = never> =
     | PatchUndefined<
         Either<Required<NestedJsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>,
@@ -33747,6 +35610,7 @@ export namespace Prisma {
     lastName: string
     email: string
     phone?: string | null
+    dateOfBirth?: Date | string | null
     status?: $Enums.EmployeeStatus
     hireDate?: Date | string | null
     createdAt?: Date | string
@@ -33761,6 +35625,8 @@ export namespace Prisma {
     leaveBalances?: LeaveBalanceCreateNestedManyWithoutEmployeeInput
     evaluations?: EvaluationCreateNestedManyWithoutEmployeeInput
     payslips?: PayslipCreateNestedManyWithoutEmployeeInput
+    department?: DepartmentCreateNestedOneWithoutEmployeesInput
+    managesDepartments?: DepartmentCreateNestedManyWithoutManagerInput
   }
 
   export type EmployeeUncheckedCreateWithoutUserInput = {
@@ -33770,8 +35636,10 @@ export namespace Prisma {
     lastName: string
     email: string
     phone?: string | null
+    dateOfBirth?: Date | string | null
     status?: $Enums.EmployeeStatus
     hireDate?: Date | string | null
+    departmentId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
@@ -33784,6 +35652,7 @@ export namespace Prisma {
     leaveBalances?: LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
     evaluations?: EvaluationUncheckedCreateNestedManyWithoutEmployeeInput
     payslips?: PayslipUncheckedCreateNestedManyWithoutEmployeeInput
+    managesDepartments?: DepartmentUncheckedCreateNestedManyWithoutManagerInput
   }
 
   export type EmployeeCreateOrConnectWithoutUserInput = {
@@ -33809,6 +35678,7 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
     hireDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -33823,6 +35693,8 @@ export namespace Prisma {
     leaveBalances?: LeaveBalanceUpdateManyWithoutEmployeeNestedInput
     evaluations?: EvaluationUpdateManyWithoutEmployeeNestedInput
     payslips?: PayslipUpdateManyWithoutEmployeeNestedInput
+    department?: DepartmentUpdateOneWithoutEmployeesNestedInput
+    managesDepartments?: DepartmentUpdateManyWithoutManagerNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutUserInput = {
@@ -33832,8 +35704,10 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
     hireDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -33846,6 +35720,7 @@ export namespace Prisma {
     leaveBalances?: LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
     evaluations?: EvaluationUncheckedUpdateManyWithoutEmployeeNestedInput
     payslips?: PayslipUncheckedUpdateManyWithoutEmployeeNestedInput
+    managesDepartments?: DepartmentUncheckedUpdateManyWithoutManagerNestedInput
   }
 
   export type ContractCreateWithoutEmployeeInput = {
@@ -33857,6 +35732,9 @@ export namespace Prisma {
     publicId?: string | null
     mimeType?: string | null
     size?: number | null
+    uploadStatus?: $Enums.FileUploadStatus
+    uploadError?: string | null
+    uploadAttempts?: number
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -33870,6 +35748,9 @@ export namespace Prisma {
     publicId?: string | null
     mimeType?: string | null
     size?: number | null
+    uploadStatus?: $Enums.FileUploadStatus
+    uploadError?: string | null
+    uploadAttempts?: number
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -34102,6 +35983,8 @@ export namespace Prisma {
     id?: string
     gross: number
     net: number
+    month?: number | null
+    year?: number | null
     fileUrl?: string | null
     publicId?: string | null
     mimeType?: string | null
@@ -34115,6 +35998,8 @@ export namespace Prisma {
     payrollRunId: string
     gross: number
     net: number
+    month?: number | null
+    year?: number | null
     fileUrl?: string | null
     publicId?: string | null
     mimeType?: string | null
@@ -34155,6 +36040,49 @@ export namespace Prisma {
     create: XOR<UserCreateWithoutEmployeeInput, UserUncheckedCreateWithoutEmployeeInput>
   }
 
+  export type DepartmentCreateWithoutEmployeesInput = {
+    id?: string
+    name: string
+    createdAt?: Date | string
+    manager?: EmployeeCreateNestedOneWithoutManagesDepartmentsInput
+  }
+
+  export type DepartmentUncheckedCreateWithoutEmployeesInput = {
+    id?: string
+    name: string
+    managerId?: string | null
+    createdAt?: Date | string
+  }
+
+  export type DepartmentCreateOrConnectWithoutEmployeesInput = {
+    where: DepartmentWhereUniqueInput
+    create: XOR<DepartmentCreateWithoutEmployeesInput, DepartmentUncheckedCreateWithoutEmployeesInput>
+  }
+
+  export type DepartmentCreateWithoutManagerInput = {
+    id?: string
+    name: string
+    createdAt?: Date | string
+    employees?: EmployeeCreateNestedManyWithoutDepartmentInput
+  }
+
+  export type DepartmentUncheckedCreateWithoutManagerInput = {
+    id?: string
+    name: string
+    createdAt?: Date | string
+    employees?: EmployeeUncheckedCreateNestedManyWithoutDepartmentInput
+  }
+
+  export type DepartmentCreateOrConnectWithoutManagerInput = {
+    where: DepartmentWhereUniqueInput
+    create: XOR<DepartmentCreateWithoutManagerInput, DepartmentUncheckedCreateWithoutManagerInput>
+  }
+
+  export type DepartmentCreateManyManagerInputEnvelope = {
+    data: DepartmentCreateManyManagerInput | DepartmentCreateManyManagerInput[]
+    skipDuplicates?: boolean
+  }
+
   export type ContractUpsertWithWhereUniqueWithoutEmployeeInput = {
     where: ContractWhereUniqueInput
     update: XOR<ContractUpdateWithoutEmployeeInput, ContractUncheckedUpdateWithoutEmployeeInput>
@@ -34184,6 +36112,9 @@ export namespace Prisma {
     publicId?: StringNullableFilter<"Contract"> | string | null
     mimeType?: StringNullableFilter<"Contract"> | string | null
     size?: IntNullableFilter<"Contract"> | number | null
+    uploadStatus?: EnumFileUploadStatusFilter<"Contract"> | $Enums.FileUploadStatus
+    uploadError?: StringNullableFilter<"Contract"> | string | null
+    uploadAttempts?: IntFilter<"Contract"> | number
     createdAt?: DateTimeFilter<"Contract"> | Date | string
     updatedAt?: DateTimeFilter<"Contract"> | Date | string
   }
@@ -34440,6 +36371,8 @@ export namespace Prisma {
     employeeId?: StringFilter<"Payslip"> | string
     gross?: FloatFilter<"Payslip"> | number
     net?: FloatFilter<"Payslip"> | number
+    month?: IntNullableFilter<"Payslip"> | number | null
+    year?: IntNullableFilter<"Payslip"> | number | null
     fileUrl?: StringNullableFilter<"Payslip"> | string | null
     publicId?: StringNullableFilter<"Payslip"> | string | null
     mimeType?: StringNullableFilter<"Payslip"> | string | null
@@ -34476,6 +36409,57 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type DepartmentUpsertWithoutEmployeesInput = {
+    update: XOR<DepartmentUpdateWithoutEmployeesInput, DepartmentUncheckedUpdateWithoutEmployeesInput>
+    create: XOR<DepartmentCreateWithoutEmployeesInput, DepartmentUncheckedCreateWithoutEmployeesInput>
+    where?: DepartmentWhereInput
+  }
+
+  export type DepartmentUpdateToOneWithWhereWithoutEmployeesInput = {
+    where?: DepartmentWhereInput
+    data: XOR<DepartmentUpdateWithoutEmployeesInput, DepartmentUncheckedUpdateWithoutEmployeesInput>
+  }
+
+  export type DepartmentUpdateWithoutEmployeesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    manager?: EmployeeUpdateOneWithoutManagesDepartmentsNestedInput
+  }
+
+  export type DepartmentUncheckedUpdateWithoutEmployeesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    managerId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DepartmentUpsertWithWhereUniqueWithoutManagerInput = {
+    where: DepartmentWhereUniqueInput
+    update: XOR<DepartmentUpdateWithoutManagerInput, DepartmentUncheckedUpdateWithoutManagerInput>
+    create: XOR<DepartmentCreateWithoutManagerInput, DepartmentUncheckedCreateWithoutManagerInput>
+  }
+
+  export type DepartmentUpdateWithWhereUniqueWithoutManagerInput = {
+    where: DepartmentWhereUniqueInput
+    data: XOR<DepartmentUpdateWithoutManagerInput, DepartmentUncheckedUpdateWithoutManagerInput>
+  }
+
+  export type DepartmentUpdateManyWithWhereWithoutManagerInput = {
+    where: DepartmentScalarWhereInput
+    data: XOR<DepartmentUpdateManyMutationInput, DepartmentUncheckedUpdateManyWithoutManagerInput>
+  }
+
+  export type DepartmentScalarWhereInput = {
+    AND?: DepartmentScalarWhereInput | DepartmentScalarWhereInput[]
+    OR?: DepartmentScalarWhereInput[]
+    NOT?: DepartmentScalarWhereInput | DepartmentScalarWhereInput[]
+    id?: StringFilter<"Department"> | string
+    name?: StringFilter<"Department"> | string
+    managerId?: StringNullableFilter<"Department"> | string | null
+    createdAt?: DateTimeFilter<"Department"> | Date | string
+  }
+
   export type EmployeeCreateWithoutContractsInput = {
     id?: string
     employeeNumber?: string | null
@@ -34483,6 +36467,7 @@ export namespace Prisma {
     lastName: string
     email: string
     phone?: string | null
+    dateOfBirth?: Date | string | null
     status?: $Enums.EmployeeStatus
     hireDate?: Date | string | null
     createdAt?: Date | string
@@ -34497,6 +36482,8 @@ export namespace Prisma {
     evaluations?: EvaluationCreateNestedManyWithoutEmployeeInput
     payslips?: PayslipCreateNestedManyWithoutEmployeeInput
     user?: UserCreateNestedOneWithoutEmployeeInput
+    department?: DepartmentCreateNestedOneWithoutEmployeesInput
+    managesDepartments?: DepartmentCreateNestedManyWithoutManagerInput
   }
 
   export type EmployeeUncheckedCreateWithoutContractsInput = {
@@ -34506,8 +36493,10 @@ export namespace Prisma {
     lastName: string
     email: string
     phone?: string | null
+    dateOfBirth?: Date | string | null
     status?: $Enums.EmployeeStatus
     hireDate?: Date | string | null
+    departmentId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     documents?: DocumentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -34520,6 +36509,7 @@ export namespace Prisma {
     evaluations?: EvaluationUncheckedCreateNestedManyWithoutEmployeeInput
     payslips?: PayslipUncheckedCreateNestedManyWithoutEmployeeInput
     user?: UserUncheckedCreateNestedOneWithoutEmployeeInput
+    managesDepartments?: DepartmentUncheckedCreateNestedManyWithoutManagerInput
   }
 
   export type EmployeeCreateOrConnectWithoutContractsInput = {
@@ -34545,6 +36535,7 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
     hireDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -34559,6 +36550,8 @@ export namespace Prisma {
     evaluations?: EvaluationUpdateManyWithoutEmployeeNestedInput
     payslips?: PayslipUpdateManyWithoutEmployeeNestedInput
     user?: UserUpdateOneWithoutEmployeeNestedInput
+    department?: DepartmentUpdateOneWithoutEmployeesNestedInput
+    managesDepartments?: DepartmentUpdateManyWithoutManagerNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutContractsInput = {
@@ -34568,8 +36561,10 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
     hireDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     documents?: DocumentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -34582,6 +36577,7 @@ export namespace Prisma {
     evaluations?: EvaluationUncheckedUpdateManyWithoutEmployeeNestedInput
     payslips?: PayslipUncheckedUpdateManyWithoutEmployeeNestedInput
     user?: UserUncheckedUpdateOneWithoutEmployeeNestedInput
+    managesDepartments?: DepartmentUncheckedUpdateManyWithoutManagerNestedInput
   }
 
   export type EmployeeCreateWithoutDocumentsInput = {
@@ -34591,6 +36587,7 @@ export namespace Prisma {
     lastName: string
     email: string
     phone?: string | null
+    dateOfBirth?: Date | string | null
     status?: $Enums.EmployeeStatus
     hireDate?: Date | string | null
     createdAt?: Date | string
@@ -34605,6 +36602,8 @@ export namespace Prisma {
     evaluations?: EvaluationCreateNestedManyWithoutEmployeeInput
     payslips?: PayslipCreateNestedManyWithoutEmployeeInput
     user?: UserCreateNestedOneWithoutEmployeeInput
+    department?: DepartmentCreateNestedOneWithoutEmployeesInput
+    managesDepartments?: DepartmentCreateNestedManyWithoutManagerInput
   }
 
   export type EmployeeUncheckedCreateWithoutDocumentsInput = {
@@ -34614,8 +36613,10 @@ export namespace Prisma {
     lastName: string
     email: string
     phone?: string | null
+    dateOfBirth?: Date | string | null
     status?: $Enums.EmployeeStatus
     hireDate?: Date | string | null
+    departmentId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
@@ -34628,6 +36629,7 @@ export namespace Prisma {
     evaluations?: EvaluationUncheckedCreateNestedManyWithoutEmployeeInput
     payslips?: PayslipUncheckedCreateNestedManyWithoutEmployeeInput
     user?: UserUncheckedCreateNestedOneWithoutEmployeeInput
+    managesDepartments?: DepartmentUncheckedCreateNestedManyWithoutManagerInput
   }
 
   export type EmployeeCreateOrConnectWithoutDocumentsInput = {
@@ -34653,6 +36655,7 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
     hireDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -34667,6 +36670,8 @@ export namespace Prisma {
     evaluations?: EvaluationUpdateManyWithoutEmployeeNestedInput
     payslips?: PayslipUpdateManyWithoutEmployeeNestedInput
     user?: UserUpdateOneWithoutEmployeeNestedInput
+    department?: DepartmentUpdateOneWithoutEmployeesNestedInput
+    managesDepartments?: DepartmentUpdateManyWithoutManagerNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutDocumentsInput = {
@@ -34676,8 +36681,10 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
     hireDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -34690,6 +36697,7 @@ export namespace Prisma {
     evaluations?: EvaluationUncheckedUpdateManyWithoutEmployeeNestedInput
     payslips?: PayslipUncheckedUpdateManyWithoutEmployeeNestedInput
     user?: UserUncheckedUpdateOneWithoutEmployeeNestedInput
+    managesDepartments?: DepartmentUncheckedUpdateManyWithoutManagerNestedInput
   }
 
   export type EmployeeCreateWithoutDisciplinaryRecordsInput = {
@@ -34699,6 +36707,7 @@ export namespace Prisma {
     lastName: string
     email: string
     phone?: string | null
+    dateOfBirth?: Date | string | null
     status?: $Enums.EmployeeStatus
     hireDate?: Date | string | null
     createdAt?: Date | string
@@ -34713,6 +36722,8 @@ export namespace Prisma {
     evaluations?: EvaluationCreateNestedManyWithoutEmployeeInput
     payslips?: PayslipCreateNestedManyWithoutEmployeeInput
     user?: UserCreateNestedOneWithoutEmployeeInput
+    department?: DepartmentCreateNestedOneWithoutEmployeesInput
+    managesDepartments?: DepartmentCreateNestedManyWithoutManagerInput
   }
 
   export type EmployeeUncheckedCreateWithoutDisciplinaryRecordsInput = {
@@ -34722,8 +36733,10 @@ export namespace Prisma {
     lastName: string
     email: string
     phone?: string | null
+    dateOfBirth?: Date | string | null
     status?: $Enums.EmployeeStatus
     hireDate?: Date | string | null
+    departmentId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
@@ -34736,6 +36749,7 @@ export namespace Prisma {
     evaluations?: EvaluationUncheckedCreateNestedManyWithoutEmployeeInput
     payslips?: PayslipUncheckedCreateNestedManyWithoutEmployeeInput
     user?: UserUncheckedCreateNestedOneWithoutEmployeeInput
+    managesDepartments?: DepartmentUncheckedCreateNestedManyWithoutManagerInput
   }
 
   export type EmployeeCreateOrConnectWithoutDisciplinaryRecordsInput = {
@@ -34761,6 +36775,7 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
     hireDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -34775,6 +36790,8 @@ export namespace Prisma {
     evaluations?: EvaluationUpdateManyWithoutEmployeeNestedInput
     payslips?: PayslipUpdateManyWithoutEmployeeNestedInput
     user?: UserUpdateOneWithoutEmployeeNestedInput
+    department?: DepartmentUpdateOneWithoutEmployeesNestedInput
+    managesDepartments?: DepartmentUpdateManyWithoutManagerNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutDisciplinaryRecordsInput = {
@@ -34784,8 +36801,10 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
     hireDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -34798,6 +36817,7 @@ export namespace Prisma {
     evaluations?: EvaluationUncheckedUpdateManyWithoutEmployeeNestedInput
     payslips?: PayslipUncheckedUpdateManyWithoutEmployeeNestedInput
     user?: UserUncheckedUpdateOneWithoutEmployeeNestedInput
+    managesDepartments?: DepartmentUncheckedUpdateManyWithoutManagerNestedInput
   }
 
   export type ApplicationCreateWithoutVacancyInput = {
@@ -35190,6 +37210,7 @@ export namespace Prisma {
     lastName: string
     email: string
     phone?: string | null
+    dateOfBirth?: Date | string | null
     status?: $Enums.EmployeeStatus
     hireDate?: Date | string | null
     createdAt?: Date | string
@@ -35204,6 +37225,8 @@ export namespace Prisma {
     leaveBalances?: LeaveBalanceCreateNestedManyWithoutEmployeeInput
     payslips?: PayslipCreateNestedManyWithoutEmployeeInput
     user?: UserCreateNestedOneWithoutEmployeeInput
+    department?: DepartmentCreateNestedOneWithoutEmployeesInput
+    managesDepartments?: DepartmentCreateNestedManyWithoutManagerInput
   }
 
   export type EmployeeUncheckedCreateWithoutEvaluationsInput = {
@@ -35213,8 +37236,10 @@ export namespace Prisma {
     lastName: string
     email: string
     phone?: string | null
+    dateOfBirth?: Date | string | null
     status?: $Enums.EmployeeStatus
     hireDate?: Date | string | null
+    departmentId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
@@ -35227,6 +37252,7 @@ export namespace Prisma {
     leaveBalances?: LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
     payslips?: PayslipUncheckedCreateNestedManyWithoutEmployeeInput
     user?: UserUncheckedCreateNestedOneWithoutEmployeeInput
+    managesDepartments?: DepartmentUncheckedCreateNestedManyWithoutManagerInput
   }
 
   export type EmployeeCreateOrConnectWithoutEvaluationsInput = {
@@ -35252,6 +37278,7 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
     hireDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35266,6 +37293,8 @@ export namespace Prisma {
     leaveBalances?: LeaveBalanceUpdateManyWithoutEmployeeNestedInput
     payslips?: PayslipUpdateManyWithoutEmployeeNestedInput
     user?: UserUpdateOneWithoutEmployeeNestedInput
+    department?: DepartmentUpdateOneWithoutEmployeesNestedInput
+    managesDepartments?: DepartmentUpdateManyWithoutManagerNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutEvaluationsInput = {
@@ -35275,8 +37304,10 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
     hireDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -35289,6 +37320,7 @@ export namespace Prisma {
     leaveBalances?: LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
     payslips?: PayslipUncheckedUpdateManyWithoutEmployeeNestedInput
     user?: UserUncheckedUpdateOneWithoutEmployeeNestedInput
+    managesDepartments?: DepartmentUncheckedUpdateManyWithoutManagerNestedInput
   }
 
   export type EmployeeCreateWithoutSalaryStructuresInput = {
@@ -35298,6 +37330,7 @@ export namespace Prisma {
     lastName: string
     email: string
     phone?: string | null
+    dateOfBirth?: Date | string | null
     status?: $Enums.EmployeeStatus
     hireDate?: Date | string | null
     createdAt?: Date | string
@@ -35312,6 +37345,8 @@ export namespace Prisma {
     evaluations?: EvaluationCreateNestedManyWithoutEmployeeInput
     payslips?: PayslipCreateNestedManyWithoutEmployeeInput
     user?: UserCreateNestedOneWithoutEmployeeInput
+    department?: DepartmentCreateNestedOneWithoutEmployeesInput
+    managesDepartments?: DepartmentCreateNestedManyWithoutManagerInput
   }
 
   export type EmployeeUncheckedCreateWithoutSalaryStructuresInput = {
@@ -35321,8 +37356,10 @@ export namespace Prisma {
     lastName: string
     email: string
     phone?: string | null
+    dateOfBirth?: Date | string | null
     status?: $Enums.EmployeeStatus
     hireDate?: Date | string | null
+    departmentId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
@@ -35335,6 +37372,7 @@ export namespace Prisma {
     evaluations?: EvaluationUncheckedCreateNestedManyWithoutEmployeeInput
     payslips?: PayslipUncheckedCreateNestedManyWithoutEmployeeInput
     user?: UserUncheckedCreateNestedOneWithoutEmployeeInput
+    managesDepartments?: DepartmentUncheckedCreateNestedManyWithoutManagerInput
   }
 
   export type EmployeeCreateOrConnectWithoutSalaryStructuresInput = {
@@ -35360,6 +37398,7 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
     hireDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35374,6 +37413,8 @@ export namespace Prisma {
     evaluations?: EvaluationUpdateManyWithoutEmployeeNestedInput
     payslips?: PayslipUpdateManyWithoutEmployeeNestedInput
     user?: UserUpdateOneWithoutEmployeeNestedInput
+    department?: DepartmentUpdateOneWithoutEmployeesNestedInput
+    managesDepartments?: DepartmentUpdateManyWithoutManagerNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutSalaryStructuresInput = {
@@ -35383,8 +37424,10 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
     hireDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -35397,12 +37440,231 @@ export namespace Prisma {
     evaluations?: EvaluationUncheckedUpdateManyWithoutEmployeeNestedInput
     payslips?: PayslipUncheckedUpdateManyWithoutEmployeeNestedInput
     user?: UserUncheckedUpdateOneWithoutEmployeeNestedInput
+    managesDepartments?: DepartmentUncheckedUpdateManyWithoutManagerNestedInput
+  }
+
+  export type EmployeeCreateWithoutManagesDepartmentsInput = {
+    id?: string
+    employeeNumber?: string | null
+    firstName: string
+    lastName: string
+    email: string
+    phone?: string | null
+    dateOfBirth?: Date | string | null
+    status?: $Enums.EmployeeStatus
+    hireDate?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    contracts?: ContractCreateNestedManyWithoutEmployeeInput
+    documents?: DocumentCreateNestedManyWithoutEmployeeInput
+    disciplinaryRecords?: DisciplinaryRecordCreateNestedManyWithoutEmployeeInput
+    salaryStructures?: SalaryStructureCreateNestedManyWithoutEmployeeInput
+    trainings?: TrainingHistoryCreateNestedManyWithoutEmployeeInput
+    attendances?: AttendanceCreateNestedManyWithoutEmployeeInput
+    leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
+    leaveBalances?: LeaveBalanceCreateNestedManyWithoutEmployeeInput
+    evaluations?: EvaluationCreateNestedManyWithoutEmployeeInput
+    payslips?: PayslipCreateNestedManyWithoutEmployeeInput
+    user?: UserCreateNestedOneWithoutEmployeeInput
+    department?: DepartmentCreateNestedOneWithoutEmployeesInput
+  }
+
+  export type EmployeeUncheckedCreateWithoutManagesDepartmentsInput = {
+    id?: string
+    employeeNumber?: string | null
+    firstName: string
+    lastName: string
+    email: string
+    phone?: string | null
+    dateOfBirth?: Date | string | null
+    status?: $Enums.EmployeeStatus
+    hireDate?: Date | string | null
+    departmentId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
+    documents?: DocumentUncheckedCreateNestedManyWithoutEmployeeInput
+    disciplinaryRecords?: DisciplinaryRecordUncheckedCreateNestedManyWithoutEmployeeInput
+    salaryStructures?: SalaryStructureUncheckedCreateNestedManyWithoutEmployeeInput
+    trainings?: TrainingHistoryUncheckedCreateNestedManyWithoutEmployeeInput
+    attendances?: AttendanceUncheckedCreateNestedManyWithoutEmployeeInput
+    leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
+    leaveBalances?: LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
+    evaluations?: EvaluationUncheckedCreateNestedManyWithoutEmployeeInput
+    payslips?: PayslipUncheckedCreateNestedManyWithoutEmployeeInput
+    user?: UserUncheckedCreateNestedOneWithoutEmployeeInput
+  }
+
+  export type EmployeeCreateOrConnectWithoutManagesDepartmentsInput = {
+    where: EmployeeWhereUniqueInput
+    create: XOR<EmployeeCreateWithoutManagesDepartmentsInput, EmployeeUncheckedCreateWithoutManagesDepartmentsInput>
+  }
+
+  export type EmployeeCreateWithoutDepartmentInput = {
+    id?: string
+    employeeNumber?: string | null
+    firstName: string
+    lastName: string
+    email: string
+    phone?: string | null
+    dateOfBirth?: Date | string | null
+    status?: $Enums.EmployeeStatus
+    hireDate?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    contracts?: ContractCreateNestedManyWithoutEmployeeInput
+    documents?: DocumentCreateNestedManyWithoutEmployeeInput
+    disciplinaryRecords?: DisciplinaryRecordCreateNestedManyWithoutEmployeeInput
+    salaryStructures?: SalaryStructureCreateNestedManyWithoutEmployeeInput
+    trainings?: TrainingHistoryCreateNestedManyWithoutEmployeeInput
+    attendances?: AttendanceCreateNestedManyWithoutEmployeeInput
+    leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
+    leaveBalances?: LeaveBalanceCreateNestedManyWithoutEmployeeInput
+    evaluations?: EvaluationCreateNestedManyWithoutEmployeeInput
+    payslips?: PayslipCreateNestedManyWithoutEmployeeInput
+    user?: UserCreateNestedOneWithoutEmployeeInput
+    managesDepartments?: DepartmentCreateNestedManyWithoutManagerInput
+  }
+
+  export type EmployeeUncheckedCreateWithoutDepartmentInput = {
+    id?: string
+    employeeNumber?: string | null
+    firstName: string
+    lastName: string
+    email: string
+    phone?: string | null
+    dateOfBirth?: Date | string | null
+    status?: $Enums.EmployeeStatus
+    hireDate?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
+    documents?: DocumentUncheckedCreateNestedManyWithoutEmployeeInput
+    disciplinaryRecords?: DisciplinaryRecordUncheckedCreateNestedManyWithoutEmployeeInput
+    salaryStructures?: SalaryStructureUncheckedCreateNestedManyWithoutEmployeeInput
+    trainings?: TrainingHistoryUncheckedCreateNestedManyWithoutEmployeeInput
+    attendances?: AttendanceUncheckedCreateNestedManyWithoutEmployeeInput
+    leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
+    leaveBalances?: LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
+    evaluations?: EvaluationUncheckedCreateNestedManyWithoutEmployeeInput
+    payslips?: PayslipUncheckedCreateNestedManyWithoutEmployeeInput
+    user?: UserUncheckedCreateNestedOneWithoutEmployeeInput
+    managesDepartments?: DepartmentUncheckedCreateNestedManyWithoutManagerInput
+  }
+
+  export type EmployeeCreateOrConnectWithoutDepartmentInput = {
+    where: EmployeeWhereUniqueInput
+    create: XOR<EmployeeCreateWithoutDepartmentInput, EmployeeUncheckedCreateWithoutDepartmentInput>
+  }
+
+  export type EmployeeCreateManyDepartmentInputEnvelope = {
+    data: EmployeeCreateManyDepartmentInput | EmployeeCreateManyDepartmentInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type EmployeeUpsertWithoutManagesDepartmentsInput = {
+    update: XOR<EmployeeUpdateWithoutManagesDepartmentsInput, EmployeeUncheckedUpdateWithoutManagesDepartmentsInput>
+    create: XOR<EmployeeCreateWithoutManagesDepartmentsInput, EmployeeUncheckedCreateWithoutManagesDepartmentsInput>
+    where?: EmployeeWhereInput
+  }
+
+  export type EmployeeUpdateToOneWithWhereWithoutManagesDepartmentsInput = {
+    where?: EmployeeWhereInput
+    data: XOR<EmployeeUpdateWithoutManagesDepartmentsInput, EmployeeUncheckedUpdateWithoutManagesDepartmentsInput>
+  }
+
+  export type EmployeeUpdateWithoutManagesDepartmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    employeeNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
+    hireDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    contracts?: ContractUpdateManyWithoutEmployeeNestedInput
+    documents?: DocumentUpdateManyWithoutEmployeeNestedInput
+    disciplinaryRecords?: DisciplinaryRecordUpdateManyWithoutEmployeeNestedInput
+    salaryStructures?: SalaryStructureUpdateManyWithoutEmployeeNestedInput
+    trainings?: TrainingHistoryUpdateManyWithoutEmployeeNestedInput
+    attendances?: AttendanceUpdateManyWithoutEmployeeNestedInput
+    leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
+    leaveBalances?: LeaveBalanceUpdateManyWithoutEmployeeNestedInput
+    evaluations?: EvaluationUpdateManyWithoutEmployeeNestedInput
+    payslips?: PayslipUpdateManyWithoutEmployeeNestedInput
+    user?: UserUpdateOneWithoutEmployeeNestedInput
+    department?: DepartmentUpdateOneWithoutEmployeesNestedInput
+  }
+
+  export type EmployeeUncheckedUpdateWithoutManagesDepartmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    employeeNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
+    hireDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
+    documents?: DocumentUncheckedUpdateManyWithoutEmployeeNestedInput
+    disciplinaryRecords?: DisciplinaryRecordUncheckedUpdateManyWithoutEmployeeNestedInput
+    salaryStructures?: SalaryStructureUncheckedUpdateManyWithoutEmployeeNestedInput
+    trainings?: TrainingHistoryUncheckedUpdateManyWithoutEmployeeNestedInput
+    attendances?: AttendanceUncheckedUpdateManyWithoutEmployeeNestedInput
+    leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
+    leaveBalances?: LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
+    evaluations?: EvaluationUncheckedUpdateManyWithoutEmployeeNestedInput
+    payslips?: PayslipUncheckedUpdateManyWithoutEmployeeNestedInput
+    user?: UserUncheckedUpdateOneWithoutEmployeeNestedInput
+  }
+
+  export type EmployeeUpsertWithWhereUniqueWithoutDepartmentInput = {
+    where: EmployeeWhereUniqueInput
+    update: XOR<EmployeeUpdateWithoutDepartmentInput, EmployeeUncheckedUpdateWithoutDepartmentInput>
+    create: XOR<EmployeeCreateWithoutDepartmentInput, EmployeeUncheckedCreateWithoutDepartmentInput>
+  }
+
+  export type EmployeeUpdateWithWhereUniqueWithoutDepartmentInput = {
+    where: EmployeeWhereUniqueInput
+    data: XOR<EmployeeUpdateWithoutDepartmentInput, EmployeeUncheckedUpdateWithoutDepartmentInput>
+  }
+
+  export type EmployeeUpdateManyWithWhereWithoutDepartmentInput = {
+    where: EmployeeScalarWhereInput
+    data: XOR<EmployeeUpdateManyMutationInput, EmployeeUncheckedUpdateManyWithoutDepartmentInput>
+  }
+
+  export type EmployeeScalarWhereInput = {
+    AND?: EmployeeScalarWhereInput | EmployeeScalarWhereInput[]
+    OR?: EmployeeScalarWhereInput[]
+    NOT?: EmployeeScalarWhereInput | EmployeeScalarWhereInput[]
+    id?: StringFilter<"Employee"> | string
+    employeeNumber?: StringNullableFilter<"Employee"> | string | null
+    firstName?: StringFilter<"Employee"> | string
+    lastName?: StringFilter<"Employee"> | string
+    email?: StringFilter<"Employee"> | string
+    phone?: StringNullableFilter<"Employee"> | string | null
+    dateOfBirth?: DateTimeNullableFilter<"Employee"> | Date | string | null
+    status?: EnumEmployeeStatusFilter<"Employee"> | $Enums.EmployeeStatus
+    hireDate?: DateTimeNullableFilter<"Employee"> | Date | string | null
+    departmentId?: StringNullableFilter<"Employee"> | string | null
+    createdAt?: DateTimeFilter<"Employee"> | Date | string
+    updatedAt?: DateTimeFilter<"Employee"> | Date | string
   }
 
   export type PayslipCreateWithoutPayrollRunInput = {
     id?: string
     gross: number
     net: number
+    month?: number | null
+    year?: number | null
     fileUrl?: string | null
     publicId?: string | null
     mimeType?: string | null
@@ -35416,6 +37678,8 @@ export namespace Prisma {
     employeeId: string
     gross: number
     net: number
+    month?: number | null
+    year?: number | null
     fileUrl?: string | null
     publicId?: string | null
     mimeType?: string | null
@@ -35475,6 +37739,7 @@ export namespace Prisma {
     lastName: string
     email: string
     phone?: string | null
+    dateOfBirth?: Date | string | null
     status?: $Enums.EmployeeStatus
     hireDate?: Date | string | null
     createdAt?: Date | string
@@ -35489,6 +37754,8 @@ export namespace Prisma {
     leaveBalances?: LeaveBalanceCreateNestedManyWithoutEmployeeInput
     evaluations?: EvaluationCreateNestedManyWithoutEmployeeInput
     user?: UserCreateNestedOneWithoutEmployeeInput
+    department?: DepartmentCreateNestedOneWithoutEmployeesInput
+    managesDepartments?: DepartmentCreateNestedManyWithoutManagerInput
   }
 
   export type EmployeeUncheckedCreateWithoutPayslipsInput = {
@@ -35498,8 +37765,10 @@ export namespace Prisma {
     lastName: string
     email: string
     phone?: string | null
+    dateOfBirth?: Date | string | null
     status?: $Enums.EmployeeStatus
     hireDate?: Date | string | null
+    departmentId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
@@ -35512,6 +37781,7 @@ export namespace Prisma {
     leaveBalances?: LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
     evaluations?: EvaluationUncheckedCreateNestedManyWithoutEmployeeInput
     user?: UserUncheckedCreateNestedOneWithoutEmployeeInput
+    managesDepartments?: DepartmentUncheckedCreateNestedManyWithoutManagerInput
   }
 
   export type EmployeeCreateOrConnectWithoutPayslipsInput = {
@@ -35562,6 +37832,7 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
     hireDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35576,6 +37847,8 @@ export namespace Prisma {
     leaveBalances?: LeaveBalanceUpdateManyWithoutEmployeeNestedInput
     evaluations?: EvaluationUpdateManyWithoutEmployeeNestedInput
     user?: UserUpdateOneWithoutEmployeeNestedInput
+    department?: DepartmentUpdateOneWithoutEmployeesNestedInput
+    managesDepartments?: DepartmentUpdateManyWithoutManagerNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutPayslipsInput = {
@@ -35585,8 +37858,10 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
     hireDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -35599,6 +37874,7 @@ export namespace Prisma {
     leaveBalances?: LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
     evaluations?: EvaluationUncheckedUpdateManyWithoutEmployeeNestedInput
     user?: UserUncheckedUpdateOneWithoutEmployeeNestedInput
+    managesDepartments?: DepartmentUncheckedUpdateManyWithoutManagerNestedInput
   }
 
   export type EmployeeCreateWithoutAttendancesInput = {
@@ -35608,6 +37884,7 @@ export namespace Prisma {
     lastName: string
     email: string
     phone?: string | null
+    dateOfBirth?: Date | string | null
     status?: $Enums.EmployeeStatus
     hireDate?: Date | string | null
     createdAt?: Date | string
@@ -35622,6 +37899,8 @@ export namespace Prisma {
     evaluations?: EvaluationCreateNestedManyWithoutEmployeeInput
     payslips?: PayslipCreateNestedManyWithoutEmployeeInput
     user?: UserCreateNestedOneWithoutEmployeeInput
+    department?: DepartmentCreateNestedOneWithoutEmployeesInput
+    managesDepartments?: DepartmentCreateNestedManyWithoutManagerInput
   }
 
   export type EmployeeUncheckedCreateWithoutAttendancesInput = {
@@ -35631,8 +37910,10 @@ export namespace Prisma {
     lastName: string
     email: string
     phone?: string | null
+    dateOfBirth?: Date | string | null
     status?: $Enums.EmployeeStatus
     hireDate?: Date | string | null
+    departmentId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
@@ -35645,6 +37926,7 @@ export namespace Prisma {
     evaluations?: EvaluationUncheckedCreateNestedManyWithoutEmployeeInput
     payslips?: PayslipUncheckedCreateNestedManyWithoutEmployeeInput
     user?: UserUncheckedCreateNestedOneWithoutEmployeeInput
+    managesDepartments?: DepartmentUncheckedCreateNestedManyWithoutManagerInput
   }
 
   export type EmployeeCreateOrConnectWithoutAttendancesInput = {
@@ -35670,6 +37952,7 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
     hireDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35684,6 +37967,8 @@ export namespace Prisma {
     evaluations?: EvaluationUpdateManyWithoutEmployeeNestedInput
     payslips?: PayslipUpdateManyWithoutEmployeeNestedInput
     user?: UserUpdateOneWithoutEmployeeNestedInput
+    department?: DepartmentUpdateOneWithoutEmployeesNestedInput
+    managesDepartments?: DepartmentUpdateManyWithoutManagerNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutAttendancesInput = {
@@ -35693,8 +37978,10 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
     hireDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -35707,6 +37994,7 @@ export namespace Prisma {
     evaluations?: EvaluationUncheckedUpdateManyWithoutEmployeeNestedInput
     payslips?: PayslipUncheckedUpdateManyWithoutEmployeeNestedInput
     user?: UserUncheckedUpdateOneWithoutEmployeeNestedInput
+    managesDepartments?: DepartmentUncheckedUpdateManyWithoutManagerNestedInput
   }
 
   export type EmployeeCreateWithoutLeaveRequestsInput = {
@@ -35716,6 +38004,7 @@ export namespace Prisma {
     lastName: string
     email: string
     phone?: string | null
+    dateOfBirth?: Date | string | null
     status?: $Enums.EmployeeStatus
     hireDate?: Date | string | null
     createdAt?: Date | string
@@ -35730,6 +38019,8 @@ export namespace Prisma {
     evaluations?: EvaluationCreateNestedManyWithoutEmployeeInput
     payslips?: PayslipCreateNestedManyWithoutEmployeeInput
     user?: UserCreateNestedOneWithoutEmployeeInput
+    department?: DepartmentCreateNestedOneWithoutEmployeesInput
+    managesDepartments?: DepartmentCreateNestedManyWithoutManagerInput
   }
 
   export type EmployeeUncheckedCreateWithoutLeaveRequestsInput = {
@@ -35739,8 +38030,10 @@ export namespace Prisma {
     lastName: string
     email: string
     phone?: string | null
+    dateOfBirth?: Date | string | null
     status?: $Enums.EmployeeStatus
     hireDate?: Date | string | null
+    departmentId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
@@ -35753,6 +38046,7 @@ export namespace Prisma {
     evaluations?: EvaluationUncheckedCreateNestedManyWithoutEmployeeInput
     payslips?: PayslipUncheckedCreateNestedManyWithoutEmployeeInput
     user?: UserUncheckedCreateNestedOneWithoutEmployeeInput
+    managesDepartments?: DepartmentUncheckedCreateNestedManyWithoutManagerInput
   }
 
   export type EmployeeCreateOrConnectWithoutLeaveRequestsInput = {
@@ -35778,6 +38072,7 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
     hireDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35792,6 +38087,8 @@ export namespace Prisma {
     evaluations?: EvaluationUpdateManyWithoutEmployeeNestedInput
     payslips?: PayslipUpdateManyWithoutEmployeeNestedInput
     user?: UserUpdateOneWithoutEmployeeNestedInput
+    department?: DepartmentUpdateOneWithoutEmployeesNestedInput
+    managesDepartments?: DepartmentUpdateManyWithoutManagerNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutLeaveRequestsInput = {
@@ -35801,8 +38098,10 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
     hireDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -35815,6 +38114,7 @@ export namespace Prisma {
     evaluations?: EvaluationUncheckedUpdateManyWithoutEmployeeNestedInput
     payslips?: PayslipUncheckedUpdateManyWithoutEmployeeNestedInput
     user?: UserUncheckedUpdateOneWithoutEmployeeNestedInput
+    managesDepartments?: DepartmentUncheckedUpdateManyWithoutManagerNestedInput
   }
 
   export type EmployeeCreateWithoutLeaveBalancesInput = {
@@ -35824,6 +38124,7 @@ export namespace Prisma {
     lastName: string
     email: string
     phone?: string | null
+    dateOfBirth?: Date | string | null
     status?: $Enums.EmployeeStatus
     hireDate?: Date | string | null
     createdAt?: Date | string
@@ -35838,6 +38139,8 @@ export namespace Prisma {
     evaluations?: EvaluationCreateNestedManyWithoutEmployeeInput
     payslips?: PayslipCreateNestedManyWithoutEmployeeInput
     user?: UserCreateNestedOneWithoutEmployeeInput
+    department?: DepartmentCreateNestedOneWithoutEmployeesInput
+    managesDepartments?: DepartmentCreateNestedManyWithoutManagerInput
   }
 
   export type EmployeeUncheckedCreateWithoutLeaveBalancesInput = {
@@ -35847,8 +38150,10 @@ export namespace Prisma {
     lastName: string
     email: string
     phone?: string | null
+    dateOfBirth?: Date | string | null
     status?: $Enums.EmployeeStatus
     hireDate?: Date | string | null
+    departmentId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
@@ -35861,6 +38166,7 @@ export namespace Prisma {
     evaluations?: EvaluationUncheckedCreateNestedManyWithoutEmployeeInput
     payslips?: PayslipUncheckedCreateNestedManyWithoutEmployeeInput
     user?: UserUncheckedCreateNestedOneWithoutEmployeeInput
+    managesDepartments?: DepartmentUncheckedCreateNestedManyWithoutManagerInput
   }
 
   export type EmployeeCreateOrConnectWithoutLeaveBalancesInput = {
@@ -35886,6 +38192,7 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
     hireDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35900,6 +38207,8 @@ export namespace Prisma {
     evaluations?: EvaluationUpdateManyWithoutEmployeeNestedInput
     payslips?: PayslipUpdateManyWithoutEmployeeNestedInput
     user?: UserUpdateOneWithoutEmployeeNestedInput
+    department?: DepartmentUpdateOneWithoutEmployeesNestedInput
+    managesDepartments?: DepartmentUpdateManyWithoutManagerNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutLeaveBalancesInput = {
@@ -35909,8 +38218,10 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
     hireDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -35923,6 +38234,7 @@ export namespace Prisma {
     evaluations?: EvaluationUncheckedUpdateManyWithoutEmployeeNestedInput
     payslips?: PayslipUncheckedUpdateManyWithoutEmployeeNestedInput
     user?: UserUncheckedUpdateOneWithoutEmployeeNestedInput
+    managesDepartments?: DepartmentUncheckedUpdateManyWithoutManagerNestedInput
   }
 
   export type SkillCreateWithoutTrainingsInput = {
@@ -36059,6 +38371,7 @@ export namespace Prisma {
     lastName: string
     email: string
     phone?: string | null
+    dateOfBirth?: Date | string | null
     status?: $Enums.EmployeeStatus
     hireDate?: Date | string | null
     createdAt?: Date | string
@@ -36073,6 +38386,8 @@ export namespace Prisma {
     evaluations?: EvaluationCreateNestedManyWithoutEmployeeInput
     payslips?: PayslipCreateNestedManyWithoutEmployeeInput
     user?: UserCreateNestedOneWithoutEmployeeInput
+    department?: DepartmentCreateNestedOneWithoutEmployeesInput
+    managesDepartments?: DepartmentCreateNestedManyWithoutManagerInput
   }
 
   export type EmployeeUncheckedCreateWithoutTrainingsInput = {
@@ -36082,8 +38397,10 @@ export namespace Prisma {
     lastName: string
     email: string
     phone?: string | null
+    dateOfBirth?: Date | string | null
     status?: $Enums.EmployeeStatus
     hireDate?: Date | string | null
+    departmentId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
@@ -36096,6 +38413,7 @@ export namespace Prisma {
     evaluations?: EvaluationUncheckedCreateNestedManyWithoutEmployeeInput
     payslips?: PayslipUncheckedCreateNestedManyWithoutEmployeeInput
     user?: UserUncheckedCreateNestedOneWithoutEmployeeInput
+    managesDepartments?: DepartmentUncheckedCreateNestedManyWithoutManagerInput
   }
 
   export type EmployeeCreateOrConnectWithoutTrainingsInput = {
@@ -36142,6 +38460,7 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
     hireDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -36156,6 +38475,8 @@ export namespace Prisma {
     evaluations?: EvaluationUpdateManyWithoutEmployeeNestedInput
     payslips?: PayslipUpdateManyWithoutEmployeeNestedInput
     user?: UserUpdateOneWithoutEmployeeNestedInput
+    department?: DepartmentUpdateOneWithoutEmployeesNestedInput
+    managesDepartments?: DepartmentUpdateManyWithoutManagerNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutTrainingsInput = {
@@ -36165,8 +38486,10 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
     hireDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -36179,6 +38502,7 @@ export namespace Prisma {
     evaluations?: EvaluationUncheckedUpdateManyWithoutEmployeeNestedInput
     payslips?: PayslipUncheckedUpdateManyWithoutEmployeeNestedInput
     user?: UserUncheckedUpdateOneWithoutEmployeeNestedInput
+    managesDepartments?: DepartmentUncheckedUpdateManyWithoutManagerNestedInput
   }
 
   export type TrainingUpsertWithoutHistoriesInput = {
@@ -36217,6 +38541,9 @@ export namespace Prisma {
     publicId?: string | null
     mimeType?: string | null
     size?: number | null
+    uploadStatus?: $Enums.FileUploadStatus
+    uploadError?: string | null
+    uploadAttempts?: number
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -36293,11 +38620,19 @@ export namespace Prisma {
     payrollRunId: string
     gross: number
     net: number
+    month?: number | null
+    year?: number | null
     fileUrl?: string | null
     publicId?: string | null
     mimeType?: string | null
     size?: number | null
     generatedAt?: Date | string
+  }
+
+  export type DepartmentCreateManyManagerInput = {
+    id?: string
+    name: string
+    createdAt?: Date | string
   }
 
   export type ContractUpdateWithoutEmployeeInput = {
@@ -36309,6 +38644,9 @@ export namespace Prisma {
     publicId?: NullableStringFieldUpdateOperationsInput | string | null
     mimeType?: NullableStringFieldUpdateOperationsInput | string | null
     size?: NullableIntFieldUpdateOperationsInput | number | null
+    uploadStatus?: EnumFileUploadStatusFieldUpdateOperationsInput | $Enums.FileUploadStatus
+    uploadError?: NullableStringFieldUpdateOperationsInput | string | null
+    uploadAttempts?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -36322,6 +38660,9 @@ export namespace Prisma {
     publicId?: NullableStringFieldUpdateOperationsInput | string | null
     mimeType?: NullableStringFieldUpdateOperationsInput | string | null
     size?: NullableIntFieldUpdateOperationsInput | number | null
+    uploadStatus?: EnumFileUploadStatusFieldUpdateOperationsInput | $Enums.FileUploadStatus
+    uploadError?: NullableStringFieldUpdateOperationsInput | string | null
+    uploadAttempts?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -36335,6 +38676,9 @@ export namespace Prisma {
     publicId?: NullableStringFieldUpdateOperationsInput | string | null
     mimeType?: NullableStringFieldUpdateOperationsInput | string | null
     size?: NullableIntFieldUpdateOperationsInput | number | null
+    uploadStatus?: EnumFileUploadStatusFieldUpdateOperationsInput | $Enums.FileUploadStatus
+    uploadError?: NullableStringFieldUpdateOperationsInput | string | null
+    uploadAttempts?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -36544,6 +38888,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     gross?: FloatFieldUpdateOperationsInput | number
     net?: FloatFieldUpdateOperationsInput | number
+    month?: NullableIntFieldUpdateOperationsInput | number | null
+    year?: NullableIntFieldUpdateOperationsInput | number | null
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     publicId?: NullableStringFieldUpdateOperationsInput | string | null
     mimeType?: NullableStringFieldUpdateOperationsInput | string | null
@@ -36557,6 +38903,8 @@ export namespace Prisma {
     payrollRunId?: StringFieldUpdateOperationsInput | string
     gross?: FloatFieldUpdateOperationsInput | number
     net?: FloatFieldUpdateOperationsInput | number
+    month?: NullableIntFieldUpdateOperationsInput | number | null
+    year?: NullableIntFieldUpdateOperationsInput | number | null
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     publicId?: NullableStringFieldUpdateOperationsInput | string | null
     mimeType?: NullableStringFieldUpdateOperationsInput | string | null
@@ -36569,11 +38917,33 @@ export namespace Prisma {
     payrollRunId?: StringFieldUpdateOperationsInput | string
     gross?: FloatFieldUpdateOperationsInput | number
     net?: FloatFieldUpdateOperationsInput | number
+    month?: NullableIntFieldUpdateOperationsInput | number | null
+    year?: NullableIntFieldUpdateOperationsInput | number | null
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     publicId?: NullableStringFieldUpdateOperationsInput | string | null
     mimeType?: NullableStringFieldUpdateOperationsInput | string | null
     size?: NullableIntFieldUpdateOperationsInput | number | null
     generatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DepartmentUpdateWithoutManagerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    employees?: EmployeeUpdateManyWithoutDepartmentNestedInput
+  }
+
+  export type DepartmentUncheckedUpdateWithoutManagerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    employees?: EmployeeUncheckedUpdateManyWithoutDepartmentNestedInput
+  }
+
+  export type DepartmentUncheckedUpdateManyWithoutManagerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ApplicationCreateManyVacancyInput = {
@@ -36664,11 +39034,93 @@ export namespace Prisma {
     result?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
+  export type EmployeeCreateManyDepartmentInput = {
+    id?: string
+    employeeNumber?: string | null
+    firstName: string
+    lastName: string
+    email: string
+    phone?: string | null
+    dateOfBirth?: Date | string | null
+    status?: $Enums.EmployeeStatus
+    hireDate?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type EmployeeUpdateWithoutDepartmentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    employeeNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
+    hireDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    contracts?: ContractUpdateManyWithoutEmployeeNestedInput
+    documents?: DocumentUpdateManyWithoutEmployeeNestedInput
+    disciplinaryRecords?: DisciplinaryRecordUpdateManyWithoutEmployeeNestedInput
+    salaryStructures?: SalaryStructureUpdateManyWithoutEmployeeNestedInput
+    trainings?: TrainingHistoryUpdateManyWithoutEmployeeNestedInput
+    attendances?: AttendanceUpdateManyWithoutEmployeeNestedInput
+    leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
+    leaveBalances?: LeaveBalanceUpdateManyWithoutEmployeeNestedInput
+    evaluations?: EvaluationUpdateManyWithoutEmployeeNestedInput
+    payslips?: PayslipUpdateManyWithoutEmployeeNestedInput
+    user?: UserUpdateOneWithoutEmployeeNestedInput
+    managesDepartments?: DepartmentUpdateManyWithoutManagerNestedInput
+  }
+
+  export type EmployeeUncheckedUpdateWithoutDepartmentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    employeeNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
+    hireDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
+    documents?: DocumentUncheckedUpdateManyWithoutEmployeeNestedInput
+    disciplinaryRecords?: DisciplinaryRecordUncheckedUpdateManyWithoutEmployeeNestedInput
+    salaryStructures?: SalaryStructureUncheckedUpdateManyWithoutEmployeeNestedInput
+    trainings?: TrainingHistoryUncheckedUpdateManyWithoutEmployeeNestedInput
+    attendances?: AttendanceUncheckedUpdateManyWithoutEmployeeNestedInput
+    leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
+    leaveBalances?: LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
+    evaluations?: EvaluationUncheckedUpdateManyWithoutEmployeeNestedInput
+    payslips?: PayslipUncheckedUpdateManyWithoutEmployeeNestedInput
+    user?: UserUncheckedUpdateOneWithoutEmployeeNestedInput
+    managesDepartments?: DepartmentUncheckedUpdateManyWithoutManagerNestedInput
+  }
+
+  export type EmployeeUncheckedUpdateManyWithoutDepartmentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    employeeNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
+    hireDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type PayslipCreateManyPayrollRunInput = {
     id?: string
     employeeId: string
     gross: number
     net: number
+    month?: number | null
+    year?: number | null
     fileUrl?: string | null
     publicId?: string | null
     mimeType?: string | null
@@ -36680,6 +39132,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     gross?: FloatFieldUpdateOperationsInput | number
     net?: FloatFieldUpdateOperationsInput | number
+    month?: NullableIntFieldUpdateOperationsInput | number | null
+    year?: NullableIntFieldUpdateOperationsInput | number | null
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     publicId?: NullableStringFieldUpdateOperationsInput | string | null
     mimeType?: NullableStringFieldUpdateOperationsInput | string | null
@@ -36693,6 +39147,8 @@ export namespace Prisma {
     employeeId?: StringFieldUpdateOperationsInput | string
     gross?: FloatFieldUpdateOperationsInput | number
     net?: FloatFieldUpdateOperationsInput | number
+    month?: NullableIntFieldUpdateOperationsInput | number | null
+    year?: NullableIntFieldUpdateOperationsInput | number | null
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     publicId?: NullableStringFieldUpdateOperationsInput | string | null
     mimeType?: NullableStringFieldUpdateOperationsInput | string | null
@@ -36705,6 +39161,8 @@ export namespace Prisma {
     employeeId?: StringFieldUpdateOperationsInput | string
     gross?: FloatFieldUpdateOperationsInput | number
     net?: FloatFieldUpdateOperationsInput | number
+    month?: NullableIntFieldUpdateOperationsInput | number | null
+    year?: NullableIntFieldUpdateOperationsInput | number | null
     fileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     publicId?: NullableStringFieldUpdateOperationsInput | string | null
     mimeType?: NullableStringFieldUpdateOperationsInput | string | null

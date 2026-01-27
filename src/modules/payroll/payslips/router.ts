@@ -8,6 +8,8 @@ const router = express.Router();
 
 // Accept optional file 'file' for payslip PDF
 router.post("/", upload.single("file"), validate(CreatePayslipSchema), controller.createPayslip);
+// List all payslips (paginated)
+router.get("/", controller.listPayslips);
 router.get("/employee/:employeeId", controller.listPayslipsForEmployee);
 router.get("/:id", controller.getPayslip);
 router.patch("/:id", controller.updatePayslip);

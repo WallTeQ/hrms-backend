@@ -10,11 +10,28 @@ const contractsRepo = ContractsRepository();
 const docsRepo = DocumentsRepository();
 
 export const EmployeeService = {
-  create: async (data: Prisma.EmployeeCreateInput & { password?: string }) => {
+  create: async (data: Prisma.EmployeeCreateInput & { password?: string; departmentId?: string }) => {
     // Parse dateOfBirth if it's a string
     const createData = { ...data };
     if (typeof createData.dateOfBirth === 'string') {
-      createData.dateOfBirth = new Date(createData.dateOfBirth);
+      const parsed = new Date(createData.dateOfBirth);
+      if (!isNaN(parsed.getTime())) {
+        createData.dateOfBirth = parsed;
+      } else {
+        // Invalid date, set to null
+        createData.dateOfBirth = null;
+      }
+    }
+
+    // Handle departmentId
+    if (createData.departmentId && typeof createData.departmentId === 'string' && createData.departmentId.trim() !== '') {
+      const department = await prismaDefault.department.findUnique({ where: { id: createData.departmentId } });
+      if (!department) throw Object.assign(new Error(`Department with id ${createData.departmentId} not found`), { status: 400 });
+      (createData as any).department = { connect: { id: createData.departmentId } };
+      delete (createData as any).departmentId;
+    } else {
+      // Ensure departmentId is not set if invalid
+      delete (createData as any).departmentId;
     }
 
     if (data.password) {
@@ -39,12 +56,47 @@ export const EmployeeService = {
   getById: async (id: string, user?: any) => repo.findById(id, user),
   findByEmail: async (email: string) => repo.findByEmail(email),
   list: async (filters: { search?: string; status?: string; skip?: number; take?: number; includes?: string[] } = {}, user?: any) => repo.list(filters as any, user, filters.includes),
-  update: async (id: string, data: Prisma.EmployeeUpdateInput) => {
+  update: async (id: string, data: Prisma.EmployeeUpdateInput & { departmentId?: string | null; position?: string }) => {
     // Parse dateOfBirth if it's a string
     const updateData = { ...data };
     if (typeof updateData.dateOfBirth === 'string') {
-      updateData.dateOfBirth = new Date(updateData.dateOfBirth);
+      const parsed = new Date(updateData.dateOfBirth);
+      if (!isNaN(parsed.getTime())) {
+        updateData.dateOfBirth = parsed;
+      } else {
+        // Invalid date, remove from update data to avoid error
+        delete updateData.dateOfBirth;
+      }
     }
+
+    // Handle departmentId
+    if (updateData.departmentId !== undefined) {
+      if (updateData.departmentId && typeof updateData.departmentId === 'string' && updateData.departmentId.trim() !== '') {
+        const department = await prismaDefault.department.findUnique({ where: { id: updateData.departmentId } });
+        if (!department) throw Object.assign(new Error(`Department with id ${updateData.departmentId} not found`), { status: 400 });
+        (updateData as any).department = { connect: { id: updateData.departmentId } };
+      } else {
+        (updateData as any).department = { disconnect: true };
+      }
+      delete (updateData as any).departmentId;
+    }
+
+    // Handle position update by updating the latest contract
+    if (updateData.position !== undefined) {
+      const latestContract = await prismaDefault.contract.findFirst({
+        where: { employeeId: id },
+        orderBy: { startDate: 'desc' },
+        select: { id: true, title: true },
+      });
+      if (latestContract && latestContract.title !== updateData.position) {
+        await prismaDefault.contract.update({
+          where: { id: latestContract.id },
+          data: { title: updateData.position },
+        });
+      }
+      delete (updateData as any).position;
+    }
+
     return repo.update(id, updateData);
   },
   delete: async (id: string) => repo.softDelete(id),

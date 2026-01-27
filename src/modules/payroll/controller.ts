@@ -46,3 +46,19 @@ export async function listPayrollRuns(req: Request, res: Response) {
   const paginated = createPaginationResult(items, total, { ...pagination, page: page || 1 });
   return res.json({ status: "success", ...paginated });
 }
+
+export async function getPayrollSummary(req: Request, res: Response) {
+  const q = ((req as any).validatedQuery || req.query) as any;
+  const summary = await PayrollService.getPayrollSummary(q);
+  return res.json({ status: "success", data: summary });
+}
+
+export async function exportPayroll(req: Request, res: Response) {
+  const q = ((req as any).validatedQuery || req.query) as any;
+  if (!q.period) return res.status(400).json({ error: "period is required" });
+  const buf = await PayrollService.exportPayrollCsv(q.period);
+  const fileName = `payroll_${q.period}.csv`;
+  res.setHeader("Content-Type", "text/csv");
+  res.setHeader("Content-Disposition", `attachment; filename="${fileName}"`);
+  return res.send(buf);
+}

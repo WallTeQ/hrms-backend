@@ -7,6 +7,7 @@ export const CreateEmployeeSchema = z.object({
   phone: z.string().optional().nullable(),
   dateOfBirth: z.string().optional().nullable(),
   password: z.string().min(8),
+  departmentId: z.string().optional().nullable(),
 });
 
 export type CreateEmployeeDto = z.infer<typeof CreateEmployeeSchema>;
@@ -24,6 +25,11 @@ export const EmployeeResponseSchema = z.object({
   phone: z.string().optional().nullable(),
   dateOfBirth: z.string().optional().nullable(),
   position: z.string().optional().nullable(),
+  departmentId: z.string().optional().nullable(),
+  department: z.object({
+    id: z.string(),
+    name: z.string(),
+  }).optional().nullable(),
   createdAt: z.string(),
   updatedAt: z.string(),
 });

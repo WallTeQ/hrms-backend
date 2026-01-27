@@ -137,8 +137,10 @@ exports.Prisma.EmployeeScalarFieldEnum = {
   lastName: 'lastName',
   email: 'email',
   phone: 'phone',
+  dateOfBirth: 'dateOfBirth',
   status: 'status',
   hireDate: 'hireDate',
+  departmentId: 'departmentId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -153,6 +155,9 @@ exports.Prisma.ContractScalarFieldEnum = {
   publicId: 'publicId',
   mimeType: 'mimeType',
   size: 'size',
+  uploadStatus: 'uploadStatus',
+  uploadError: 'uploadError',
+  uploadAttempts: 'uploadAttempts',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -247,6 +252,13 @@ exports.Prisma.SalaryStructureScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.DepartmentScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  managerId: 'managerId',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.PayrollRunScalarFieldEnum = {
   id: 'id',
   period: 'period',
@@ -260,6 +272,8 @@ exports.Prisma.PayslipScalarFieldEnum = {
   employeeId: 'employeeId',
   gross: 'gross',
   net: 'net',
+  month: 'month',
+  year: 'year',
   fileUrl: 'fileUrl',
   publicId: 'publicId',
   mimeType: 'mimeType',
@@ -368,6 +382,12 @@ exports.EmployeeStatus = exports.$Enums.EmployeeStatus = {
   PROBATION: 'PROBATION'
 };
 
+exports.FileUploadStatus = exports.$Enums.FileUploadStatus = {
+  PENDING: 'PENDING',
+  SUCCEEDED: 'SUCCEEDED',
+  FAILED: 'FAILED'
+};
+
 exports.DocumentType = exports.$Enums.DocumentType = {
   PASSPORT: 'PASSPORT',
   ID: 'ID',
@@ -393,6 +413,7 @@ exports.ApplicationStatus = exports.$Enums.ApplicationStatus = {
 
 exports.PayrollStatus = exports.$Enums.PayrollStatus = {
   PENDING: 'PENDING',
+  QUEUED: 'QUEUED',
   PROCESSING: 'PROCESSING',
   COMPLETED: 'COMPLETED',
   FAILED: 'FAILED'
@@ -424,6 +445,7 @@ exports.Prisma.ModelName = {
   Kpi: 'Kpi',
   Evaluation: 'Evaluation',
   SalaryStructure: 'SalaryStructure',
+  Department: 'Department',
   PayrollRun: 'PayrollRun',
   Payslip: 'Payslip',
   StatutoryDeduction: 'StatutoryDeduction',

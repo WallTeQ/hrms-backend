@@ -6,6 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  engine   = "library"
   output   = "../generated/prisma"
 }
 
@@ -58,6 +59,7 @@ enum ApplicationStatus {
 
 enum PayrollStatus {
   PENDING
+  QUEUED
   PROCESSING
   COMPLETED
   FAILED
@@ -71,6 +73,12 @@ enum DocumentType {
   OTHER
 }
 
+enum FileUploadStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+}
+
 // Models
 model User {
   id         String    @id @default(uuid())
@@ -81,6 +89,10 @@ model User {
   employeeId String?   @unique
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
+
+  // Indexes for performance
+  @@index([role])
+  @@index([createdAt])
 }
 
 model Employee {
@@ -90,6 +102,7 @@ model Employee {
   lastName            String
   email               String               @unique
   phone               String?
+  dateOfBirth         DateTime?
   status              EmployeeStatus       @default(ACTIVE)
   hireDate            DateTime?
   contracts           Contract[]
@@ -103,23 +116,40 @@ model Employee {
   evaluations         Evaluation[]
   payslips            Payslip[]
   user                User?
+  // Department association (optional)
+  department          Department?          @relation(fields: [departmentId], references: [id])
+  departmentId        String?
+  // Departments managed by this employee (inverse of Department.manager)
+  managesDepartments  Department[]         @relation("DepartmentManager")
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
+
+  @@index([departmentId])
+  // Indexes for performance
+  @@index([firstName])
+  @@index([lastName])
+  @@index([email])
+  @@index([status])
+  @@index([createdAt])
 }
 
 model Contract {
-  id         String    @id @default(uuid())
-  employee   Employee  @relation(fields: [employeeId], references: [id])
-  employeeId String
-  title      String
-  startDate  DateTime
-  endDate    DateTime?
-  fileUrl    String?
-  publicId   String?
-  mimeType   String?
-  size       Int?
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  id             String           @id @default(uuid())
+  employee       Employee         @relation(fields: [employeeId], references: [id])
+  employeeId     String
+  title          String
+  startDate      DateTime
+  endDate        DateTime?
+  fileUrl        String?
+  publicId       String?
+  mimeType       String?
+  size           Int?
+  // Track background upload status for files
+  uploadStatus   FileUploadStatus @default(SUCCEEDED)
+  uploadError    String?
+  uploadAttempts Int              @default(0)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
 }
 
 model Document {
@@ -220,16 +250,33 @@ model SalaryStructure {
   deductions    Float?   @default(0)
   effectiveFrom DateTime
   createdAt     DateTime @default(now())
+
+  // Indexes for performance
+  @@index([employeeId])
+  @@index([effectiveFrom])
+}
+
+model Department {
+  id        String     @id @default(uuid())
+  name      String     @unique
+  manager   Employee?  @relation("DepartmentManager", fields: [managerId], references: [id])
+  managerId String?
+  employees Employee[]
+  createdAt DateTime   @default(now())
+
+  @@index([name])
 }
 
 model PayrollRun {
-  id          String        @id @default(uuid())
-  period      String        @unique
-  runAt       DateTime      @default(now())
-  status      PayrollStatus @default(PENDING)
-  completedAt DateTime?
-  errorLog    String?
-  payslips    Payslip[]
+  id       String        @id @default(uuid())
+  period   String
+  runAt    DateTime      @default(now())
+  status   PayrollStatus @default(PENDING)
+  payslips Payslip[]
+
+  // Indexes for performance
+  @@index([status])
+  @@index([runAt])
 }
 
 model Payslip {
@@ -240,11 +287,21 @@ model Payslip {
   employeeId   String
   gross        Float
   net          Float
+  // Store month and year that this payslip applies to (separate from payroll run)
+  month        Int?
+  year         Int?
   fileUrl      String?
   publicId     String?
   mimeType     String?
   size         Int?
   generatedAt  DateTime   @default(now())
+
+  // Indexes for performance
+  @@index([employeeId])
+  @@index([employeeId, generatedAt])
+  @@index([payrollRunId])
+  @@index([generatedAt])
+  @@index([year, month])
 }
 
 model StatutoryDeduction {
@@ -261,6 +318,11 @@ model Attendance {
   status     AttendanceStatus
   clockIn    DateTime?
   clockOut   DateTime?
+
+  // Indexes for performance
+  @@index([employeeId])
+  @@index([date])
+  @@index([status])
 }
 
 model LeaveRequest {

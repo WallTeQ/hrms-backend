@@ -7,6 +7,7 @@
 generator client {
   provider = "prisma-client-js"
   engine = "library"
+  output = "../generated/prisma"
 }
 
 datasource db {
@@ -58,6 +59,7 @@ enum ApplicationStatus {
 
 enum PayrollStatus {
   PENDING
+  QUEUED
   PROCESSING
   COMPLETED
   FAILED
@@ -114,7 +116,14 @@ model Employee {
   evaluations          Evaluation[]
   payslips             Payslip[]
   user                 User?
+  // Department association (optional)
+  department           Department?           @relation(fields: [departmentId], references: [id])
+  departmentId         String?
+  // Departments managed by this employee (inverse of Department.manager)
+  managesDepartments  Department[]         @relation("DepartmentManager")
   createdAt            DateTime              @default(now())
+
+  @@index([departmentId])
   updatedAt            DateTime              @updatedAt
 
   // Indexes for performance
@@ -142,6 +151,8 @@ model Contract {
   uploadAttempts Int @default(0)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+
+  @@index([employeeId, startDate])
 }
 
 model Document {
@@ -246,6 +257,17 @@ model SalaryStructure {
   // Indexes for performance
   @@index([employeeId])
   @@index([effectiveFrom])
+}
+
+model Department {
+  id        String     @id @default(uuid())
+  name      String     @unique
+  manager   Employee?  @relation("DepartmentManager", fields: [managerId], references: [id])
+  managerId String?
+  employees Employee[]
+  createdAt DateTime   @default(now())
+
+  @@index([name])
 }
 
 model PayrollRun {

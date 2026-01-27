@@ -65,6 +65,16 @@ export async function listPayslipsForEmployee(req: Request, res: Response) {
   return res.json({ status: "success", ...paginated });
 }
 
+export async function listPayslips(req: Request, res: Response) {
+  const pagination = getPaginationOptions(req.query);
+  const { skip, take, page } = pagination;
+  const key = `payroll:payslips:skip=${skip}:take=${take}`;
+  const result = await cacheWrap(key, 60, () => PayrollService.listPayslips(skip, take)) as { items: any[]; total: number };
+  const { items, total } = result;
+  const paginated = createPaginationResult(items, total, { ...pagination, page: page || 1 });
+  return res.json({ status: "success", ...paginated });
+}
+
 export async function updatePayslip(req: Request, res: Response) {
   const id = req.params.id;
   const payload = req.body;

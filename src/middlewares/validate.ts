@@ -37,3 +37,20 @@ export function validate<T extends z.ZodType<any, any, any>>(schema: T): Request
     return next();
   };
 }
+
+// Validate query parameters (useful for GET endpoints)
+export function validateQuery<T extends z.ZodType<any, any, any>>(schema: T): RequestHandler {
+  return (req, res, next) => {
+    const result = schema.safeParse(req.query);
+    if (!result.success) {
+      const messages = result.error.issues.map((issue) => {
+        const path = issue.path && issue.path.length ? issue.path.join(".") : "query";
+        return `${path}: ${issue.message}`;
+      });
+      return res.status(400).json({ error: "Validation failed", messages });
+    }
+    // Attach parsed query to a separate property to avoid assigning to read-only req.query
+    (req as any).validatedQuery = result.data as any;
+    return next();
+  };
+}

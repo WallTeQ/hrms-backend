@@ -25,8 +25,46 @@ const worker = new Worker<PayrollRunProcessJobData>(
     }
 
     try {
-      // Example processing: summarize existing payslips for the run
-      const payslips = await prismaDefault.payslip.findMany({ where: { payrollRunId } });
+      // If there are no payslips for this run yet, generate payslips for active employees using salary structures
+      let payslips = await prismaDefault.payslip.findMany({ where: { payrollRunId } });
+      if (!payslips || payslips.length === 0) {
+        const run = await repo.findPayrollRun(payrollRunId);
+        // derive month/year from run.period if available
+        let year: number | undefined;
+        let month: number | undefined;
+        if (run?.period) {
+          const parts = run.period.split("-").map(Number);
+          if (parts.length === 2 && !Number.isNaN(parts[0]) && !Number.isNaN(parts[1])) {
+            year = parts[0];
+            month = parts[1];
+          }
+        }
+
+        const employees = await prismaDefault.employee.findMany({ where: { status: 'ACTIVE' } });
+        for (const emp of employees) {
+          // ensure we don't duplicate
+          const exists = await prismaDefault.payslip.findFirst({ where: { payrollRunId, employeeId: emp.id } });
+          if (exists) continue;
+
+          // find latest salary structure effective on or before run date
+          const latestStructure = await prismaDefault.salaryStructure.findFirst({ where: { employeeId: emp.id, effectiveFrom: { lte: new Date() } }, orderBy: { effectiveFrom: 'desc' } });
+          const base = latestStructure?.baseSalary ?? 0;
+          const allowances = latestStructure?.allowances ?? 0;
+          const deductions = latestStructure?.deductions ?? 0;
+          const gross = base + allowances;
+          const net = gross - deductions;
+
+          try {
+            await prismaDefault.payslip.create({ data: { payrollRunId, employeeId: emp.id, gross, net, month: month ?? null, year: year ?? null } as any });
+          } catch (e) {
+            console.error('Failed to create payslip for employee', emp.id, e);
+          }
+        }
+
+        // reload payslips after potential generation
+        payslips = await prismaDefault.payslip.findMany({ where: { payrollRunId } });
+      }
+
       const totals = payslips.reduce(
         (acc: { gross: number; net: number }, p: any) => {
           acc.gross += p?.gross ?? 0;

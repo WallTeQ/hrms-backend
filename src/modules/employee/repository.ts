@@ -49,13 +49,14 @@ export const EmployeeRepository = (prisma = prismaDefault) => ({
         dateOfBirth: true,
         status: true,
         hireDate: true,
+        departmentId: true,
+        department: { select: { id: true, name: true } },
         createdAt: true,
         updatedAt: true,
         user: { select: { id: true, email: true, role: true, createdAt: true, updatedAt: true } },
         contracts: { 
           select: { id: true, title: true, startDate: true, endDate: true },
           orderBy: { startDate: "desc" },
-          take: 1
         },
         salaryStructures: { 
           select: { id: true, baseSalary: true, effectiveFrom: true },
@@ -134,19 +135,16 @@ export const EmployeeRepository = (prisma = prismaDefault) => ({
       dateOfBirth: true,
       status: true,
       hireDate: true,
+      departmentId: true,
+      department: { select: { id: true, name: true } },
       createdAt: true,
       updatedAt: true,
       user: { select: { id: true, email: true, role: true, createdAt: true, updatedAt: true } },
-    };
-
-    // Add includes only if explicitly requested
-    if (includes?.includes('contracts')) {
-      selectObj.contracts = { 
+      contracts: { 
         select: { id: true, title: true, startDate: true, endDate: true },
         orderBy: { startDate: "desc" },
-        take: 1 // Only latest contract for position
-      };
-    }
+      },
+    };
     if (includes?.includes('documents')) {
       selectObj.documents = { 
         select: { id: true, type: true, name: true, createdAt: true },
