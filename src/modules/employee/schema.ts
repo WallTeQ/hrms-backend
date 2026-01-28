@@ -12,8 +12,10 @@ export const CreateEmployeeSchema = z.object({
 
 export type CreateEmployeeDto = z.infer<typeof CreateEmployeeSchema>;
 
-// For update use partial
-export const UpdateEmployeeSchema = CreateEmployeeSchema.partial();
+// For update use partial and add position
+export const UpdateEmployeeSchema = CreateEmployeeSchema.partial().extend({
+  position: z.string().optional(),
+});
 export type UpdateEmployeeDto = z.infer<typeof UpdateEmployeeSchema>;
 
 // Response schema (strip sensitive fields)

@@ -57,6 +57,7 @@ export const EmployeeService = {
   findByEmail: async (email: string) => repo.findByEmail(email),
   list: async (filters: { search?: string; status?: string; skip?: number; take?: number; includes?: string[] } = {}, user?: any) => repo.list(filters as any, user, filters.includes),
   update: async (id: string, data: Prisma.EmployeeUpdateInput & { departmentId?: string | null; position?: string }) => {
+    console.log('Update payload:', data); // Debug log
     // Parse dateOfBirth if it's a string
     const updateData = { ...data };
     if (typeof updateData.dateOfBirth === 'string') {
@@ -93,11 +94,21 @@ export const EmployeeService = {
           where: { id: latestContract.id },
           data: { title: updateData.position },
         });
+        console.log('Contract updated');
+      } else {
+        console.log('No update needed or no contract');
       }
       delete (updateData as any).position;
     }
 
-    return repo.update(id, updateData);
+    console.log('Final updateData:', updateData); // Debug log
+    const result = await repo.update(id, updateData);
+    console.log('Update result:', result); // Debug log
+    // If position was updated, refetch to get the updated position from contract
+    if (data.position !== undefined) {
+      return repo.findById(id, undefined); // Refetch with position
+    }
+    return result;
   },
   delete: async (id: string) => repo.softDelete(id),
 

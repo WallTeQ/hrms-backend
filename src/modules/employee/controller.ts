@@ -46,6 +46,7 @@ export async function updateEmployee(req: Request, res: Response) {
   const id = req.params.id;
   const payload = req.body as UpdateEmployeeDto;
   const u = await EmployeeService.update(id, payload as any);
+  console.log('Updated employee:', u); // Debug log
   await cacheDelByPrefix("employees");
   await cacheDelByPrefix(`employees:detail:${id}`);
   await cacheDelByPrefix("departments");
