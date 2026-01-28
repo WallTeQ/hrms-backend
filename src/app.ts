@@ -38,10 +38,9 @@ app.use(compression());
 // Cache control for GET requests
 app.use((req, res, next) => {
   if (req.method === 'GET') {
-    res.set('Cache-Control', 'public, max-age=300'); // 5 minutes
-    // Add ETag for better caching
-    const etag = crypto.createHash('md5').update(req.originalUrl + JSON.stringify(req.query)).digest('hex');
-    res.set('ETag', `"${etag}"`);
+    res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
   }
   next();
 });
