@@ -9,8 +9,8 @@
     "typeRoots": ["node_modules/@types", "src/types"],
     "baseUrl": ".",
     "paths": {
-      ".prisma/client/*": ["src/generated/prisma/*"],
-      ".prisma/client": ["src/generated/prisma"]
+      ".prisma/client/*": ["node_modules/.prisma/client/*"],
+      ".prisma/client": ["node_modules/.prisma/client"]
     },
     // "rootDir": ".",
 
