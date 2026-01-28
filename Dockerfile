@@ -10,13 +10,12 @@ WORKDIR /app
 # Copy configs & sources
 COPY package*.json tsconfig.json ./
 COPY src ./src
-COPY src/prisma ./prisma
 
 # Install deps (incl dev deps for TS)
 RUN npm ci --silent
 
 # 🔑 Generate Prisma Client for TypeScript
-RUN npx prisma generate --schema=prisma/schema.prisma
+RUN npx prisma generate --schema=src/prisma/schema.prisma
 
 # Build TypeScript
 RUN npm run build
@@ -37,7 +36,7 @@ RUN npm ci --only=production --silent
 
 # Copy build output & prisma schema
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/src/prisma ./prisma
 
 # 🔑 Generate Prisma Client for runtime
 RUN npx prisma generate --schema=prisma/schema.prisma

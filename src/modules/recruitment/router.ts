@@ -4,8 +4,13 @@ import applicationsRouter from "./applications/router.js";
 import interviewsRouter from "./interviews/router.js";
 import offersRouter from "./offers/router.js";
 import * as controller from "./controller.js";
+import { authMiddleware } from "../../middlewares/auth.js";
+
 
 const router = express.Router();
+
+// Apply auth middleware to all routes in this router
+router.use(authMiddleware);
 
 // Public top-level vacancy listings
 router.get("/vacancies", controller.listVacancies);
