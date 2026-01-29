@@ -7,6 +7,7 @@ export const CreateEmployeeSchema = z.object({
   phone: z.string().optional().nullable(),
   dateOfBirth: z.string().optional().nullable(),
   password: z.string().min(8),
+  position: z.string().optional(),
   departmentId: z.string().optional().nullable(),
 });
 

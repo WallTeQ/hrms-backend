@@ -34,11 +34,41 @@ export const EmployeeService = {
       delete (createData as any).departmentId;
     }
 
+    // If a position is provided on create, create an initial contract with that title.
+    const position = (createData as any).position;
+    if (position !== undefined) delete (createData as any).position;
+
     if (data.password) {
       const hashed = await bcrypt.hash(data.password, 10);
       const { password, ...employeeData } = createData;
+
+      if (position) {
+        // Create employee + contract + user in a transaction
+        const result = await prismaDefault.$transaction(async (tx:any) => {
+          const employee = await tx.employee.create({ data: employeeData });
+          await tx.contract.create({
+            data: {
+              title: position,
+              startDate: employee.hireDate || new Date(),
+              employee: { connect: { id: employee.id } },
+            },
+          });
+          await tx.user.create({
+            data: {
+              email: data.email,
+              password: hashed,
+              role: "EMPLOYEE",
+              employeeId: employee.id,
+            },
+          });
+          return employee;
+        });
+
+        return result;
+      }
+
+      // No position: default create + user
       const employee = await repo.create(employeeData);
-      // Create user linked to employee
       await prismaDefault.user.create({
         data: {
           email: data.email,
@@ -50,6 +80,23 @@ export const EmployeeService = {
       return employee;
     } else {
       const { password, ...employeeData } = createData;
+
+      if (position) {
+        // Create employee + contract in a transaction
+        const result = await prismaDefault.$transaction(async (tx: any) => {
+          const employee = await tx.employee.create({ data: employeeData });
+          await tx.contract.create({
+            data: {
+              title: position,
+              startDate: employee.hireDate || new Date(),
+              employee: { connect: { id: employee.id } },
+            },
+          });
+          return employee;
+        });
+        return result;
+      }
+
       return repo.create(employeeData);
     }
   },
@@ -82,22 +129,36 @@ export const EmployeeService = {
       delete (updateData as any).departmentId;
     }
 
-    // Handle position update by updating the latest contract
+    // Handle position update by updating the latest contract or creating one if none exists
     if (updateData.position !== undefined) {
       const latestContract = await prismaDefault.contract.findFirst({
         where: { employeeId: id },
         orderBy: { startDate: 'desc' },
         select: { id: true, title: true },
       });
-      if (latestContract && latestContract.title !== updateData.position) {
-        await prismaDefault.contract.update({
-          where: { id: latestContract.id },
-          data: { title: updateData.position },
-        });
-        console.log('Contract updated');
+
+      if (latestContract) {
+        if (latestContract.title !== updateData.position) {
+          await prismaDefault.contract.update({
+            where: { id: latestContract.id },
+            data: { title: updateData.position },
+          });
+          console.log('Contract updated');
+        } else {
+          console.log('No update needed');
+        }
       } else {
-        console.log('No update needed or no contract');
+        // No existing contract: create an initial contract to persist position
+        await prismaDefault.contract.create({
+          data: {
+            title: updateData.position,
+            startDate: new Date(),
+            employee: { connect: { id } },
+          },
+        });
+        console.log('Contract created for position');
       }
+
       delete (updateData as any).position;
     }
 
