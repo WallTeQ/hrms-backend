@@ -14,5 +14,6 @@ router.get("/:id", requirePermission("departments:get"), controller.getDepartmen
 router.patch("/:id", requirePermission("departments:update"), validate(UpdateDepartmentSchema), controller.updateDepartment);
 router.delete("/:id", requirePermission("departments:delete"), controller.deleteDepartment);
 router.get("/:id/employees", requirePermission("departments:list"), controller.listEmployeesInDepartment);
+router.get("/stats/overview", requirePermission("departments:list"), controller.getDepartmentStats);
 
 export default router;

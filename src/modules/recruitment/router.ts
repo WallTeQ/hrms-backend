@@ -9,8 +9,8 @@ import { authMiddleware } from "../../middlewares/auth.js";
 
 const router = express.Router();
 
-// Apply auth middleware to all routes in this router
-router.use(authMiddleware);
+// Applications should be public so candidates can apply without signing up
+router.use("/applications", applicationsRouter);
 
 // Public top-level vacancy listings
 router.get("/vacancies", controller.listVacancies);

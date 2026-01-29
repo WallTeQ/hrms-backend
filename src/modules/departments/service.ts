@@ -75,4 +75,20 @@ export const DepartmentsService = {
   },
   list: async (skip = 0, take = 50) => repo.list(skip, take),
   listEmployees: async (departmentId: string, skip = 0, take = 50) => repo.listEmployees(departmentId, skip, take),
+
+  getDepartmentStats: async () => {
+    const departments = await prismaDefault.department.findMany({
+      include: {
+        _count: {
+          select: { employees: true }
+        }
+      }
+    });
+
+    return departments.map((dept: any) => ({
+      id: dept.id,
+      name: dept.name,
+      employeeCount: dept._count.employees
+    }));
+  },
 };

@@ -27,4 +27,21 @@ export const PerformanceService = {
   updateEvaluation: async (id: string, data: Prisma.EvaluationUpdateInput) => repo.updateEvaluation(id, data),
   deleteEvaluation: async (id: string) => repo.deleteEvaluation(id),
   listEvaluationsForEmployee: async (employeeId: string, skip = 0, take = 50) => repo.listEvaluationsForEmployee(employeeId, skip, take),
+
+  startReview: async (employeeId: string) => {
+    // Check if employee exists
+    const employee = await repo.findEmployee(employeeId);
+    if (!employee) {
+      const err = new Error("EMPLOYEE_NOT_FOUND");
+      (err as any).status = 400;
+      throw err;
+    }
+    // Create evaluation with default values
+    return repo.createEvaluation({
+      employee: { connect: { id: employeeId } },
+      period: "Annual",
+      score: 0,
+      notes: "Review initiated"
+    });
+  },
 };

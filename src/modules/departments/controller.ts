@@ -53,3 +53,8 @@ export async function listEmployeesInDepartment(req: Request, res: Response) {
   const paginated = createPaginationResult(items, total, { ...pagination, page: page || 1 });
   return res.json({ status: "success", ...paginated });
 }
+export async function getDepartmentStats(req: Request, res: Response) {
+  const key = `departments:stats`;
+  const stats = await cacheWrap(key, 300, () => DepartmentsService.getDepartmentStats());
+  return res.json({ status: "success", data: stats });
+}

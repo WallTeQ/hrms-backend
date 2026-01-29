@@ -29,12 +29,48 @@ export const ReportsRepository = (prisma = prismaDefault) => ({
       prisma.employee.count({ where: { status: "SUSPENDED" } }),
       prisma.employee.count({ where: { status: "PROBATION" } }),
     ]);
+    const departmentCount = await prisma.department.count();
     return {
       total,
       ACTIVE: byStatus[0],
       INACTIVE: byStatus[1],
       SUSPENDED: byStatus[2],
       PROBATION: byStatus[3],
+      departmentCount,
     };
+  },
+
+  getTotalEmployees: async () => {
+    return prisma.employee.count();
+  },
+
+  getActiveEmployees: async () => {
+    return prisma.employee.count({ where: { status: "ACTIVE" } });
+  },
+
+  getPendingLeaves: async () => {
+    // This would need a leave requests table - for now return 0
+    return 0;
+  },
+
+  getExpiringDocuments: async () => {
+    // This would need document expiry tracking - for now return 0
+    return 0;
+  },
+
+  getDepartmentCount: async () => {
+    return prisma.department.count();
+  },
+
+  getNewHiresThisMonth: async () => {
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    return prisma.employee.count({
+      where: {
+        hireDate: {
+          gte: startOfMonth,
+        },
+      },
+    });
   },
 });

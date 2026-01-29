@@ -10,5 +10,6 @@ router.use(authMiddleware);
 router.get("/attendance", controller.attendanceSummary);
 router.get("/payroll", controller.payrollSummary);
 router.get("/headcount", controller.headcount);
+router.get("/dashboard", controller.dashboardStats);
 
 export default router;

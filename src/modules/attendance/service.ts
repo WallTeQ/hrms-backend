@@ -84,4 +84,34 @@ export const AttendanceService = {
     return repo.list({ employeeId, startDate, endDate, skip, take });
   },
 
+  clockOut: async (employeeId: string) => {
+    const today = new Date();
+    const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const endOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59, 999);
+
+    // Find today's attendance record for the employee
+    const existingRecord = await prismaDefault.attendance.findFirst({
+      where: {
+        employeeId,
+        date: {
+          gte: startOfDay,
+          lte: endOfDay,
+        },
+      },
+    });
+
+    if (!existingRecord) {
+      throw new Error("No check-in record found for today");
+    }
+
+    if (existingRecord.clockOut) {
+      throw new Error("Already checked out for today");
+    }
+
+    const clockOutTime = new Date();
+
+    return repo.update(existingRecord.id, {
+      clockOut: clockOutTime,
+    });
+  },
 };

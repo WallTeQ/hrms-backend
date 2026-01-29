@@ -10,6 +10,7 @@ const router = express.Router();
 router.use(authMiddleware);
 
 router.post("/mark", validate(MarkAttendanceSchema), controller.markAttendance);
+router.post("/clock-out", controller.clockOut);
 router.post("/", validate(CreateAttendanceSchema), controller.createAttendance);
 router.get("/", controller.listAttendance);
 router.get("/:id", controller.getAttendance);

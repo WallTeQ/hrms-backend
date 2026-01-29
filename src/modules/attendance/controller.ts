@@ -37,6 +37,30 @@ export async function markAttendance(req: Request, res: Response) {
   }
 }
 
+export async function clockOut(req: Request, res: Response) {
+  try {
+    const { employeeId } = req.body;
+    if (!employeeId) {
+      return res.status(400).json({ error: "Employee ID is required" });
+    }
+
+    const result = await AttendanceService.clockOut(employeeId);
+
+    // Map response to use user-friendly field names and format times
+    const responseData = {
+      ...result,
+      checkIn: result.clockIn ? result.clockIn.toTimeString().slice(0, 5) : null,
+      checkOut: result.clockOut ? result.clockOut.toTimeString().slice(0, 5) : null,
+    };
+    delete responseData.clockIn;
+    delete responseData.clockOut;
+
+    return res.json({ status: "success", data: responseData });
+  } catch (err: any) {
+    return res.status(400).json({ error: err?.message ?? "Failed to clock out" });
+  }
+}
+
 export async function createAttendance(req: Request, res: Response) {
   try {
     const payload = req.body as CreateAttendanceDto;
@@ -107,9 +131,32 @@ export async function listAttendance(req: Request, res: Response) {
   const { skip, take, page } = pagination;
   const user = (req as any).user;
   const role = user?.role || 'anonymous';
-  const key = `attendance:list:role=${role}:employeeId=${employeeId || 'all'}:startDate=${startDate || 'none'}:endDate=${endDate || 'none'}:skip=${skip}:take=${take}`;
+
+  // Role-based access control for attendance
+  let filterEmployeeId = employeeId as string | undefined;
+
+  if (user) {
+    switch (user.role) {
+      case 'EMPLOYEE':
+        // Employees can only see their own attendance
+        filterEmployeeId = user.employeeId;
+        break;
+      case 'SUPERVISOR':
+      case 'HR_ADMIN':
+      case 'BOARD':
+        // These roles can see all attendance or filter by specific employee
+        // If no employeeId specified, show all
+        break;
+      default:
+        return res.status(403).json({ error: "Access denied" });
+    }
+  } else {
+    return res.status(401).json({ error: "Authentication required" });
+  }
+
+  const key = `attendance:list:role=${role}:employeeId=${filterEmployeeId || 'all'}:startDate=${startDate || 'none'}:endDate=${endDate || 'none'}:skip=${skip}:take=${take}`;
   const result = await cacheWrap(key, 60, () => AttendanceService.list({
-    employeeId: employeeId as string | undefined,
+    employeeId: filterEmployeeId,
     startDate: startDate ? new Date(String(startDate)) : undefined,
     endDate: endDate ? new Date(String(endDate)) : undefined,
     skip,

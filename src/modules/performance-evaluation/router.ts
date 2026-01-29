@@ -21,6 +21,8 @@ router.post("/kpis", requirePermission("performance:kpis:create"), validate(Crea
 router.post("/evaluations", requirePermission("performance:evaluations:create"), validate(CreateEvaluationSchema), controller.createEvaluation);
 router.get("/evaluations/employee/:employeeId", controller.listEvaluationsForEmployee);
 
+router.post("/start-review/:employeeId", requirePermission("performance:evaluations:create"), controller.startReview);
+
 router.use("/kpis", kpisRouter);
 router.use("/evaluations", evaluationsRouter);
 

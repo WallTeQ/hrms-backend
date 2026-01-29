@@ -52,3 +52,17 @@ export async function createEvaluation(req: Request, res: Response) {
     throw err;
   }
 }
+
+export async function startReview(req: Request, res: Response) {
+  if (!req.user) return res.status(401).json({ error: "Unauthorized" });
+
+  const employeeId = req.params.employeeId;
+  try {
+    const evaluation = await PerformanceService.startReview(employeeId);
+    await cacheDelByPrefix(`performance:evaluations:employee:${employeeId}`);
+    return res.status(201).json({ status: "success", data: evaluation });
+  } catch (err: any) {
+    if (err?.message === "EMPLOYEE_NOT_FOUND") return res.status(400).json({ error: "Invalid employeeId" });
+    throw err;
+  }
+}

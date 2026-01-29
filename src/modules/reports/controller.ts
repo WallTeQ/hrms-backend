@@ -23,3 +23,9 @@ export async function headcount(_req: Request, res: Response) {
   const stats = await cacheWrap(key, 60, () => ReportsService.headcount());
   return res.json({ status: "success", data: stats });
 }
+
+export async function dashboardStats(_req: Request, res: Response) {
+  const key = `reports:dashboard`;
+  const stats = await cacheWrap(key, 300, () => ReportsService.dashboardStats());
+  return res.json({ status: "success", data: stats });
+}
