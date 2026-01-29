@@ -85,7 +85,7 @@ export const DepartmentsService = {
       }
     });
 
-    return departments.map((dept: any) => ({
+    return departments.map((dept) => ({
       id: dept.id,
       name: dept.name,
       employeeCount: dept._count.employees
