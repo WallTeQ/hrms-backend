@@ -51,6 +51,12 @@ export const UserService = {
       try {
         if (payload.firstName || payload.lastName) {
           return await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+            // fetch default shift for new employees
+            const defaultShift = await tx.shift.findUnique({ where: { name: "Default" } });
+            if (!defaultShift) {
+              throw new Error("Default shift not found; database may not be seeded");
+            }
+
             let employeeId: string | undefined;
             for (let attempt = 0; attempt < 5; attempt++) {
               const nextId = await generateEmployeeId(tx);
@@ -61,6 +67,7 @@ export const UserService = {
                     firstName: payload.firstName || "",
                     lastName: payload.lastName || "",
                     email: payload.email,
+                    shift: { connect: { id: defaultShift.id } },
                   },
                 });
                 employeeId = employee.id;
@@ -114,8 +121,18 @@ export const UserService = {
           prismaData.employee = prismaData.employee || {};
           prismaData.employee.update = { ...(firstName ? { firstName } : {}), ...(lastName ? { lastName } : {}) };
         } else {
+          // need default shift when creating employee record for the first time
+          const defaultShift = await prisma.shift.findUnique({ where: { name: "Default" } });
+          if (!defaultShift) {
+            throw new Error("Default shift not found; database may not be seeded");
+          }
           prismaData.employee = prismaData.employee || {};
-          prismaData.employee.create = { ...(firstName ? { firstName } : {}), ...(lastName ? { lastName } : {}), email: existing.email || (data as any).email };
+          prismaData.employee.create = {
+            ...(firstName ? { firstName } : {}),
+            ...(lastName ? { lastName } : {}),
+            email: existing.email || (data as any).email,
+            shift: { connect: { id: defaultShift.id } },
+          };
         }
       }
 

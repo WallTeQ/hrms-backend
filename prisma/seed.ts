@@ -37,7 +37,8 @@ async function main() {
       update: {},
       create: {
         name: "Default",
-        type: "DAY",
+        // use a valid ShiftType value
+        type: "STANDARD",
         isFlexible: false,
         punctualityApplies: true,
         expectedHours: 8,
@@ -45,10 +46,12 @@ async function main() {
     });
 
     // assign the default shift to any existing employees without one
-    await prisma.employee.updateMany({
-      where: { shiftId: null },
-      data: { shiftId: defaultShift.id },
-    });
+    // using raw SQL because shiftId is non-nullable in the generated types
+    await prisma.$executeRaw`
+      UPDATE "Employee"
+      SET "shiftId" = ${defaultShift.id}
+      WHERE "shiftId" IS NULL
+    `;
 
     // Create employee first
     const employeeId = await generateEmployeeId(prisma);

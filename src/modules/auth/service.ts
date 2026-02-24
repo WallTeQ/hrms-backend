@@ -33,8 +33,19 @@ export const AuthService = {
       const hashed = await bcrypt.hash(password, 10);
       return prismaDefault.$transaction(async (tx: Prisma.TransactionClient) => {
         const employeeId = await generateEmployeeId(tx);
+        // ensure we have a default shift to attach new employees to
+        const defaultShift = await tx.shift.findUnique({ where: { name: "Default" } });
+        if (!defaultShift) {
+          throw new Error("Default shift not found; make sure database is seeded properly");
+        }
         const employee = await tx.employee.create({
-          data: { id: employeeId, firstName, lastName, email },
+          data: {
+            id: employeeId,
+            firstName,
+            lastName,
+            email,
+            shift: { connect: { id: defaultShift.id } },
+          },
         });
         return tx.user.create({
           data: {
