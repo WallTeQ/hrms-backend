@@ -15,10 +15,11 @@ datasource db {
 
 // Enums
 enum Role {
-  EMPLOYEE
-  SUPERVISOR
+  SUPER_ADMIN
   HR_ADMIN
-  BOARD
+  DEPARTMENT_HEAD
+  PAYROLL_OFFICER
+  EMPLOYEE
 }
 
 enum EmployeeStatus {
@@ -31,6 +32,9 @@ enum EmployeeStatus {
 enum LeaveType {
   ANNUAL
   SICK
+  MATERNITY
+  PATERNITY
+  STUDY
   UNPAID
   SPECIAL
 }
@@ -39,6 +43,20 @@ enum AttendanceStatus {
   PRESENT
   ABSENT
   LATE
+  ON_LEAVE
+}
+
+enum LeaveStatus {
+  PENDING_SUPERVISOR
+  PENDING_HR
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum AttendanceEntryMethod {
+  SYSTEM
+  MANUAL
 }
 
 enum VacancyStatus {
@@ -64,11 +82,17 @@ enum PayrollStatus {
   FAILED
 }
 
+enum PaymentMethod {
+  MOBILE_MONEY
+  BANK_TRANSFER
+}
+
 enum DocumentType {
   PASSPORT
   ID
   CERTIFICATE
   CONTRACT
+  COMPLIANCE
   OTHER
 }
 
@@ -78,16 +102,57 @@ enum FileUploadStatus {
   FAILED
 }
 
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  OVERDUE
+}
+
+enum PerformanceRating {
+  EXCELLENT
+  VERY_GOOD
+  SATISFACTORY
+  NEEDS_IMPROVEMENT
+  UNSATISFACTORY
+}
+
+enum RecommendationStatus {
+  PENDING
+  ACCEPTED
+  COMPLETED
+  REJECTED
+}
+
+enum EvaluationCategory {
+  SUPERVISOR
+  TEAMWORK
+}
+
+enum ShiftType {
+  STANDARD
+  NIGHT
+  ROTATIONAL
+  FLEXIBLE
+}
+
 // Models
 model User {
-  id         String    @id @default(uuid())
+  id         String    @id
   email      String    @unique
   password   String
   role       Role      @default(EMPLOYEE)
-  employee   Employee? @relation(fields: [employeeId], references: [id])
-  employeeId String?   @unique
+  employee   Employee? @relation(fields: [id], references: [id])
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
+
+  recordedAttendances Attendance[] @relation("AttendanceRecorder")
+  createdTasks        Task[]       @relation("TaskCreator")
+  approvedTasks       Task[]       @relation("TaskApprover")
+  approvedPayslips    Payslip[]    @relation("PayslipApprover")
+  leaveSupervisorApprovals LeaveRequest[] @relation("LeaveSupervisorApproval")
+  leaveHrApprovals         LeaveRequest[] @relation("LeaveHrApproval")
+  leaveFinalApprovals      LeaveRequest[] @relation("LeaveFinalApproval")
 
   // Indexes for performance
   @@index([role])
@@ -95,15 +160,26 @@ model User {
 }
 
 model Employee {
-  id                   String                @id @default(uuid())
-  employeeNumber       String?               @unique
+  id                   String                @id
   firstName            String
   lastName             String
   email                String                @unique
-  phone                String?
+  contactNumbers       Json?
   dateOfBirth          DateTime?
   status               EmployeeStatus        @default(ACTIVE)
   hireDate             DateTime?
+  dateOfEmployment     DateTime?
+
+  // Photo stored on CDN (Cloudinary)
+  photoUrl             String?
+  photoPublicId        String?
+  photoMimeType        String?
+  photoSize            Int?
+
+  // Payment & compliance
+  mobileMoneyNumber    String?
+  complianceChecklist  Json?
+
   contracts            Contract[]
   documents            Document[]
   disciplinaryRecords  DisciplinaryRecord[]
@@ -115,15 +191,33 @@ model Employee {
   evaluations          Evaluation[]
   payslips             Payslip[]
   user                 User?
+  notifications        Notification[]
+
   // Department association (optional)
   department           Department?           @relation(fields: [departmentId], references: [id])
   departmentId         String?
   // Departments managed by this employee (inverse of Department.manager)
   managesDepartments  Department[]         @relation("DepartmentManager")
+
+  // Shift assignment (required for performance calculations)
+  shift               Shift                 @relation(fields: [shiftId], references: [id])
+  shiftId             String
+
+  // Skills (many-to-many)
+  skills               Skill[]
+  primarySkillId        String?
+  primarySkill          Skill?                @relation("PrimarySkill", fields: [primarySkillId], references: [id])
+
+  tasks                Task[]
+  performanceRecords   PerformanceRecord[]
+  trainingRecommendations TrainingRecommendation[]
+
   createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
 
   @@index([departmentId])
-  updatedAt            DateTime              @updatedAt
+  @@index([primarySkillId])
+  @@index([shiftId])
 
   // Indexes for performance
   @@index([firstName])
@@ -184,6 +278,8 @@ model Vacancy {
   department   String?
   status       VacancyStatus @default(DRAFT)
   description  String?
+  skillId      String?
+  skill        Skill?         @relation(fields: [skillId], references: [id])
   createdAt    DateTime      @default(now())
   applications Application[]
 }
@@ -201,6 +297,8 @@ model Application {
   size          Int?
   score         Float?
   status        ApplicationStatus @default(APPLIED)
+  skillId       String?
+  skill         Skill?             @relation(fields: [skillId], references: [id])
   createdAt     DateTime         @default(now())
   interviews    Interview[]
   offer         Offer?
@@ -237,6 +335,7 @@ model Evaluation {
   employee   Employee @relation(fields: [employeeId], references: [id])
   employeeId String
   kpiId      String?
+  category   EvaluationCategory @default(SUPERVISOR)
   score      Float
   period     String
   notes      String?
@@ -264,6 +363,7 @@ model Department {
   manager   Employee?  @relation("DepartmentManager", fields: [managerId], references: [id])
   managerId String?
   employees Employee[]
+  tasks     Task[]
   createdAt DateTime   @default(now())
 
   @@index([name])
@@ -274,6 +374,8 @@ model PayrollRun {
   period    String
   runAt     DateTime  @default(now())
   status    PayrollStatus @default(PENDING)
+  completedAt DateTime?
+  errorLog  String?
   payslips  Payslip[]
 
   // Indexes for performance
@@ -289,6 +391,20 @@ model Payslip {
   employeeId   String
   gross        Float
   net          Float
+  overtimePay  Float?   @default(0)
+  absenceDeductions Float? @default(0)
+  lateDeductions Float? @default(0)
+  earlyDeductions Float? @default(0)
+  leaveDeductions Float? @default(0)
+  statutoryDeductions Float? @default(0)
+  loanDeductions Float? @default(0)
+  paymentMethod PaymentMethod?
+  transactionRef String?
+  approvedAt   DateTime?
+  approvedByUserId String?
+  approvedByUser User? @relation("PayslipApprover", fields: [approvedByUserId], references: [id])
+  paidAt       DateTime?
+  attendanceDaysWorked Float?
   // Store month and year that this payslip applies to (separate from payroll run)
   month        Int?
   year         Int?
@@ -304,6 +420,7 @@ model Payslip {
   @@index([payrollRunId])
   @@index([generatedAt])
   @@index([year, month])
+  @@index([approvedByUserId])
 } 
 
 model StatutoryDeduction {
@@ -320,11 +437,24 @@ model Attendance {
   status     AttendanceStatus
   clockIn    DateTime?
   clockOut   DateTime?
+  entryMethod AttendanceEntryMethod @default(SYSTEM)
+  recordedByUserId String?
+  recordedByUser   User? @relation("AttendanceRecorder", fields: [recordedByUserId], references: [id])
+  workMinutes Int?
+  overtimeMinutes Int?
+  overtimeApproved Boolean @default(false)
+  lateMinutes Int?
+  earlyDepartureMinutes Int?
+  notes      String?
+  leaveRequestId String?
+  leaveRequest  LeaveRequest? @relation(fields: [leaveRequestId], references: [id])
   
   // Indexes for performance
   @@index([employeeId])
   @@index([date])
   @@index([status])
+  @@index([recordedByUserId])
+  @@index([leaveRequestId])
 }
 
 model LeaveRequest {
@@ -334,8 +464,23 @@ model LeaveRequest {
   type        LeaveType
   startDate   DateTime
   endDate     DateTime
-  status      String
+  status      LeaveStatus @default(PENDING_SUPERVISOR)
+  reason      String?
+  specialApproval Boolean @default(false)
+  isPaid      Boolean? @default(true)
+  medicalCertificateUrl String?
+  supervisorApprovedAt DateTime?
+  hrApprovedAt DateTime?
+  finalApprovedAt DateTime?
+  supervisorApprovedByUserId String?
+  hrApprovedByUserId String?
+  finalApprovedByUserId String?
+  supervisorApprovedByUser User? @relation("LeaveSupervisorApproval", fields: [supervisorApprovedByUserId], references: [id])
+  hrApprovedByUser User? @relation("LeaveHrApproval", fields: [hrApprovedByUserId], references: [id])
+  finalApprovedByUser User? @relation("LeaveFinalApproval", fields: [finalApprovedByUserId], references: [id])
   createdAt   DateTime  @default(now())
+
+  attendances Attendance[]
 }
 
 model LeaveBalance {
@@ -344,6 +489,8 @@ model LeaveBalance {
   employeeId String
   year       Int
   balance    Float
+
+  @@unique([employeeId, year])
 }
 
 model Training {
@@ -354,12 +501,19 @@ model Training {
   skillId    String?
   skill      Skill?   @relation(fields: [skillId], references: [id])
   histories   TrainingHistory[]
+  recommendations TrainingRecommendation[]
 }
 
 model Skill {
-  id       String    @id @default(uuid())
-  name     String    @unique
+  id        String    @id @default(uuid())
+  name      String    @unique
   trainings Training[]
+  employees Employee[]
+  primaryEmployees Employee[] @relation("PrimarySkill")
+  vacancies Vacancy[]
+  applications Application[]
+  tasks Task[]
+  trainingRecommendations TrainingRecommendation[]
 }
 
 model TrainingHistory {
@@ -369,6 +523,125 @@ model TrainingHistory {
   training     Training  @relation(fields: [trainingId], references: [id])
   trainingId   String
   completedAt  DateTime?
+  prePerformanceScore Float?
+  postPerformanceScore Float?
+  impactScore Float?
+}
+
+model TrainingRecommendation {
+  id         String    @id @default(uuid())
+  employee   Employee  @relation(fields: [employeeId], references: [id])
+  employeeId String
+  skill      Skill?    @relation(fields: [skillId], references: [id])
+  skillId    String?
+  training   Training? @relation(fields: [trainingId], references: [id])
+  trainingId String?
+  period     String?
+  reason     String?
+  status     RecommendationStatus @default(PENDING)
+  createdAt  DateTime  @default(now())
+  resolvedAt DateTime?
+
+  @@index([employeeId])
+  @@index([skillId])
+  @@index([trainingId])
+}
+
+model Task {
+  id                String     @id @default(uuid())
+  title             String
+  description       String?
+  dueDate           DateTime?
+  status            TaskStatus @default(PENDING)
+  performanceWeight Float      @default(1)
+  completedAt       DateTime?
+  completedAttachmentUrl String?
+  completedAttachmentPublicId String?
+  completedAttachmentMimeType String?
+  completedAttachmentSize Int?
+  approvedAt        DateTime?
+  approvedByUserId  String?
+  createdByUserId   String?
+  employee          Employee   @relation(fields: [employeeId], references: [id])
+  employeeId        String
+  department        Department? @relation(fields: [departmentId], references: [id])
+  departmentId      String?
+  skill             Skill?      @relation(fields: [skillId], references: [id])
+  skillId           String?
+  requiredShiftId   String?
+  requiredShift     Shift?      @relation(fields: [requiredShiftId], references: [id])
+  createdByUser     User?       @relation("TaskCreator", fields: [createdByUserId], references: [id])
+  approvedByUser    User?       @relation("TaskApprover", fields: [approvedByUserId], references: [id])
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  @@index([employeeId])
+  @@index([departmentId])
+  @@index([skillId])
+  @@index([status])
+  @@index([dueDate])
+  @@index([requiredShiftId])
+  // Composite indexes to support department-scoped, ordered queries and counts
+  @@index([departmentId, status, dueDate, createdAt])
+  @@index([departmentId, status])
+  // Support keyset pagination on (dueDate, id)
+  @@index([departmentId, dueDate, id])
+}
+
+model Shift {
+  id                 String   @id @default(uuid())
+  name               String   @unique
+  type               ShiftType
+  startTime          String?
+  endTime            String?
+  expectedHours      Float
+  graceMinutes       Int      @default(0)
+  earlyDepartureMinutes Int   @default(0)
+  punctualityApplies Boolean  @default(true)
+  isFlexible         Boolean  @default(false)
+  active             Boolean  @default(true)
+  employees          Employee[]
+  tasks              Task[]
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([type])
+  @@index([active])
+}
+
+model PerformanceRecord {
+  id                 String            @id @default(uuid())
+  employee           Employee          @relation(fields: [employeeId], references: [id])
+  employeeId         String
+  period             String
+  taskScore          Float
+  attendanceScore    Float
+  punctualityScore   Float
+  supervisorScore    Float
+  teamworkScore      Float
+  totalScore         Float
+  rating             PerformanceRating
+  flagPromotionReview Boolean          @default(false)
+  flagCorrectiveAction Boolean         @default(false)
+  flagTrainingRecommendation Boolean   @default(false)
+  createdAt          DateTime          @default(now())
+
+  @@unique([employeeId, period])
+  @@index([period])
+}
+
+model Notification {
+  id          String    @id @default(uuid())
+  employee    Employee? @relation(fields: [employeeId], references: [id])
+  employeeId  String?
+  type        String
+  channel     String
+  payload     Json?
+  sent        Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  deliveredAt DateTime?
+  @@index([employeeId])
+  @@index([type])
 }
 
 model AuditLog {

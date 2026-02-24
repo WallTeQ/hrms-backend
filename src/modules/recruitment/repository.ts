@@ -8,7 +8,7 @@ export const RecruitmentRepository = (prisma = prismaDefault) => ({
   updateVacancy: async (id: string, data: Prisma.VacancyUpdateInput) => prisma.vacancy.update({ where: { id }, data }),
   deleteVacancy: async (id: string) => prisma.vacancy.delete({ where: { id } }),
   listVacancies: async (skip = 0, take = 20) => {
-    const items = await prisma.vacancy.findMany({ skip, take });
+    const items = await prisma.vacancy.findMany({ skip, take, include: { skill: { select: { id: true, name: true } } } });
     const total = await prisma.vacancy.count();
     return { items, total };
   },

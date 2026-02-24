@@ -41,13 +41,9 @@ export async function deleteRun(req: Request, res: Response) {
 
 export async function processRun(req: Request, res: Response) {
   const id = req.params.id;
-  try {
-    const result = await PayrollService.enqueueProcessPayrollRun(id);
-    // invalidate caches
-    await cacheDelByPrefix("payroll:runs");
-    await cacheDelByPrefix("reports:payroll");
-    return res.status(202).json({ status: "success", data: result });
-  } catch (err: any) {
-    return res.status(500).json({ error: err?.message ?? "Failed to enqueue payroll run processing" });
-  }
+  const actorId = (req as any).user?.id as string | undefined;
+  const result = await PayrollService.enqueueProcessPayrollRun(id, actorId || null);
+  await cacheDelByPrefix("payroll:runs");
+  await cacheDelByPrefix("reports:payroll");
+  return res.status(202).json({ status: "success", data: result });
 }

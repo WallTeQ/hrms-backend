@@ -5,6 +5,7 @@ import type { Prisma } from '@prisma/client';
 export type EmployeeFilters = {
   search?: string;
   status?: string;
+  employeeId?: string;
   skip?: number;
   take?: number;
 };
@@ -13,44 +14,27 @@ export const EmployeeRepository = (prisma = prismaDefault) => ({
   create: async (data: Prisma.EmployeeCreateInput) =>
     prisma.employee.create({ data }),
 
-  findById: async (id: string, user?: any) => {
-    // Apply role-based access control
-    if (user) {
-      switch (user.role) {
-        case 'EMPLOYEE':
-          // EMPLOYEE can only see themselves
-          if (!user.employeeId || user.employeeId !== id) {
-            return null;
-          }
-          break;
-        case 'SUPERVISOR':
-          // SUPERVISOR can see all employees (TODO: restrict to direct reports)
-          break;
-        case 'HR_ADMIN':
-          // HR_ADMIN can see all
-          break;
-        case 'BOARD':
-          // BOARD cannot see individual employee records
-          return null;
-        default:
-          return null;
-      }
-    }
-
-    return prisma.employee.findUnique({ 
+  findById: async (id: string) =>
+    prisma.employee.findUnique({
       where: { id },
       select: {
         id: true,
-        employeeNumber: true,
         firstName: true,
         lastName: true,
         email: true,
-        phone: true,
+        contactNumbers: true,
+        mobileMoneyNumber: true,
+        photoUrl: true,
+        complianceChecklist: true,
         dateOfBirth: true,
         status: true,
         hireDate: true,
+        dateOfEmployment: true,
         departmentId: true,
         department: { select: { id: true, name: true } },
+        shift: { select: { id: true, name: true, type: true, expectedHours: true, isFlexible: true, punctualityApplies: true } },
+        primarySkillId: true,
+        primarySkill: { select: { id: true, name: true } },
         createdAt: true,
         updatedAt: true,
         user: { select: { id: true, email: true, role: true, createdAt: true, updatedAt: true } },
@@ -67,24 +51,25 @@ export const EmployeeRepository = (prisma = prismaDefault) => ({
           select: { id: true, year: true, balance: true },
           where: { year: new Date().getFullYear() }
         },
-      }
+        skills: { select: { id: true, name: true } },
+      },
     }).then((emp: any) => emp ? {
       ...emp,
       position: emp.contracts?.[0]?.title || null,
       currentSalary: emp.salaryStructures?.[0]?.baseSalary || null,
-    } : null);
-  },
+    } : null),
 
   findByEmail: async (email: string) =>
     prisma.employee.findUnique({ where: { email } }),
 
-  list: async (filters: EmployeeFilters = {}, user?: any, includes?: string[]) => {
-    const { search, status, skip = 0, take = 20 } = filters;
+  list: async (filters: EmployeeFilters = {}, includes?: string[]) => {
+    const { search, status, employeeId, skip = 0, take = 20 } = filters;
 
     // Build base where clause
     let whereClause: any = {
       AND: [
         status ? { status } : {},
+        employeeId ? { id: employeeId } : {},
         search
           ? {
               OR: [
@@ -97,114 +82,49 @@ export const EmployeeRepository = (prisma = prismaDefault) => ({
       ],
     };
 
-    // Apply role-based filtering
-    if (user) {
-      switch (user.role) {
-        case 'EMPLOYEE':
-          // EMPLOYEE can only see themselves
-          if (user.employeeId) {
-            whereClause.AND.push({ id: user.employeeId });
-          } else {
-            // No employee record, return empty
-            return { items: [], total: 0 };
-          }
-          break;
-        case 'SUPERVISOR':
-          // SUPERVISOR can see all employees (since no supervisor relationship in schema yet)
-          // TODO: Filter to direct reports when supervisor field is added
-          break;
-        case 'HR_ADMIN':
-          // HR_ADMIN can see all
-          break;
-        case 'BOARD':
-          // BOARD cannot see individual employee records, only aggregated data
-          return { items: [], total: 0 };
-        default:
-          return { items: [], total: 0 };
-      }
-    }
-
     // Default select: only essential fields
     const selectObj: any = {
       id: true,
-      employeeNumber: true,
       firstName: true,
       lastName: true,
       email: true,
-      phone: true,
+      contactNumbers: true,
+      mobileMoneyNumber: true,
+      photoUrl: true,
       dateOfBirth: true,
       status: true,
       hireDate: true,
+      dateOfEmployment: true,
       departmentId: true,
       department: { select: { id: true, name: true } },
+      shift: { select: { id: true, name: true, type: true, expectedHours: true, isFlexible: true, punctualityApplies: true } },
+      primarySkillId: true,
+      primarySkill: { select: { id: true, name: true } },
       createdAt: true,
       updatedAt: true,
       user: { select: { id: true, email: true, role: true, createdAt: true, updatedAt: true } },
-      contracts: { 
-        select: { id: true, title: true, startDate: true, endDate: true },
-        orderBy: { startDate: "desc" },
-      },
+      // contracts intentionally omitted from list to keep list queries fast
+      // (contracts are returned by `findById` when fetching a single employee)
+      
+      skills: { select: { id: true, name: true } },
     };
-    if (includes?.includes('documents')) {
-      selectObj.documents = { 
-        select: { id: true, type: true, name: true, createdAt: true },
-        take: 5 // Limit to recent documents
-      };
-    }
-    if (includes?.includes('disciplinaryRecords')) {
-      selectObj.disciplinaryRecords = { 
-        select: { id: true, incident: true, action: true, date: true },
-        take: 3 // Limit to recent records
-      };
-    }
-    // Other includes remain optional and limited
-    if (includes?.includes('salaryStructures')) {
-      selectObj.salaryStructures = { 
-        select: { id: true, baseSalary: true, effectiveFrom: true },
-        orderBy: { effectiveFrom: "desc" },
-        take: 1
-      };
-    }
-    if (includes?.includes('trainings')) {
-      selectObj.trainings = { 
-        select: { id: true, completedAt: true, training: { select: { title: true } } },
-        take: 5
-      };
-    }
-    if (includes?.includes('attendances')) {
-      selectObj.attendances = { 
-        select: { id: true, date: true, status: true },
-        orderBy: { date: "desc" },
-        take: 10
-      };
-    }
-    if (includes?.includes('leaveRequests')) {
-      selectObj.leaveRequests = { 
-        select: { id: true, type: true, startDate: true, endDate: true, status: true },
-        orderBy: { createdAt: "desc" },
-        take: 5
-      };
-    }
-    if (includes?.includes('leaveBalances')) {
-      selectObj.leaveBalances = { 
-        select: { id: true, year: true, balance: true },
-        where: { year: new Date().getFullYear() }
-      };
-    }
-    if (includes?.includes('evaluations')) {
-      selectObj.evaluations = { 
-        select: { id: true, score: true, period: true },
-        orderBy: { createdAt: "desc" },
-        take: 3
-      };
-    }
-    if (includes?.includes('payslips')) {
-      selectObj.payslips = { 
-        select: { id: true, gross: true, net: true, generatedAt: true },
-        orderBy: { generatedAt: "desc" },
-        take: 3
-      };
-    }
+    // documents are intentionally NOT returned in the employee *list* (table view)
+    // — fetching documents should be done via the single-employee endpoint or a dedicated documents endpoint.
+    // if (includes?.includes('documents')) {
+    //   selectObj.documents = { 
+    //     select: { id: true, type: true, name: true, createdAt: true },
+    //     take: 5 // Limit to recent documents
+    //   };
+    // }
+    // Large/nested relations (disciplinaryRecords, salaryStructures, trainings,
+    // attendances, leaveRequests, leaveBalances, evaluations, payslips) are
+    // intentionally NOT returned by the `list` endpoint (table view).  Fetch
+    // any of these via the single-employee endpoint `GET /employees/:id` or the
+    // dedicated resource endpoints (e.g. `/employees/:id/attendances`).
+
+    // The `includes` parameter no longer enables these heavy relations for the
+    // list endpoint; it is ignored here to keep list queries fast and predictable.
+
 
     const [items, total] = await Promise.all([
       prisma.employee.findMany({
@@ -231,11 +151,11 @@ export const EmployeeRepository = (prisma = prismaDefault) => ({
   softDelete: async (id: string) =>
     prisma.employee.update({ where: { id }, data: { status: "INACTIVE" } }),
 
-  createWithContract: async (employeeData: Prisma.EmployeeCreateInput, contractData: Prisma.ContractCreateInput) =>
-    prisma.$transaction([
-      prisma.employee.create({ data: employeeData }),
-      prisma.contract.create({ data: contractData }),
-    ]),
+  createWithContract: async (employeeData: Prisma.EmployeeCreateInput, contractData: Prisma.ContractCreateInput) => {
+    const employee = await prisma.employee.create({ data: employeeData });
+    const contract = await prisma.contract.create({ data: contractData });
+    return [employee, contract];
+  },
 
   // any complex/aggregate queries can live here (reports, headcount, etc.)
 });

@@ -1,1 +1,0 @@
-// scaffold: trainings types / dtos

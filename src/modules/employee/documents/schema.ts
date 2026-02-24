@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const CreateDocumentSchema = z.object({
   employeeId: z.string().uuid(),
-  type: z.enum(["PASSPORT", "ID", "CERTIFICATE", "CONTRACT", "OTHER"]),
+  type: z.enum(["PASSPORT", "ID", "CERTIFICATE", "CONTRACT", "COMPLIANCE", "OTHER"]),
   name: z.string().min(1),
   // fileUrl is optional for multipart/file uploads (controller will add it when a file is uploaded)
   fileUrl: z.string().url().optional(),

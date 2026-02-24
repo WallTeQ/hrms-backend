@@ -19,7 +19,6 @@ export const LoginResponseSchema = z.object({
     id: z.string(),
     email: z.string().email(),
     role: z.string(),
-    employeeId: z.string().nullable(),
     createdAt: z.string(),
   }),
   tokens: z.object({

@@ -14,12 +14,8 @@ export async function listVacancies(req: Request, res: Response) {
 }
 
 export async function createVacancy(req: Request, res: Response) {
-  // Defensive: ensure only authenticated HR_ADMIN can create vacancies
-  if (!req.user) return res.status(401).json({ error: "Unauthorized" });
-  if (req.user.role !== "HR_ADMIN") return res.status(403).json({ error: "Forbidden" });
-
   const payload = req.body;
-  const v = await RecruitmentService.createVacancy(payload as any);
+  const v = await RecruitmentService.createVacancy(payload as any, req.user as any);
   await cacheDelByPrefix("recruitment:vacancies");
   return res.status(201).json({ status: "success", data: v });
 }
@@ -30,4 +26,11 @@ export async function getVacancy(req: Request, res: Response) {
   const v = await cacheWrap(key, 60, () => RecruitmentService.getVacancy(id));
   if (!v) return res.status(404).json({ error: "Not found" });
   return res.json({ status: "success", data: v });
+}
+
+export async function planningInsights(req: Request, res: Response) {
+  const monthsAhead = req.query.monthsAhead ? Number(req.query.monthsAhead) : 12;
+  const key = `recruitment:planning:${monthsAhead}`;
+  const data = await cacheWrap(key, 300, () => RecruitmentService.getPlanningInsights(monthsAhead));
+  return res.json({ status: "success", data });
 }

@@ -8,6 +8,8 @@ import recruitment from "../modules/recruitment/router.js";
 import reports from "../modules/reports/router.js";
 import trainings from "../modules/trainings/router.js";
 import user from "../modules/user/router.js";
+import tasks from "../modules/tasks/router.js";
+import shifts from "../modules/shifts/router.js";
 
 export default [
   { path: "/attendance", router: attendance },
@@ -20,4 +22,6 @@ export default [
   { path: "/reports", router: reports },
   { path: "/trainings", router: trainings },
   { path: "/users", router: user },
+  { path: "/tasks", router: tasks },
+  { path: "/shifts", router: shifts },
 ];

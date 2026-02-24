@@ -1,9 +1,10 @@
 import express from "express";
 import { authMiddleware } from "../../middlewares/auth.js";
-import { validate } from "../../middlewares/validate.js";
+import { validate, validateQuery } from "../../middlewares/validate.js";
 import { requirePermission } from "../../middlewares/requireRole.js";
 import { CreateKpiSchema } from "./kpis/schema.js";
 import { CreateEvaluationSchema } from "./evaluations/schema.js";
+import { GeneratePerformanceSchema, PerformanceRecordQuerySchema } from "./schema.js";
 import kpisRouter from "./kpis/router.js";
 import evaluationsRouter from "./evaluations/router.js";
 import * as controller from "./controller.js";
@@ -22,6 +23,10 @@ router.post("/evaluations", requirePermission("performance:evaluations:create"),
 router.get("/evaluations/employee/:employeeId", controller.listEvaluationsForEmployee);
 
 router.post("/start-review/:employeeId", requirePermission("performance:evaluations:create"), controller.startReview);
+
+router.post("/records/generate", requirePermission("performance:records:generate"), validate(GeneratePerformanceSchema), controller.generateMonthlyPerformance);
+router.get("/records", requirePermission("performance:records:list"), validateQuery(PerformanceRecordQuerySchema), controller.listPerformanceRecords);
+router.patch("/records/:id", requirePermission("performance:records:update"), controller.updatePerformanceRecord);
 
 router.use("/kpis", kpisRouter);
 router.use("/evaluations", evaluationsRouter);

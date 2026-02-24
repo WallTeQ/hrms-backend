@@ -65,28 +65,34 @@ export const AttendanceRepository = (prisma = prismaDefault) => ({
 
   delete: async (id: string) => prisma.attendance.delete({ where: { id } }),
 
-  mark: async (employeeId: string, date: Date, status?: AttendanceStatus, clockIn?: Date, clockOut?: Date) =>
-    prisma.$transaction(async (tx: Prisma.TransactionClient) => {
-      // Normalize date to start of day for consistent comparison
-      const normalizedDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  mark: async (
+    employeeId: string,
+    date: Date,
+    status?: AttendanceStatus,
+    clockIn?: Date,
+    clockOut?: Date,
+    extraData?: Prisma.AttendanceUpdateInput
+  ) => {
+    // Normalize date to start of day for consistent comparison
+    const normalizedDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
 
-      const existing = await tx.attendance.findFirst({
-        where: {
-          employeeId,
-          date: {
-            gte: normalizedDate,
-            lt: new Date(normalizedDate.getTime() + 24 * 60 * 60 * 1000), // Next day
-          }
-        }
-      });
-      const data: any = {};
-      if (status !== undefined) data.status = status;
-      if (clockIn) data.clockIn = clockIn;
-      if (clockOut) data.clockOut = clockOut;
-      if (existing) {
-        return tx.attendance.update({ where: { id: existing.id }, data });
-      }
-      // Creation expects status to be present (service ensures this)
-      return tx.attendance.create({ data: { employeeId, date: normalizedDate, ...data } });
-    }),
+    const existing = await prisma.attendance.findFirst({
+      where: {
+        employeeId,
+        date: {
+          gte: normalizedDate,
+          lt: new Date(normalizedDate.getTime() + 24 * 60 * 60 * 1000), // Next day
+        },
+      },
+    });
+    const data: any = { ...(extraData || {}) };
+    if (status !== undefined) data.status = status;
+    if (clockIn) data.clockIn = clockIn;
+    if (clockOut) data.clockOut = clockOut;
+    if (existing) {
+      return prisma.attendance.update({ where: { id: existing.id }, data });
+    }
+    // Creation expects status to be present (service ensures this)
+    return prisma.attendance.create({ data: { employeeId, date: normalizedDate, ...data } });
+  },
 });

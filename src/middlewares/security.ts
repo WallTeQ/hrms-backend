@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { redis } from "../infra/redis.js";
+import prismaDefault from "../infra/database.js";
 
 // Generic Redis-backed rate limiter (per IP or custom key)
 export function createRateLimiter(options: { prefix: string; windowSeconds?: number; max: number }) {
@@ -72,6 +73,22 @@ export async function auditAuthEvent(type: string, payload: any) {
     await redis.ltrim(AUDIT_LIST, 0, 1000);
   } catch (err) {
     // ignore
+  }
+}
+
+export async function auditAuthEventDb(type: string, payload: any, actorId?: string | null) {
+  try {
+    await prismaDefault.auditLog.create({
+      data: {
+        actorId: actorId || null,
+        action: type,
+        entity: "Auth",
+        entityId: actorId || null,
+        details: payload as any,
+      },
+    });
+  } catch (err) {
+    // avoid blocking auth flows
   }
 }
 

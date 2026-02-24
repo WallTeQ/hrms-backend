@@ -9,6 +9,7 @@ const BaseApplicationSchema = z.object({
   email: z.string().email(),
   phone: z.string().optional().nullable(),
   resumeUrl: z.string().url().optional().nullable(),
+  skillId: z.string().uuid().optional().nullable(),
 });
 
 export const CreateApplicationSchema = BaseApplicationSchema.refine((data) => !!data.candidateName || (data.firstName && data.lastName), {

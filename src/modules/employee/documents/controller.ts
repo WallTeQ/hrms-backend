@@ -1,39 +1,17 @@
 import { Request, Response } from "express";
 import { DocumentsService } from "./service.js";
 import { cacheWrap, cacheDelByPrefix } from "../../../infra/redis.js";
-import { uploadBuffer } from "../../../infra/cloudinary.js";
 import { getPaginationOptions, createPaginationResult } from "../../../common/pagination.js";
 
 export async function uploadDocument(req: Request, res: Response) {
-  try {
-    const payload = req.body as any;
+  const payload = req.body as any;
+  payload.employeeId = req.params.employeeId;
+  const file = (req as any).file as Express.Multer.File | undefined;
 
-    // Handle file upload if present
-    if ((req as any).file) {
-      const file = (req as any).file;
-      const filename = (file.originalname || `file-${Date.now()}`).replace(/[^a-zA-Z0-9_.-]/g, "_");
-      const result = await uploadBuffer(file.buffer, filename, { folder: `employees/${req.params.employeeId}` });
-      payload.fileUrl = result?.secure_url;
-      payload.publicId = result?.public_id;
-      payload.mimeType = file.mimetype;
-      payload.size = file.size;
-    }
-
-    // Ensure employeeId is set
-    payload.employeeId = req.params.employeeId;
-
-    // Ensure a file was uploaded or a fileUrl provided
-    if (!payload.fileUrl) {
-      return res.status(400).json({ error: "file or fileUrl is required" });
-    }
-
-    const doc = await DocumentsService.create(payload as any);
-    if ((payload as any).employeeId) await cacheDelByPrefix(`employees:detail:${(payload as any).employeeId}`);
-    await cacheDelByPrefix("employees");
-    return res.status(201).json({ status: "success", data: doc });
-  } catch (err: any) {
-    return res.status(500).json({ error: err?.message ?? "Upload failed" });
-  }
+  const doc = await DocumentsService.createWithUpload(payload as any, file);
+  if ((payload as any).employeeId) await cacheDelByPrefix(`employees:detail:${(payload as any).employeeId}`);
+  await cacheDelByPrefix("employees");
+  return res.status(201).json({ status: "success", data: doc });
 }
 
 export async function listDocumentsForEmployee(req: Request, res: Response) {

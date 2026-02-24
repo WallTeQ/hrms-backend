@@ -7,78 +7,64 @@ import { CreateAttendanceSchema } from "./schema.js";
 import { getPaginationOptions, createPaginationResult } from "../../common/pagination.js";
 
 export async function markAttendance(req: Request, res: Response) {
-  try {
-    const payload = req.body as MarkAttendanceDto;
-    const date = new Date(payload.date);
+  const payload = req.body as MarkAttendanceDto;
+  const userId = (req as any).user?.id as string | undefined;
 
-    // If client provided times but not status, default to PRESENT
-    let status = payload.status as any | undefined;
-    if (!status && (payload.clockIn || payload.clockOut)) {
-      status = "PRESENT";
-    }
+  const result = await AttendanceService.markAttendance({
+    employeeId: payload.employeeId,
+    date: payload.date,
+    status: payload.status as any,
+    clockIn: payload.clockIn as any,
+    clockOut: payload.clockOut as any,
+    entryMethod: payload.entryMethod as any,
+    overtimeApproved: payload.overtimeApproved,
+    notes: payload.notes ?? null,
+    recordedByUserId: userId,
+  });
 
-    const clockInDate = payload.clockIn ? new Date(`${payload.date}T${payload.clockIn}:00`) : undefined;
-    const clockOutDate = payload.clockOut ? new Date(`${payload.date}T${payload.clockOut}:00`) : undefined;
+  // Map response to use user-friendly field names and format times
+  const responseData = {
+    ...result,
+    checkIn: (result as any).clockIn ? (result as any).clockIn.toTimeString().slice(0, 5) : null,
+    checkOut: (result as any).clockOut ? (result as any).clockOut.toTimeString().slice(0, 5) : null,
+  };
+  delete (responseData as any).clockIn;
+  delete (responseData as any).clockOut;
 
-    const result = await AttendanceService.markAttendance(payload.employeeId, date, status as any, clockInDate, clockOutDate);
-
-    // Map response to use user-friendly field names and format times
-    const responseData = {
-      ...result,
-      checkIn: (result as any).clockIn ? (result as any).clockIn.toTimeString().slice(0, 5) : null,
-      checkOut: (result as any).clockOut ? (result as any).clockOut.toTimeString().slice(0, 5) : null,
-    };
-    delete (responseData as any).clockIn;
-    delete (responseData as any).clockOut;
-
-    return res.status(201).json({ status: "success", data: responseData });
-  } catch (err: any) {
-    return res.status(400).json({ error: err?.message ?? "Failed to mark attendance" });
-  }
+  return res.status(201).json({ status: "success", data: responseData });
 }
 
 export async function clockOut(req: Request, res: Response) {
-  try {
-    const { employeeId } = req.body;
-    if (!employeeId) {
-      return res.status(400).json({ error: "Employee ID is required" });
-    }
+  const { employeeId } = req.body;
+  const result = await AttendanceService.clockOut(employeeId);
 
-    const result = await AttendanceService.clockOut(employeeId);
+  // Map response to use user-friendly field names and format times
+  const responseData = {
+    ...result,
+    checkIn: result.clockIn ? result.clockIn.toTimeString().slice(0, 5) : null,
+    checkOut: result.clockOut ? result.clockOut.toTimeString().slice(0, 5) : null,
+  };
+  delete responseData.clockIn;
+  delete responseData.clockOut;
 
-    // Map response to use user-friendly field names and format times
-    const responseData = {
-      ...result,
-      checkIn: result.clockIn ? result.clockIn.toTimeString().slice(0, 5) : null,
-      checkOut: result.clockOut ? result.clockOut.toTimeString().slice(0, 5) : null,
-    };
-    delete responseData.clockIn;
-    delete responseData.clockOut;
-
-    return res.json({ status: "success", data: responseData });
-  } catch (err: any) {
-    return res.status(400).json({ error: err?.message ?? "Failed to clock out" });
-  }
+  return res.json({ status: "success", data: responseData });
 }
 
 export async function createAttendance(req: Request, res: Response) {
-  try {
-    const payload = req.body as CreateAttendanceDto;
-    const result = await AttendanceService.create(payload);
-    
-    // Map response to use user-friendly field names and format times
-    const responseData = {
-      ...result,
-      checkIn: result.clockIn ? result.clockIn.toTimeString().slice(0, 5) : null,
-      checkOut: result.clockOut ? result.clockOut.toTimeString().slice(0, 5) : null,
-    };
-    delete responseData.clockIn;
-    delete responseData.clockOut;
-    
-    return res.status(201).json({ status: "success", data: responseData });
-  } catch (err: any) {
-    return res.status(400).json({ error: err?.message ?? "Failed to create attendance" });
-  }
+  const payload = req.body as CreateAttendanceDto;
+  const userId = (req as any).user?.id as string | undefined;
+  const result = await AttendanceService.create(payload, { recordedByUserId: userId });
+
+  // Map response to use user-friendly field names and format times
+  const responseData = {
+    ...result,
+    checkIn: result.clockIn ? result.clockIn.toTimeString().slice(0, 5) : null,
+    checkOut: result.clockOut ? result.clockOut.toTimeString().slice(0, 5) : null,
+  };
+  delete responseData.clockIn;
+  delete responseData.clockOut;
+
+  return res.status(201).json({ status: "success", data: responseData });
 }
 
 export async function getAttendance(req: Request, res: Response) {
@@ -99,24 +85,20 @@ export async function getAttendance(req: Request, res: Response) {
 }
 
 export async function updateAttendance(req: Request, res: Response) {
-  try {
-    const id = req.params.id;
-    const payload = req.body;
-    const updated = await AttendanceService.update(id, payload as any);
-    
-    // Map response to use user-friendly field names
-    const responseData = {
-      ...updated,
-      checkIn: updated.clockIn,
-      checkOut: updated.clockOut,
-    };
-    delete responseData.clockIn;
-    delete responseData.clockOut;
-    
-    return res.json({ status: "success", data: responseData });
-  } catch (err: any) {
-    return res.status(400).json({ error: err?.message ?? "Failed to update" });
-  }
+  const id = req.params.id;
+  const payload = req.body;
+  const updated = await AttendanceService.update(id, payload as any);
+
+  // Map response to use user-friendly field names
+  const responseData = {
+    ...updated,
+    checkIn: updated.clockIn,
+    checkOut: updated.clockOut,
+  };
+  delete responseData.clockIn;
+  delete responseData.clockOut;
+
+  return res.json({ status: "success", data: responseData });
 }
 
 export async function deleteAttendance(req: Request, res: Response) {
@@ -130,38 +112,17 @@ export async function listAttendance(req: Request, res: Response) {
   const pagination = getPaginationOptions(req.query);
   const { skip, take, page } = pagination;
   const user = (req as any).user;
-  const role = user?.role || 'anonymous';
+  const role = user?.role || "anonymous";
+  const scopeEmployeeId = role === "EMPLOYEE" ? user?.employeeId || "self" : (employeeId as string | undefined) || "all";
 
-  // Role-based access control for attendance
-  let filterEmployeeId = employeeId as string | undefined;
-
-  if (user) {
-    switch (user.role) {
-      case 'EMPLOYEE':
-        // Employees can only see their own attendance
-        filterEmployeeId = user.employeeId;
-        break;
-      case 'SUPERVISOR':
-      case 'HR_ADMIN':
-      case 'BOARD':
-        // These roles can see all attendance or filter by specific employee
-        // If no employeeId specified, show all
-        break;
-      default:
-        return res.status(403).json({ error: "Access denied" });
-    }
-  } else {
-    return res.status(401).json({ error: "Authentication required" });
-  }
-
-  const key = `attendance:list:role=${role}:employeeId=${filterEmployeeId || 'all'}:startDate=${startDate || 'none'}:endDate=${endDate || 'none'}:skip=${skip}:take=${take}`;
+  const key = `attendance:list:role=${role}:employeeId=${scopeEmployeeId}:startDate=${startDate || 'none'}:endDate=${endDate || 'none'}:skip=${skip}:take=${take}`;
   const result = await cacheWrap(key, 60, () => AttendanceService.list({
-    employeeId: filterEmployeeId,
+    employeeId: employeeId as string | undefined,
     startDate: startDate ? new Date(String(startDate)) : undefined,
     endDate: endDate ? new Date(String(endDate)) : undefined,
     skip,
     take,
-  })) as { items: any[]; total: number };
+  }, user)) as { items: any[]; total: number };
   
   const { items, total } = result;
   // Map response to use user-friendly field names

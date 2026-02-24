@@ -17,7 +17,27 @@ export const TrainingsRepository = (prisma = prismaDefault) => ({
   findSkill: async (id: string) => prisma.skill.findUnique({ where: { id } }),
   updateSkill: async (id: string, data: Prisma.SkillUpdateInput) => prisma.skill.update({ where: { id }, data }),
   deleteSkill: async (id: string) => prisma.skill.delete({ where: { id } }),
-  listSkills: async () => prisma.skill.findMany(),
+  listSkills: async (skip = 0, take = 50) => {
+    const items = await prisma.skill.findMany({ skip, take, orderBy: { name: "asc" } });
+    const total = await prisma.skill.count();
+    return { items, total };
+  },
+
+  // employees that have a given skill (optimized + paginated)
+  listEmployeesSkill: async (skillId: string, skip = 0, take = 50) => {
+    // run count + page fetch in a single transaction to reduce roundtrips
+    const [total, items] = await prisma.$transaction([
+      prisma.employee.count({ where: { skills: { some: { id: skillId } } } }),
+      prisma.employee.findMany({
+        where: { skills: { some: { id: skillId } } },
+        skip,
+        take,
+        orderBy: [{ lastName: "asc" }, { firstName: "asc" }],
+        select: { id: true, firstName: true, lastName: true, email: true, departmentId: true, primarySkillId: true, status: true },
+      }),
+    ]);
+    return { items, total };
+  },
 
   // Training history
   addTrainingHistory: async (data: Prisma.TrainingHistoryCreateInput) => prisma.trainingHistory.create({ data }),
@@ -26,4 +46,26 @@ export const TrainingsRepository = (prisma = prismaDefault) => ({
   deleteTrainingHistory: async (id: string) => prisma.trainingHistory.delete({ where: { id } }),
   listTrainingHistoryForEmployee: async (employeeId: string, skip = 0, take = 50) =>
     prisma.trainingHistory.findMany({ where: { employeeId }, skip, take, orderBy: { completedAt: "desc" } }),
+
+  // Training recommendations
+  listTrainingRecommendations: async (filters: { employeeId?: string; status?: string; skip?: number; take?: number } = {}) => {
+    const { employeeId, status, skip = 0, take = 50 } = filters;
+    const where: Prisma.TrainingRecommendationWhereInput = {
+      AND: [
+        employeeId ? { employeeId } : {},
+        status ? { status: status as any } : {},
+      ],
+    };
+    const items = await prisma.trainingRecommendation.findMany({
+      where,
+      skip,
+      take,
+      orderBy: { createdAt: "desc" },
+      include: { employee: { select: { id: true, firstName: true, lastName: true } }, skill: { select: { id: true, name: true } }, training: { select: { id: true, title: true } } },
+    });
+    const total = await prisma.trainingRecommendation.count({ where });
+    return { items, total };
+  },
+  updateTrainingRecommendation: async (id: string, data: Prisma.TrainingRecommendationUpdateInput) =>
+    prisma.trainingRecommendation.update({ where: { id }, data }),
 });

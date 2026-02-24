@@ -3,6 +3,7 @@ import cors from "cors";
 import morgan from "morgan";
 import helmet from "helmet";
 import compression from "compression";
+import cookieParser from "cookie-parser";
 import routes from "./routes/index.js";
 import { errorHandler } from "./middlewares/errorHandler.js";
 import { createRateLimiter } from "./middlewares/security.js";
@@ -34,6 +35,7 @@ app.use(cors({
 
 // Compression
 app.use(compression());
+app.use(cookieParser());
 
 // Cache control for GET requests
 app.use((req, res, next) => {

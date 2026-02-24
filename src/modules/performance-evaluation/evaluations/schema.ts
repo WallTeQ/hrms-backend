@@ -3,6 +3,7 @@ import { z } from "zod";
 export const CreateEvaluationSchema = z.object({
   employeeId: z.string().uuid(),
   kpiId: z.string().uuid().optional().nullable(),
+  category: z.enum(["SUPERVISOR", "TEAMWORK"]).optional(),
   score: z.number(),
   period: z.string().min(1),
   notes: z.string().optional().nullable(),

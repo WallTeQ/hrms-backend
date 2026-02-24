@@ -14,6 +14,26 @@
       "key": "auth_token",
       "value": "",
       "type": "string"
+    },
+    {
+      "key": "refresh_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "employeeId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "shiftId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "skillId",
+      "value": "",
+      "type": "string"
     }
   ],
   "item": [
@@ -69,7 +89,9 @@
                   "if (pm.response.code === 200) {",
                   "    const body = pm.response.json();",
                   "    const token = body?.data?.tokens?.accessToken || body?.tokens?.accessToken || body?.token;",
+                  "    const refresh = body?.data?.tokens?.refreshToken || body?.tokens?.refreshToken || body?.refreshToken;",
                   "    if (token) pm.collectionVariables.set('auth_token', token);",
+                  "    if (refresh) pm.collectionVariables.set('refresh_token', refresh);",
                   "}"
                 ]
               }
@@ -90,6 +112,27 @@
               "raw": "{{base_url}}/auth/logout",
               "host": ["{{base_url}}"],
               "path": ["auth", "logout"]
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refresh_token}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/refresh",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "refresh"]
             }
           }
         },
@@ -153,6 +196,69 @@
               "raw": "{{base_url}}/auth/signup/complete",
               "host": ["{{base_url}}"],
               "path": ["auth", "signup", "complete"]
+            }
+          }
+        },
+        {
+          "name": "Reset Password Request OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/reset/request",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "reset", "request"]
+            }
+          }
+        },
+        {
+          "name": "Reset Password Verify OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"otp\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/reset/verify",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "reset", "verify"]
+            }
+          }
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"otp\": \"123456\",\n  \"newPassword\": \"newpassword123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/reset/password",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "reset", "password"]
             }
           }
         },
@@ -231,6 +337,23 @@
           }
         },
         {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/users/me",
+              "host": ["{{base_url}}"],
+              "path": ["users", "me"]
+            }
+          }
+        },
+        {
           "name": "Update User",
           "request": {
             "method": "PATCH",
@@ -305,12 +428,37 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"employeeId\": 1,\n  \"date\": \"2023-10-01\",\n  \"clockIn\": \"09:00\",\n  \"clockOut\": \"17:00\"\n}"
+              "raw": "{\n  \"employeeId\": \"{{employeeId}}\",\n  \"date\": \"2026-02-01\",\n  \"clockIn\": \"08:05\",\n  \"clockOut\": \"16:10\",\n  \"entryMethod\": \"MANUAL\",\n  \"overtimeApproved\": true,\n  \"notes\": \"Manual entry due to low connectivity\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/attendance/mark",
               "host": ["{{base_url}}"],
               "path": ["attendance", "mark"]
+            }
+          }
+        },
+        {
+          "name": "Clock Out",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employeeId\": \"{{employeeId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/attendance/clock-out",
+              "host": ["{{base_url}}"],
+              "path": ["attendance", "clock-out"]
             }
           }
         },
@@ -330,7 +478,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"employeeId\": 1,\n  \"date\": \"2023-10-01\",\n  \"status\": \"present\"\n}"
+              "raw": "{\n  \"employeeId\": \"{{employeeId}}\",\n  \"date\": \"2026-02-01\",\n  \"status\": \"PRESENT\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/attendance",
@@ -401,7 +549,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"status\": \"absent\"\n}"
+              "raw": "{\n  \"status\": \"ABSENT\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/attendance/:id",
@@ -438,6 +586,239 @@
               ]
             }
           }
+        },
+        {
+          "name": "Leave Requests",
+          "item": [
+            {
+              "name": "Create Leave Request",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"employeeId\": \"{{employeeId}}\",\n  \"type\": \"ANNUAL\",\n  \"startDate\": \"2026-03-01\",\n  \"endDate\": \"2026-03-05\",\n  \"reason\": \"Family travel\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/attendance/leave-requests",
+                  "host": ["{{base_url}}"],
+                  "path": ["attendance", "leave-requests"]
+                }
+              }
+            },
+            {
+              "name": "List Leave Requests for Employee",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/attendance/leave-requests/employee/{{employeeId}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["attendance", "leave-requests", "employee", "{{employeeId}}"]
+                }
+              }
+            },
+            {
+              "name": "Get Leave Request",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/attendance/leave-requests/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["attendance", "leave-requests", ":id"],
+                  "variable": [
+                    { "key": "id", "value": "1" }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Update Leave Request",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"reason\": \"Updated reason\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/attendance/leave-requests/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["attendance", "leave-requests", ":id"],
+                  "variable": [
+                    { "key": "id", "value": "1" }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Update Leave Status",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"APPROVED\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/attendance/leave-requests/:id/status",
+                  "host": ["{{base_url}}"],
+                  "path": ["attendance", "leave-requests", ":id", "status"],
+                  "variable": [
+                    { "key": "id", "value": "1" }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Delete Leave Request",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/attendance/leave-requests/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["attendance", "leave-requests", ":id"],
+                  "variable": [
+                    { "key": "id", "value": "1" }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Leave Balances",
+          "item": [
+            {
+              "name": "Get Leave Balance",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/attendance/leave-balances/employee/{{employeeId}}?year=2026",
+                  "host": ["{{base_url}}"],
+                  "path": ["attendance", "leave-balances", "employee", "{{employeeId}}"],
+                  "query": [
+                    { "key": "year", "value": "2026" }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "List Leave Balances",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/attendance/leave-balances?year=2026",
+                  "host": ["{{base_url}}"],
+                  "path": ["attendance", "leave-balances"],
+                  "query": [
+                    { "key": "year", "value": "2026" }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Upsert Leave Balance",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"employeeId\": \"{{employeeId}}\",\n  \"year\": 2026,\n  \"balance\": 20\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/attendance/leave-balances",
+                  "host": ["{{base_url}}"],
+                  "path": ["attendance", "leave-balances"]
+                }
+              }
+            },
+            {
+              "name": "Delete Leave Balance",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/attendance/leave-balances/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["attendance", "leave-balances", ":id"],
+                  "variable": [
+                    { "key": "id", "value": "1" }
+                  ]
+                }
+              }
+            }
+          ]
         }
       ]
     },
@@ -458,9 +839,10 @@
                 "value": "application/json"
               }
             ],
+            "description": "Use `contactNumbers.primary` instead of `phone`. To enable server perf timing set `DEBUG_PERF=1` when starting the server.",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"firstName\": \"Jane\",\n  \"lastName\": \"Doe\",\n  \"email\": \"jane@example.com\",\n  \"phone\": \"+1234567890\",\n  \"dateOfBirth\": \"1990-01-01\",\n  \"password\": \"password123\"\n}"
+              "raw": "{\n  \"firstName\": \"Jane\",\n  \"lastName\": \"Doe\",\n  \"email\": \"jane@example.com\",\n  \"contactNumbers\": { \"primary\": \"+1234567890\" },\n  \"dateOfBirth\": \"1990-01-01\",\n  \"dateOfEmployment\": \"2026-02-01\",\n  \"mobileMoneyNumber\": \"+233200000000\",\n  \"password\": \"password123\",\n  \"shiftId\": \"{{shiftId}}\",\n  \"primarySkillId\": null,\n  \"skillIds\": []\n}"
             },
             "url": {
               "raw": "{{base_url}}/employees",
@@ -530,12 +912,76 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"position\": \"Senior Manager\"\n}"
+              "raw": "{\n  \"position\": \"Senior Manager\",\n  \"skillIds\": [],\n  \"primarySkillId\": null\n}"
             },
             "url": {
               "raw": "{{base_url}}/employees/:id",
               "host": ["{{base_url}}"],
               "path": ["employees", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Upload Employee Photo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "photo",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/employees/:id/photo",
+              "host": ["{{base_url}}"],
+              "path": ["employees", ":id", "photo"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Compliance Checklist",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"key\": \"id_card\",\n      \"status\": \"SUBMITTED\",\n      \"fileUrl\": \"https://example.com/id-card.pdf\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/employees/:id/compliance-checklist",
+              "host": ["{{base_url}}"],
+              "path": ["employees", ":id", "compliance-checklist"],
               "variable": [
                 {
                   "key": "id",
@@ -1106,6 +1552,225 @@
       ]
     },
     {
+      "name": "Departments",
+      "item": [
+        {
+          "name": "Create Department",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Engineering\",\n  \"description\": \"Core product team\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/departments",
+              "host": ["{{base_url}}"],
+              "path": ["departments"]
+            }
+          }
+        },
+        {
+          "name": "List Departments",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/departments",
+              "host": ["{{base_url}}"],
+              "path": ["departments"]
+            }
+          }
+        },
+        {
+          "name": "Get Department",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/departments/:id",
+              "host": ["{{base_url}}"],
+              "path": ["departments", ":id"],
+              "variable": [
+                { "key": "id", "value": "1" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Department",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Updated description\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/departments/:id",
+              "host": ["{{base_url}}"],
+              "path": ["departments", ":id"],
+              "variable": [
+                { "key": "id", "value": "1" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Department",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/departments/:id",
+              "host": ["{{base_url}}"],
+              "path": ["departments", ":id"],
+              "variable": [
+                { "key": "id", "value": "1" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Department Employees",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/departments/:id/employees",
+              "host": ["{{base_url}}"],
+              "path": ["departments", ":id", "employees"],
+              "variable": [
+                { "key": "id", "value": "1" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Department Stats Overview",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/departments/stats/overview",
+              "host": ["{{base_url}}"],
+              "path": ["departments", "stats", "overview"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Shifts",
+      "item": [
+        {
+          "name": "Create Shift",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Standard Day\",\n  \"type\": \"STANDARD\",\n  \"startTime\": \"09:00\",\n  \"endTime\": \"17:00\",\n  \"expectedHours\": 8,\n  \"graceMinutes\": 10,\n  \"punctualityApplies\": true,\n  \"isFlexible\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/shifts",
+              "host": ["{{base_url}}"],
+              "path": ["shifts"]
+            }
+          }
+        },
+        {
+          "name": "List Shifts",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/shifts",
+              "host": ["{{base_url}}"],
+              "path": ["shifts"]
+            }
+          }
+        },
+        {
+          "name": "Get Shift",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/shifts/:id",
+              "host": ["{{base_url}}"],
+              "path": ["shifts", ":id"],
+              "variable": [
+                { "key": "id", "value": "1" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Shift",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"graceMinutes\": 5\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/shifts/:id",
+              "host": ["{{base_url}}"],
+              "path": ["shifts", ":id"],
+              "variable": [
+                { "key": "id", "value": "1" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Shift",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/shifts/:id",
+              "host": ["{{base_url}}"],
+              "path": ["shifts", ":id"],
+              "variable": [
+                { "key": "id", "value": "1" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
       "name": "Payroll",
       "item": [
         {
@@ -1130,6 +1795,47 @@
               "raw": "{{base_url}}/payroll/process",
               "host": ["{{base_url}}"],
               "path": ["payroll", "process"]
+            }
+          }
+        },
+        {
+          "name": "Payroll Summary",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/payroll/summary?period=2026-01",
+              "host": ["{{base_url}}"],
+              "path": ["payroll", "summary"],
+              "query": [
+                { "key": "period", "value": "2026-01" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Payroll Export",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/payroll/export?period=2026-01&format=csv",
+              "host": ["{{base_url}}"],
+              "path": ["payroll", "export"],
+              "query": [
+                { "key": "period", "value": "2026-01" },
+                { "key": "format", "value": "csv" }
+              ]
             }
           }
         },
@@ -1435,6 +2141,29 @@
                   "raw": "{{base_url}}/payroll/payslips/:id",
                   "host": ["{{base_url}}"],
                   "path": ["payroll", "payslips", ":id"],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "1"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Approve Payslip",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/payroll/payslips/:id/approve",
+                  "host": ["{{base_url}}"],
+                  "path": ["payroll", "payslips", ":id", "approve"],
                   "variable": [
                     {
                       "key": "id",
@@ -1782,6 +2511,7 @@
                 "value": "application/json"
               }
             ],
+            "description": "Create a KPI. The `weight` value will be used by the performance generator when computing evaluation scores.",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Sales Target\",\n  \"description\": \"Achieve 100k sales\",\n  \"weight\": 1\n}"
@@ -1821,6 +2551,7 @@
             },
             {
               "name": "Update KPI",
+              "description": "Modify a KPI; adjust weight to change its importance in automated scoring.",
               "request": {
                 "method": "PATCH",
                 "header": [
@@ -2014,6 +2745,29 @@
               }
             },
             {
+              "name": "Start Review",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/performance/start-review/:employeeId",
+                  "host": ["{{base_url}}"],
+                  "path": ["performance", "start-review", ":employeeId"],
+                  "variable": [
+                    {
+                      "key": "employeeId",
+                      "value": "99a7da70-e176-40dc-baf0-a2da2ae467a9"
+                    }
+                  ]
+                }
+              }
+            },
+            {
               "name": "Create Promotion",
               "request": {
                 "method": "POST",
@@ -2064,6 +2818,85 @@
               }
             }
           ]
+        },
+        {
+          "name": "Performance Records",
+          "item": [
+            {
+              "name": "Generate Monthly Performance",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"period\": \"2026-01\"\n}"
+                },
+                "description": "Manually trigger monthly performance generation (period YYYY-MM). This task is also executed automatically by a background job on schedule.",
+              "url": {
+                  "raw": "{{base_url}}/performance/records/generate",
+                  "host": ["{{base_url}}"],
+                  "path": ["performance", "records", "generate"]
+                }
+              }
+            },
+            {
+              "name": "List Performance Records",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/performance/records?period=2026-01",
+                  "host": ["{{base_url}}"],
+                  "path": ["performance", "records"],
+                  "query": [
+                    { "key": "period", "value": "2026-01" }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Update Performance Record",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{auth_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"notes\": \"Manual adjustment\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/performance/records/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["performance", "records", ":id"],
+                  "variable": [
+                    { "key": "id", "value": "1" }
+                  ]
+                }
+              }
+            }
+          ]
         }
       ]
     },
@@ -2092,6 +2925,26 @@
           }
         },
         {
+          "name": "Planning Insights",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/recruitment/planning?monthsAhead=12",
+              "host": ["{{base_url}}"],
+              "path": ["recruitment", "planning"],
+              "query": [
+                { "key": "monthsAhead", "value": "12" }
+              ]
+            }
+          }
+        },
+        {
           "name": "Create Vacancy",
           "request": {
             "method": "POST",
@@ -2107,7 +2960,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Software Engineer\",\n  \"description\": \"Develop software\",\n  \"department\": \"IT\"\n}"
+              "raw": "{\n  \"title\": \"Software Engineer\",\n  \"description\": \"Develop software\",\n  \"department\": \"IT\",\n  \"skillId\": \"skill-123\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/recruitment/vacancies",
@@ -2221,6 +3074,10 @@
                 {
                   "key": "email",
                   "value": "applicant@example.com"
+                },
+                {
+                  "key": "skillId",
+                  "value": ""
                 },
                 {
                   "key": "file",
@@ -2590,6 +3447,69 @@
           }
         },
         {
+          "name": "Attendance by Department",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/reports/attendance/department?startDate=2026-02-01&endDate=2026-02-28",
+              "host": ["{{base_url}}"],
+              "path": ["reports", "attendance", "department"],
+              "query": [
+                { "key": "startDate", "value": "2026-02-01" },
+                { "key": "endDate", "value": "2026-02-28" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Attendance by Shift",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/reports/attendance/shift?startDate=2026-02-01&endDate=2026-02-28",
+              "host": ["{{base_url}}"],
+              "path": ["reports", "attendance", "shift"],
+              "query": [
+                { "key": "startDate", "value": "2026-02-01" },
+                { "key": "endDate", "value": "2026-02-28" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Overtime by Shift",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/reports/overtime/shift?startDate=2026-02-01&endDate=2026-02-28",
+              "host": ["{{base_url}}"],
+              "path": ["reports", "overtime", "shift"],
+              "query": [
+                { "key": "startDate", "value": "2026-02-01" },
+                { "key": "endDate", "value": "2026-02-28" }
+              ]
+            }
+          }
+        },
+        {
           "name": "Payroll Summary",
           "request": {
             "method": "GET",
@@ -2607,6 +3527,164 @@
           }
         },
         {
+          "name": "Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/reports/dashboard",
+              "host": ["{{base_url}}"],
+              "path": ["reports", "dashboard"]
+            }
+          }
+        },
+        {
+          "name": "Performance Report",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/reports/performance?period=2026-01",
+              "host": ["{{base_url}}"],
+              "path": ["reports", "performance"],
+              "query": [
+                { "key": "period", "value": "2026-01" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Performance by Shift",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/reports/performance/shift?period=2026-01",
+              "host": ["{{base_url}}"],
+              "path": ["reports", "performance", "shift"],
+              "query": [
+                { "key": "period", "value": "2026-01" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Department Productivity",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/reports/productivity?period=2026-01",
+              "host": ["{{base_url}}"],
+              "path": ["reports", "productivity"],
+              "query": [
+                { "key": "period", "value": "2026-01" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Productivity by Shift",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/reports/productivity/shift?period=2026-01",
+              "host": ["{{base_url}}"],
+              "path": ["reports", "productivity", "shift"],
+              "query": [
+                { "key": "period", "value": "2026-01" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Retirement Forecast",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/reports/retirement?monthsAhead=12",
+              "host": ["{{base_url}}"],
+              "path": ["reports", "retirement"],
+              "query": [
+                { "key": "monthsAhead", "value": "12" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Leave Utilization",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/reports/leave-utilization?startDate=2026-02-01&endDate=2026-02-28",
+              "host": ["{{base_url}}"],
+              "path": ["reports", "leave-utilization"],
+              "query": [
+                { "key": "startDate", "value": "2026-02-01" },
+                { "key": "endDate", "value": "2026-02-28" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Salary Projections",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/reports/salary-projections?monthsAhead=12",
+              "host": ["{{base_url}}"],
+              "path": ["reports", "salary-projections"],
+              "query": [
+                { "key": "monthsAhead", "value": "12" }
+              ]
+            }
+          }
+        },
+        {
           "name": "Headcount",
           "request": {
             "method": "GET",
@@ -2620,6 +3698,40 @@
               "raw": "{{base_url}}/reports/headcount",
               "host": ["{{base_url}}"],
               "path": ["reports", "headcount"]
+            }
+          }
+        },
+        {
+          "name": "Department Stats",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/reports/departments",
+              "host": ["{{base_url}}"],
+              "path": ["reports", "departments"]
+            }
+          }
+        },
+        {
+          "name": "Skill Stats",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/reports/skills",
+              "host": ["{{base_url}}"],
+              "path": ["reports", "skills"]
             }
           }
         }
@@ -2787,9 +3899,37 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/trainings/skills",
+              "raw": "{{base_url}}/trainings/skills?page=1&take=50",
               "host": ["{{base_url}}"],
-              "path": ["trainings", "skills"]
+              "path": ["trainings", "skills"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "take", "value": "50" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Employees for Skill",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/trainings/skills/:id/employees?page=1&take=50",
+              "host": ["{{base_url}}"],
+              "path": ["trainings", "skills", ":id", "employees"],
+              "variable": [
+                { "key": "id", "value": "{{skillId}}" }
+              ],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "take", "value": "50" }
+              ]
             }
           }
         },
@@ -2866,6 +4006,368 @@
                   "key": "id",
                   "value": "1"
                 }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Training Recommendations",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/trainings/recommendations?employeeId={{employeeId}}",
+              "host": ["{{base_url}}"],
+              "path": ["trainings", "recommendations"],
+              "query": [
+                { "key": "employeeId", "value": "{{employeeId}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Generate Training Recommendations",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/trainings/recommendations/generate?employeeId={{employeeId}}",
+              "host": ["{{base_url}}"],
+              "path": ["trainings", "recommendations", "generate"],
+              "query": [
+                { "key": "employeeId", "value": "{{employeeId}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Training Recommendation",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"COMPLETED\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/trainings/recommendations/:id",
+              "host": ["{{base_url}}"],
+              "path": ["trainings", "recommendations", ":id"],
+              "variable": [
+                { "key": "id", "value": "1" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Training History",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employeeId\": \"{{employeeId}}\",\n  \"trainingId\": \"training-123\",\n  \"completedAt\": \"2026-02-10\",\n  \"impactScore\": 80,\n  \"impactNotes\": \"Improved service delivery\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/trainings/history",
+              "host": ["{{base_url}}"],
+              "path": ["trainings", "history"]
+            }
+          }
+        },
+        {
+          "name": "List Training History for Employee",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/trainings/history/employee/:employeeId?page=1&take=50",
+              "host": ["{{base_url}}"],
+              "path": ["trainings", "history", "employee", ":employeeId"],
+              "variable": [
+                { "key": "employeeId", "value": "{{employeeId}}" }
+              ],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "take", "value": "50" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Training History",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"impactNotes\": \"Updated impact notes\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/trainings/history/:id",
+              "host": ["{{base_url}}"],
+              "path": ["trainings", "history", ":id"],
+              "variable": [
+                { "key": "id", "value": "1" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Training History",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/trainings/history/:id",
+              "host": ["{{base_url}}"],
+              "path": ["trainings", "history", ":id"],
+              "variable": [
+                { "key": "id", "value": "1" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tasks",
+      "item": [
+        {
+          "name": "Create Task",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Prepare monthly report\",\n  \"description\": \"Compile KPIs for February\",\n  \"employeeId\": \"{{employeeId}}\",\n  \"dueDate\": \"2026-02-28\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/tasks",
+              "host": ["{{base_url}}"],
+              "path": ["tasks"]
+            }
+          }
+        },
+        {
+          "name": "List Tasks",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tasks?employeeId={{employeeId}}",
+              "host": ["{{base_url}}"],
+              "path": ["tasks"],
+              "query": [
+                { "key": "employeeId", "value": "{{employeeId}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Tasks for Employee (admin/department head)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tasks/employee/:employeeId?page=1&take=50",
+              "host": ["{{base_url}}"],
+              "path": ["tasks", "employee", ":employeeId"],
+              "variable": [
+                { "key": "employeeId", "value": "{{employeeId}}" }
+              ],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "take", "value": "50" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Department Tasks (department head)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "description": "Department heads retrieve current (non-completed) tasks for their department. Admins may omit departmentId or pass a departmentId query param.",
+            "url": {
+              "raw": "{{base_url}}/tasks/department?page=1&take=50",
+              "host": ["{{base_url}}"],
+              "path": ["tasks", "department"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "take", "value": "50" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List My Tasks",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tasks/my?page=1&take=50",
+              "host": ["{{base_url}}"],
+              "path": ["tasks", "my"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "take", "value": "50" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Task",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tasks/:id",
+              "host": ["{{base_url}}"],
+              "path": ["tasks", ":id"],
+              "variable": [
+                { "key": "id", "value": "1" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Task",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"IN_PROGRESS\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/tasks/:id",
+              "host": ["{{base_url}}"],
+              "variable": [
+                { "key": "id", "value": "1" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Task (complete + attachment)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "description": "Attach a supporting document (PDF, Word .doc/.docx, or Excel .xls/.xlsx) up to 10MB using form key `attachment`.",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "status", "value": "COMPLETED", "type": "text" },
+                { "key": "attachment", "type": "file" }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/tasks/:id",
+              "host": ["{{base_url}}"],
+              "path": ["tasks", ":id"],
+              "variable": [
+                { "key": "id", "value": "1" }
+              ]
+            }
+          }
+        },
+
+        {
+          "name": "Approve Task",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tasks/:id/approve",
+              "host": ["{{base_url}}"],
+              "path": ["tasks", ":id", "approve"],
+              "variable": [
+                { "key": "id", "value": "1" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Task",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tasks/:id",
+              "host": ["{{base_url}}"],
+              "path": ["tasks", ":id"],
+              "variable": [
+                { "key": "id", "value": "1" }
               ]
             }
           }

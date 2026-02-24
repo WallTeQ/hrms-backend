@@ -29,6 +29,7 @@
     "bcryptjs": "^3.0.3",
     "bullmq": "^5.66.4",
     "cloudinary": "^2.8.0",
+    "cookie-parser": "^1.4.7",
     "compression": "^1.8.1",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
@@ -52,6 +53,7 @@
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
     "@types/compression": "^1.8.1",
+    "@types/cookie-parser": "^1.4.9",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/hpp": "^0.2.7",

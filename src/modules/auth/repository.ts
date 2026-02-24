@@ -13,7 +13,4 @@ export const AuthRepository = (prisma = prismaDefault) => ({
 
   updatePassword: async (id: string, hashedPassword: string) =>
     prisma.user.update({ where: { id }, data: { password: hashedPassword } }),
-
-  setEmployeeLink: async (userId: string, employeeId: string) =>
-    prisma.user.update({ where: { id: userId }, data: { employeeId } }),
 });

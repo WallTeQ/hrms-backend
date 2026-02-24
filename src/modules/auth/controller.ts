@@ -2,157 +2,110 @@ import { Request, Response } from "express";
 import { AuthService } from "./service.js";
 import type { RegisterDto, LoginDto, RequestPasswordResetOtpDto, VerifyPasswordResetOtpDto, ResetPasswordDto, ChangePasswordDto } from "./schema.js";
 import { cacheWrap, cacheDelByPrefix, cacheSet } from "../../infra/redis.js";
-import { recordFailedLogin, clearFailedLogin, auditAuthEvent, revokeToken } from "../../middlewares/security.js";
-import { generateTokens, verifyRefreshToken } from "../../common/jwt.js";
+
+const ACCESS_COOKIE = "access_token";
+const REFRESH_COOKIE = "refresh_token";
+
+function getCookieOptions() {
+  const isProd = process.env.NODE_ENV === "production";
+  return {
+    httpOnly: true,
+    secure: isProd,
+    sameSite: (process.env.AUTH_COOKIE_SAMESITE || (isProd ? "strict" : "lax")) as "strict" | "lax" | "none",
+    domain: process.env.AUTH_COOKIE_DOMAIN || undefined,
+    path: "/",
+  };
+}
 
 export async function register(req: Request, res: Response) {
-  try {
-    const payload = req.body as RegisterDto;
-    const user = await AuthService.register(payload.email, payload.password, payload.firstName, payload.lastName);
-    // scrub password
-    delete user.password;
-    await cacheDelByPrefix("users:list");
-    try { await cacheSet("users:version", Date.now().toString()); } catch (e) {}
-    return res.status(201).json({ status: "success", data: user });
-  } catch (err: any) {
-    return res.status(400).json({ error: err?.message ?? "Failed to register" });
-  }
+  const payload = req.body as RegisterDto;
+  const user = await AuthService.register(payload.email, payload.password, payload.firstName, payload.lastName);
+  // scrub password
+  delete user.password;
+  await cacheDelByPrefix("users:list");
+  try { await cacheSet("users:version", Date.now().toString()); } catch (e) {}
+  return res.status(201).json({ status: "success", data: user });
 }
 
 export async function login(req: Request, res: Response) {
-  try {
-    const payload = req.body as LoginDto;
+  const payload = req.body as LoginDto;
+  const result = await AuthService.login(payload.email, payload.password, { ip: req.ip });
 
-    // Attempt auth
-    const user = await AuthService.authenticate(payload.email, payload.password);
-
-    if (!user) {
-      // record failed attempt for brute force protection
-      await recordFailedLogin(payload.email);
-      await auditAuthEvent("login:failed", { email: payload.email, ip: req.ip });
-      return res.status(401).json({ error: "Invalid credentials" });
-    }
-
-    // clear any failed counters on success
-    await clearFailedLogin((payload as any).email);
-    await auditAuthEvent("login:success", { id: user.id, email: user.email, ip: req.ip });
-
-    const tokens = generateTokens({
-      id: user.id,
-      email: user.email,
-      role: user.role,
-      employeeId: user.employeeId || undefined,
-    });
-
-    // Exclude password from response
-    const { password, ...userWithoutPassword } = user;
-
-    return res.json({ status: "success", data: { user: userWithoutPassword, tokens } });
-  } catch (err: any) {
-    return res.status(500).json({ error: err?.message ?? "Login failed" });
-  }
+  // Exclude password from response
+  const { password, ...userWithoutPassword } = result.user;
+  const cookieOptions = getCookieOptions();
+  res.cookie(ACCESS_COOKIE, result.tokens.accessToken, { ...cookieOptions, maxAge: 2 * 24 * 60 * 60 * 1000 });
+  res.cookie(REFRESH_COOKIE, result.tokens.refreshToken, { ...cookieOptions, maxAge: 7 * 24 * 60 * 60 * 1000 });
+  return res.json({ status: "success", data: { user: userWithoutPassword } });
 }
 
 // OTP signup flow controllers
 export async function requestSignupOtp(req: Request, res: Response) {
-  try {
-    const { email } = req.body;
-    await AuthService.requestSignupOtp(email);
-    return res.json({ ok: true });
-  } catch (err: any) {
-    return res.status(400).json({ error: err?.message });
-  }
+  const { email } = req.body;
+  await AuthService.requestSignupOtp(email);
+  return res.json({ ok: true });
 }
 
 export async function verifySignupOtp(req: Request, res: Response) {
-  try {
-    const { email, otp } = req.body;
-    await AuthService.verifySignupOtp(email, otp);
-    return res.json({ ok: true });
-  } catch (err: any) {
-    return res.status(400).json({ error: err?.message });
-  }
+  const { email, otp } = req.body;
+  await AuthService.verifySignupOtp(email, otp);
+  return res.json({ ok: true });
 }
 
 export async function completeSignup(req: Request, res: Response) {
-  try {
-    const { email, password, firstName, lastName } = req.body;
-    const user = await AuthService.completeSignup(email, password, firstName, lastName);
-    delete user.password;
-    await cacheDelByPrefix("users:list");
-    return res.status(201).json({ status: "success", data: user });
-  } catch (err: any) {
-    return res.status(400).json({ error: err?.message });
-  }
+  const { email, password, firstName, lastName } = req.body;
+  const user = await AuthService.completeSignup(email, password, firstName, lastName);
+  delete user.password;
+  await cacheDelByPrefix("users:list");
+  return res.status(201).json({ status: "success", data: user });
 }
 
 export async function logout(req: Request, res: Response) {
-  try {
-    const auth = req.headers.authorization;
-    if (!auth || !auth.startsWith("Bearer ")) return res.status(400).json({ error: "No token provided" });
-    const token = auth.slice(7);
-    // revoke token until its expiry
-    await revokeToken(token);
-    await auditAuthEvent("logout", { ip: req.ip });
-    return res.json({ ok: true });
-  } catch (err: any) {
-    return res.status(500).json({ error: err?.message ?? "Logout failed" });
-  }
+  const auth = req.headers.authorization;
+  const bearerToken = auth && auth.startsWith("Bearer ") ? auth.slice(7) : "";
+  const cookieToken = (req as any).cookies?.access_token as string | undefined;
+  const token = cookieToken || bearerToken;
+  await AuthService.logout(token, { ip: req.ip, userId: (req as any).user?.id });
+  const cookieOptions = getCookieOptions();
+  res.clearCookie(ACCESS_COOKIE, cookieOptions);
+  res.clearCookie(REFRESH_COOKIE, cookieOptions);
+  return res.json({ ok: true });
 }
 
 export async function refreshToken(req: Request, res: Response) {
-  try {
-    const { refreshToken } = req.body;
-    if (!refreshToken) return res.status(400).json({ error: "Refresh token required" });
+  const bodyToken = (req.body && req.body.refreshToken) as string | undefined;
+  const cookieToken = (req as any).cookies?.refresh_token as string | undefined;
+  const refreshToken = bodyToken || cookieToken || "";
+  const newTokens = await AuthService.refreshTokens(refreshToken);
 
-    const payload = verifyRefreshToken(refreshToken);
-    const newTokens = generateTokens(payload);
-
-    return res.json({ status: "success", data: newTokens });
-  } catch (err: any) {
-    return res.status(403).json({ error: "Invalid refresh token" });
-  }
+  const cookieOptions = getCookieOptions();
+  res.cookie(ACCESS_COOKIE, newTokens.accessToken, { ...cookieOptions, maxAge: 2 * 24 * 60 * 60 * 1000 });
+  res.cookie(REFRESH_COOKIE, newTokens.refreshToken, { ...cookieOptions, maxAge: 7 * 24 * 60 * 60 * 1000 });
+  return res.json({ status: "success" });
 }
 
 // Password reset flow controllers
 export async function requestPasswordResetOtp(req: Request, res: Response) {
-  try {
-    const { email } = req.body as RequestPasswordResetOtpDto;
-    await AuthService.requestPasswordResetOtp(email);
-    return res.json({ ok: true });
-  } catch (err: any) {
-    return res.status(400).json({ error: err?.message });
-  }
+  const { email } = req.body as RequestPasswordResetOtpDto;
+  await AuthService.requestPasswordResetOtp(email);
+  return res.json({ ok: true });
 }
 
 export async function verifyPasswordResetOtp(req: Request, res: Response) {
-  try {
-    const { email, otp } = req.body as VerifyPasswordResetOtpDto;
-    await AuthService.verifyPasswordResetOtp(email, otp);
-    return res.json({ ok: true });
-  } catch (err: any) {
-    return res.status(400).json({ error: err?.message });
-  }
+  const { email, otp } = req.body as VerifyPasswordResetOtpDto;
+  await AuthService.verifyPasswordResetOtp(email, otp);
+  return res.json({ ok: true });
 }
 
 export async function resetPassword(req: Request, res: Response) {
-  try {
-    const { email, password } = req.body as ResetPasswordDto;
-    await AuthService.resetPassword(email, password);
-    return res.json({ ok: true });
-  } catch (err: any) {
-    return res.status(400).json({ error: err?.message });
-  }
+  const { email, password } = req.body as ResetPasswordDto;
+  await AuthService.resetPassword(email, password);
+  return res.json({ ok: true });
 }
 
 export async function changePassword(req: Request, res: Response) {
-  try {
-    const user = (req as any).user;
-    const payload = req.body as ChangePasswordDto;
-    await AuthService.changePassword(user.id, payload.oldPassword, payload.newPassword);
-    await auditAuthEvent("password:changed", { id: user.id, email: user.email, ip: req.ip });
-    return res.json({ status: "success", message: "Password changed successfully" });
-  } catch (err: any) {
-    return res.status(400).json({ error: err?.message });
-  }
+  const user = (req as any).user;
+  const payload = req.body as ChangePasswordDto;
+  await AuthService.changePassword(user.id, payload.oldPassword, payload.newPassword, { ip: req.ip, email: user.email });
+  return res.json({ status: "success", message: "Password changed successfully" });
 }

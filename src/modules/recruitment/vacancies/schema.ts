@@ -4,6 +4,7 @@ export const CreateVacancySchema = z.object({
   title: z.string().min(1),
   department: z.string().optional().nullable(),
   description: z.string().optional().nullable(),
+  skillId: z.string().uuid().optional().nullable(),
 });
 export type CreateVacancyDto = z.infer<typeof CreateVacancySchema>;
 

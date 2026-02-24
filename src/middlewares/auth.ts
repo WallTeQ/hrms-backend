@@ -20,8 +20,10 @@ export const authMiddleware: RequestHandler = async (req, res, next) => {
   }
 
   const auth = req.headers.authorization;
-  if (!auth || !auth.startsWith("Bearer ")) return res.status(401).json({ error: "Unauthorized" });
-  const token = auth.slice(7);
+  const bearerToken = auth && auth.startsWith("Bearer ") ? auth.slice(7) : "";
+  const cookieToken = (req as any).cookies?.access_token as string | undefined;
+  const token = cookieToken || bearerToken;
+  if (!token) return res.status(401).json({ error: "Unauthorized" });
   try {
     const payload = verifyAccessToken(token);
     // check revocation

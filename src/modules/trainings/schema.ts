@@ -13,3 +13,19 @@ export type UpdateTrainingDto = z.infer<typeof UpdateTrainingSchema>;
 
 export const TrainingResponseSchema = CreateTrainingSchema.extend({ id: z.string() });
 export type TrainingResponseDto = z.infer<typeof TrainingResponseSchema>;
+
+export const TrainingRecommendationQuerySchema = z.object({
+  employeeId: z.string().uuid().optional(),
+  status: z.string().optional(),
+});
+export type TrainingRecommendationQueryDto = z.infer<typeof TrainingRecommendationQuerySchema>;
+
+export const UpdateTrainingRecommendationSchema = z.object({
+  status: z.enum(["PENDING", "ACCEPTED", "COMPLETED", "REJECTED"]),
+});
+export type UpdateTrainingRecommendationDto = z.infer<typeof UpdateTrainingRecommendationSchema>;
+
+export const TrainingGapRecommendationQuerySchema = z.object({
+  employeeId: z.string().uuid().optional(),
+});
+export type TrainingGapRecommendationQueryDto = z.infer<typeof TrainingGapRecommendationQuerySchema>;

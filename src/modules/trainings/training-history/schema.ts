@@ -4,6 +4,9 @@ export const AddTrainingHistorySchema = z.object({
   employeeId: z.string().uuid(),
   trainingId: z.string().uuid(),
   completedAt: z.string().optional().nullable(),
+  prePerformanceScore: z.number().optional().nullable(),
+  postPerformanceScore: z.number().optional().nullable(),
+  impactScore: z.number().optional().nullable(),
 });
 export type AddTrainingHistoryDto = z.infer<typeof AddTrainingHistorySchema>;
 
