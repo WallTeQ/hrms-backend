@@ -8,19 +8,10 @@ const REFRESH_COOKIE = "refresh_token";
 
 function getCookieOptions() {
   const isProd = process.env.NODE_ENV === "production";
-  let domain: string | undefined = undefined;
-  if (process.env.AUTH_COOKIE_DOMAIN) {
-    try {
-      domain = new URL(process.env.AUTH_COOKIE_DOMAIN).hostname;
-    } catch {
-      domain = process.env.AUTH_COOKIE_DOMAIN;
-    }
-  }
   return {
     httpOnly: true,
     secure: isProd,
     sameSite: (process.env.AUTH_COOKIE_SAMESITE || (isProd ? "strict" : "lax")) as "strict" | "lax" | "none",
-    domain,
     path: "/",
   };
 }
@@ -44,7 +35,7 @@ export async function login(req: Request, res: Response) {
   const cookieOptions = getCookieOptions();
   res.cookie(ACCESS_COOKIE, result.tokens.accessToken, { ...cookieOptions, maxAge: 2 * 24 * 60 * 60 * 1000 });
   res.cookie(REFRESH_COOKIE, result.tokens.refreshToken, { ...cookieOptions, maxAge: 7 * 24 * 60 * 60 * 1000 });
-  return res.json({ status: "success", data: { user: userWithoutPassword } });
+  return res.json({ status: "success", data: { user: userWithoutPassword, tokens: result.tokens } });
 }
 
 // OTP signup flow controllers
