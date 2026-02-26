@@ -8,11 +8,19 @@ const REFRESH_COOKIE = "refresh_token";
 
 function getCookieOptions() {
   const isProd = process.env.NODE_ENV === "production";
+  let domain: string | undefined = undefined;
+  if (process.env.AUTH_COOKIE_DOMAIN) {
+    try {
+      domain = new URL(process.env.AUTH_COOKIE_DOMAIN).hostname;
+    } catch {
+      domain = process.env.AUTH_COOKIE_DOMAIN;
+    }
+  }
   return {
     httpOnly: true,
     secure: isProd,
     sameSite: (process.env.AUTH_COOKIE_SAMESITE || (isProd ? "strict" : "lax")) as "strict" | "lax" | "none",
-    domain: process.env.AUTH_COOKIE_DOMAIN || undefined,
+    domain,
     path: "/",
   };
 }
