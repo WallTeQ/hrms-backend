@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const CreateContractSchema = z.object({
-  employeeId: z.string().uuid(),
+  employeeId: z.string().regex(/^EMP-\d{2}-\d{2}$/, { message: "Invalid employee ID format" }),
   title: z.string().min(1),
   startDate: z.string().refine((s) => !Number.isNaN(Date.parse(s)), { message: "Invalid date" }),
   endDate: z.string().optional().nullable(),

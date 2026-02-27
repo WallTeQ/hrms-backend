@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const AddTrainingHistorySchema = z.object({
-  employeeId: z.string().uuid(),
+  employeeId: z.string().regex(/^EMP-\d{2}-\d{2}$/, { message: "Invalid employee ID format" }),
   trainingId: z.string().uuid(),
   completedAt: z.string().optional().nullable(),
   prePerformanceScore: z.number().optional().nullable(),

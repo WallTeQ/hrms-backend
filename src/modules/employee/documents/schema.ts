@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const CreateDocumentSchema = z.object({
-  employeeId: z.string().uuid(),
+  employeeId: z.string().regex(/^EMP-\d{2}-\d{2}$/, { message: "Invalid employee ID format" }),
   type: z.enum(["PASSPORT", "ID", "CERTIFICATE", "CONTRACT", "COMPLIANCE", "OTHER"]),
   name: z.string().min(1),
   // fileUrl is optional for multipart/file uploads (controller will add it when a file is uploaded)

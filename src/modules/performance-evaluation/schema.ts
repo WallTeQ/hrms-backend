@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const CreateEvaluationSchema = z.object({
-  employeeId: z.string().uuid(),
+  employeeId: z.string().regex(/^EMP-\d{2}-\d{2}$/, { message: "Invalid employee ID format" }),
   kpiId: z.string().uuid().optional().nullable(),
   category: z.enum(["SUPERVISOR", "TEAMWORK"]).optional(),
   score: z.number(),
@@ -23,7 +23,7 @@ export const GeneratePerformanceSchema = z.object({
 export type GeneratePerformanceDto = z.infer<typeof GeneratePerformanceSchema>;
 
 export const PerformanceRecordQuerySchema = z.object({
-  employeeId: z.string().uuid().optional(),
+  employeeId: z.string().regex(/^EMP-\d{2}-\d{2}$/, { message: "Invalid employee ID format" }).optional(),
   period: z.string().optional(),
   skip: z.preprocess((v) => Number(v), z.number().int().nonnegative().optional()),
   take: z.preprocess((v) => Number(v), z.number().int().positive().optional()),

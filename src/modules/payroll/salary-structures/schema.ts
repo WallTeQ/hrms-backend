@@ -2,7 +2,7 @@ import { z } from "zod";
 
 // Base schema without preprocess so we can call .partial() and .extend() in TypeScript
 export const BaseCreateSalaryStructureSchema = z.object({
-  employeeId: z.string().uuid(),
+  employeeId: z.string().regex(/^EMP-\d{2}-\d{2}$/, { message: "Invalid employee ID format" }),
   baseSalary: z.number().nonnegative(),
   allowances: z.number().nonnegative().optional(),
   deductions: z.number().nonnegative().optional(),

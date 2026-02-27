@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const CreateDisciplinaryRecordSchema = z.object({
-  employeeId: z.string().uuid(),
+  employeeId: z.string().regex(/^EMP-\d{2}-\d{2}$/, { message: "Invalid employee ID format" }),
   incident: z.string().min(1),
   action: z.string().min(1),
   date: z.string().refine((s) => !Number.isNaN(Date.parse(s)), { message: "Invalid date" }),

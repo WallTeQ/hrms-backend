@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const CreateLeaveRequestSchema = z.object({
-  employeeId: z.string().uuid(),
+  employeeId: z.string().regex(/^EMP-\d{2}-\d{2}$/, { message: "Invalid employee ID format" }),
   type: z.enum(["ANNUAL", "SICK", "MATERNITY", "PATERNITY", "STUDY", "UNPAID", "SPECIAL"]),
   startDate: z.string().refine((s) => !Number.isNaN(Date.parse(s)), { message: "Invalid date" }),
   endDate: z.string().refine((s) => !Number.isNaN(Date.parse(s)), { message: "Invalid date" }),
