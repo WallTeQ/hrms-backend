@@ -18,7 +18,7 @@ const app = express();
 app.disable("x-powered-by");
 app.use(helmet({ contentSecurityPolicy: false })); // CSP should be tuned per-app
 
-const allowedOrigins = (process.env.CORS_ORIGIN || "")
+const allowedOrigins = (process.env.CORS_ORIGIN || "*")
   .split(",")
   .map(o => o.trim());
 

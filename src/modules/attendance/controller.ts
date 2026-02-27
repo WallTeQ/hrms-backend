@@ -5,13 +5,23 @@ import { validate } from "../../middlewares/validate.js";
 import type { MarkAttendanceDto, CreateAttendanceDto } from "./schema.js";
 import { CreateAttendanceSchema } from "./schema.js";
 import { getPaginationOptions, createPaginationResult } from "../../common/pagination.js";
+import { prisma } from "../../infra/database.js";
 
 export async function markAttendance(req: Request, res: Response) {
   const payload = req.body as MarkAttendanceDto;
   const userId = (req as any).user?.id as string | undefined;
 
+  // Find employee by id to validate
+  const employee = await prisma.employee.findUnique({
+    where: { id: payload.employeeId },
+    select: { id: true },
+  });
+  if (!employee) {
+    return res.status(404).json({ status: "error", message: "Employee not found" });
+  }
+
   const result = await AttendanceService.markAttendance({
-    employeeId: payload.employeeId,
+    employeeId: employee.id,
     date: payload.date,
     status: payload.status as any,
     clockIn: payload.clockIn as any,
@@ -36,7 +46,17 @@ export async function markAttendance(req: Request, res: Response) {
 
 export async function clockOut(req: Request, res: Response) {
   const { employeeId } = req.body;
-  const result = await AttendanceService.clockOut(employeeId);
+
+  // Find employee by id to validate
+  const employee = await prisma.employee.findUnique({
+    where: { id: employeeId },
+    select: { id: true },
+  });
+  if (!employee) {
+    return res.status(404).json({ status: "error", message: "Employee not found" });
+  }
+
+  const result = await AttendanceService.clockOut(employee.id);
 
   // Map response to use user-friendly field names and format times
   const responseData = {
@@ -53,7 +73,17 @@ export async function clockOut(req: Request, res: Response) {
 export async function createAttendance(req: Request, res: Response) {
   const payload = req.body as CreateAttendanceDto;
   const userId = (req as any).user?.id as string | undefined;
-  const result = await AttendanceService.create(payload, { recordedByUserId: userId });
+
+  // Find employee by id to validate
+  const employee = await prisma.employee.findUnique({
+    where: { id: payload.employeeId },
+    select: { id: true },
+  });
+  if (!employee) {
+    return res.status(404).json({ status: "error", message: "Employee not found" });
+  }
+
+  const result = await AttendanceService.create({ ...payload, employeeId: employee.id }, { recordedByUserId: userId });
 
   // Map response to use user-friendly field names and format times
   const responseData = {
@@ -113,11 +143,39 @@ export async function listAttendance(req: Request, res: Response) {
   const { skip, take, page } = pagination;
   const user = (req as any).user;
   const role = user?.role || "anonymous";
-  const scopeEmployeeId = role === "EMPLOYEE" ? user?.employeeId || "self" : (employeeId as string | undefined) || "all";
+  let scopeEmployeeId = role === "EMPLOYEE" ? user?.employeeId || "self" : (employeeId as string | undefined) || "all";
+
+  // Resolve scopeEmployeeId to validate
+  let resolvedScopeEmployeeId: string | undefined;
+  if (scopeEmployeeId && scopeEmployeeId !== "all" && scopeEmployeeId !== "self") {
+    const employee = await prisma.employee.findUnique({
+      where: { id: scopeEmployeeId },
+      select: { id: true },
+    });
+    if (!employee) {
+      return res.status(404).json({ status: "error", message: "Employee not found" });
+    }
+    resolvedScopeEmployeeId = employee.id;
+    scopeEmployeeId = resolvedScopeEmployeeId; // for cache key
+    // Update user.employeeId for the service
+    if (user) user.employeeId = resolvedScopeEmployeeId;
+  }
+
+  let resolvedEmployeeId: string | undefined;
+  if (employeeId) {
+    const employee = await prisma.employee.findUnique({
+      where: { id: employeeId as string },
+      select: { id: true },
+    });
+    if (!employee) {
+      return res.status(404).json({ status: "error", message: "Employee not found" });
+    }
+    resolvedEmployeeId = employee.id;
+  }
 
   const key = `attendance:list:role=${role}:employeeId=${scopeEmployeeId}:startDate=${startDate || 'none'}:endDate=${endDate || 'none'}:skip=${skip}:take=${take}`;
   const result = await cacheWrap(key, 60, () => AttendanceService.list({
-    employeeId: employeeId as string | undefined,
+    employeeId: resolvedEmployeeId,
     startDate: startDate ? new Date(String(startDate)) : undefined,
     endDate: endDate ? new Date(String(endDate)) : undefined,
     skip,

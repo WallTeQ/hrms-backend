@@ -81,9 +81,9 @@ export const AttendanceService = {
 
       const result = await prismaDefault.$transaction(async (tx: Prisma.TransactionClient) => {
         const txRepo = AttendanceRepository(tx as any);
-        const updated = await txRepo.mark(input.employeeId, date, status, clockIn, clockOut, payload as any);
+        const updated = await txRepo.mark(employee.id, date, status, clockIn, clockOut, payload as any);
         if (status === "ABSENT") {
-          await maybeTriggerAbsenceAlert(input.employeeId, date, tx as any);
+          await maybeTriggerAbsenceAlert(employee.id, date, tx as any);
         }
         return updated;
       });
