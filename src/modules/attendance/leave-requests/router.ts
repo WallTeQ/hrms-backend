@@ -7,6 +7,7 @@ import * as controller from "./controller.js";
 const router = express.Router();
 
 router.post("/", requirePermission("leave:request:create"), validate(CreateLeaveRequestSchema), controller.createLeaveRequest);
+router.get("/", requirePermission("leave:request:list"), controller.listLeaveRequests);
 router.get("/employee/:employeeId", requirePermission("leave:request:list"), controller.listLeaveRequestsForEmployee);
 router.get("/:id", requirePermission("leave:request:read"), controller.getLeaveRequest);
 router.patch("/:id", requirePermission("leave:request:update"), validate(UpdateLeaveRequestSchema), controller.updateLeaveRequest);

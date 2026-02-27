@@ -16,6 +16,26 @@ export async function listLeaveRequestsForEmployee(req: Request, res: Response) 
   return res.json({ status: "success", data: items });
 }
 
+export async function listLeaveRequests(req: Request, res: Response) {
+  const user = (req as any).user;
+  const role = user?.role;
+  const { status, employeeId } = req.query;
+  let filters: any = {};
+  if (status) filters.status = status as string;
+  if (role !== "SUPER_ADMIN") {
+    if (!employeeId) {
+      return res.status(403).json({ status: "error", message: "Forbidden" });
+    }
+    filters.employeeId = employeeId as string;
+  } else {
+    if (employeeId) filters.employeeId = employeeId as string;
+  }
+  const skip = Number(req.query.skip || 0);
+  const take = Number(req.query.take || 50);
+  const items = await LeaveRequestService.list(filters, skip, take);
+  return res.json({ status: "success", data: items });
+}
+
 export async function getLeaveRequest(req: Request, res: Response) {
   const id = req.params.id;
   const leave = await LeaveRequestService.find(id);

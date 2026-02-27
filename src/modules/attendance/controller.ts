@@ -20,6 +20,17 @@ export async function markAttendance(req: Request, res: Response) {
     return res.status(404).json({ status: "error", message: "Employee not found" });
   }
 
+  // Check if attendance already marked for this date
+  const existingAttendance = await prisma.attendance.findFirst({
+    where: {
+      employeeId: employee.id,
+      date: new Date(payload.date),
+    },
+  });
+  if (existingAttendance) {
+    return res.status(400).json({ status: "error", message: "Attendance already marked for this date" });
+  }
+
   const result = await AttendanceService.markAttendance({
     employeeId: employee.id,
     date: payload.date,

@@ -32,6 +32,8 @@ export const LeaveRequestService = {
 
     const payload: Prisma.LeaveRequestCreateInput = {
       ...data,
+      startDate: start,
+      endDate: end,
       isPaid,
       status: "PENDING_SUPERVISOR" as any,
     } as any;
@@ -52,6 +54,13 @@ export const LeaveRequestService = {
   find: async (id: string) => serviceGuard(async () => prisma.leaveRequest.findUnique({ where: { id } })),
   listForEmployee: async (employeeId: string, skip = 0, take = 50) =>
     serviceGuard(async () => prisma.leaveRequest.findMany({ where: { employeeId }, skip, take, orderBy: { createdAt: "desc" } })),
+  list: async (filters: { status?: string, employeeId?: string }, skip = 0, take = 50) =>
+    serviceGuard(async () => {
+      const where: any = {};
+      if (filters.status) where.status = filters.status;
+      if (filters.employeeId) where.employeeId = filters.employeeId;
+      return prisma.leaveRequest.findMany({ where, skip, take, orderBy: { createdAt: "desc" } });
+    }),
   updateStatus: async (id: string, status: string, actorId?: string) =>
     serviceGuard(async () => {
       const existing = await prisma.leaveRequest.findUnique({ where: { id } });

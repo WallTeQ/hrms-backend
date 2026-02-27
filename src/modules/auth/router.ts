@@ -12,7 +12,7 @@ router.post("/register", validate(RegisterSchema), controller.register);
 router.post("/login", createRateLimiter({ prefix: "auth:login", windowSeconds: 60, max: Number(process.env.AUTH_LOGIN_RATE_LIMIT || 10) }), loginLockMiddleware(), validate(LoginSchema), controller.login);
 // logout will revoke the current bearer token
 
-router.post("/logout", controller.logout);
+router.post("/logout", authMiddleware, controller.logout);
 router.post("/refresh", controller.refreshToken);
 router.post("/signup/request", createRateLimiter({ prefix: "auth:signup", windowSeconds: 60, max: Number(process.env.AUTH_SIGNUP_RATE_LIMIT || 5) }), validate(RequestOtpSchema), controller.requestSignupOtp);
 router.post("/signup/verify", validate(VerifyOtpSchema), controller.verifySignupOtp);
